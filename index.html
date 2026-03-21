@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Лабиринт — Прототип интерфейса</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Caveat+Brush&display=swap');
+
+:root {
+  --bg:      #faf8f3;
+  --paper:   #fffef9;
+  --ink:     #2c2416;
+  --ink2:    #6b5d4f;
+  --ink3:    #c4b8a8;
+  --accent:  #3a5a8c;
+  --danger:  #8c3a3a;
+  --success: #3a6b3a;
+  --warn:    #8c6e3a;
+  --hi:      #f0e68c;
+  --font:    'Caveat', cursive;
+  --fontb:   'Caveat Brush', cursive;
+  --r:       4px 8px 3px 7px;
+  --rb:      3px 9px 4px 8px;
+  --shadow:  2px 3px 0 var(--ink3);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+body {
+  background: var(--bg);
+  font-family: var(--font);
+  color: var(--ink);
+  font-size: 16px;
+  min-height: 100vh;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+svg.filters{position:absolute;width:0;height:0;overflow:hidden}
+
+/* ── SCREEN SWITCHER ── */
+.screen{display:none}
+.screen.active{display:block}
+
+/* ── NAV TABS (prototype switcher) ── */
+.proto-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; gap: 0; background: var(--ink);
+  border-bottom: 2px solid var(--ink);
+  filter: url(#pencil);
+}
+.proto-tab {
+  font-family: var(--fontb); font-size: 0.85rem;
+  padding: 8px 18px; color: var(--ink3); cursor: pointer;
+  border-right: 1px dashed #4a3a2a; transition: all .15s;
+  user-select: none;
+}
+.proto-tab:hover { color: var(--hi); }
+.proto-tab.active { background: var(--hi); color: var(--ink); }
+.proto-label {
+  font-family: var(--font); font-size: 0.75rem;
+  padding: 8px 12px 8px 4px; color: var(--ink3);
+  border-right: 1px dashed #4a3a2a; pointer-events: none;
+}
+
+.page { padding-top: 42px; min-height: 100vh; }
+
+/* ══════════════════════════════════════
+   COMMON COMPONENTS
+══════════════════════════════════════ */
+.btn {
+  font-family: var(--font); font-size: 1rem;
+  padding: 8px 20px;
+  border: 2px solid var(--ink); border-radius: var(--rb);
+  background: var(--paper); color: var(--ink);
+  cursor: pointer; transition: transform .1s, box-shadow .1s;
+  box-shadow: var(--shadow); outline: none;
+  filter: url(#pencil); display: inline-block;
+}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:3px 4px 0 var(--ink3)}
+.btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink3)}
+.btn-primary{background:var(--ink);color:var(--bg)}
+.btn-accent{border-color:var(--accent);color:var(--accent);box-shadow:2px 3px 0 var(--accent)}
+.btn-danger{border-color:var(--danger);color:var(--danger);box-shadow:2px 3px 0 var(--danger)}
+.btn-success{border-color:var(--success);color:var(--success);box-shadow:2px 3px 0 var(--success)}
+.btn-ghost{border-style:dashed;box-shadow:none;color:var(--ink2)}
+.btn-sm{font-size:.85rem;padding:5px 12px}
+.btn-lg{font-size:1.2rem;padding:12px 28px}
+.btn-full{width:100%;text-align:center;display:block}
+
+.input {
+  font-family: var(--font); font-size: 1rem;
+  padding: 8px 12px;
+  border: 2px solid var(--ink); border-radius: var(--r);
+  background: var(--paper); color: var(--ink);
+  outline: none; width: 100%;
+  filter: url(#pencil);
+}
+.input:focus{box-shadow:0 0 0 2px var(--ink3)}
+.input::placeholder{color:var(--ink3);font-style:italic}
+
+.select-wrap{position:relative}
+.select-wrap select {
+  font-family: var(--font); font-size: 1rem;
+  padding: 8px 32px 8px 12px;
+  border: 2px solid var(--ink); border-radius: var(--r);
+  background: var(--paper); color: var(--ink);
+  appearance: none; outline: none; width: 100%;
+  cursor: pointer; filter: url(#pencil);
+}
+.select-wrap::after{
+  content:'▾'; position:absolute; right:10px; top:50%;
+  transform:translateY(-50%); pointer-events:none;
+  color:var(--ink2); font-size:.9rem;
+}
+
+.label{font-size:.9rem;color:var(--ink2);margin-bottom:4px;display:block}
+
+.card {
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 6px 12px 8px 10px;
+  padding: 20px; filter: url(#pencil);
+}
+.card-title{
+  font-family:var(--fontb); font-size:1.1rem;
+  margin-bottom:10px; padding-bottom:8px;
+  border-bottom:1.5px dashed var(--ink3);
+}
+
+.badge{
+  display:inline-block; font-size:.78rem;
+  padding:2px 8px; border:1.5px solid var(--ink);
+  border-radius:20px 24px 22px 20px;
+  filter:url(#pencil);
+}
+.badge-success{border-color:var(--success);color:var(--success)}
+.badge-danger{border-color:var(--danger);color:var(--danger)}
+.badge-accent{border-color:var(--accent);color:var(--accent)}
+.badge-warn{border-color:var(--warn);color:var(--warn)}
+.badge-filled{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+.divider{
+  border:none; border-top:1.5px dashed var(--ink3);
+  margin:16px 0;
+}
+
+.hint{font-size:.82rem;color:var(--ink3);font-style:italic;margin-top:3px}
+.err{font-size:.82rem;color:var(--danger);margin-top:3px}
+
+.check-item{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;font-size:.95rem}
+.check-box{
+  width:18px;height:18px; flex-shrink:0;
+  border:2px solid var(--ink); border-radius:3px 5px 3px 5px;
+  background:var(--paper); display:flex; align-items:center; justify-content:center;
+  filter:url(#pencil);
+}
+.check-box.on::after{
+  content:''; width:11px;height:6px;
+  border-left:2.5px solid var(--ink); border-bottom:2.5px solid var(--ink);
+  transform:rotate(-45deg) translate(1px,-1px);
+}
+.radio-dot{
+  width:18px;height:18px; flex-shrink:0;
+  border:2px solid var(--ink); border-radius:50%;
+  background:var(--paper); display:flex; align-items:center; justify-content:center;
+  filter:url(#pencil);
+}
+.radio-dot.on::after{content:'';width:8px;height:8px;background:var(--ink);border-radius:50%}
+
+.toggle-track{
+  width:40px;height:22px; border:2px solid var(--ink); border-radius:20px;
+  background:var(--paper); position:relative; transition:background .2s;
+  flex-shrink:0; filter:url(#pencil); cursor:pointer;
+}
+.toggle-track.on{background:var(--ink)}
+.toggle-thumb{
+  width:14px;height:14px;background:var(--ink);border-radius:50%;
+  position:absolute;top:3px;left:3px;transition:left .2s,background .2s;
+}
+.toggle-track.on .toggle-thumb{left:21px;background:var(--bg)}
+
+.progress-wrap{
+  height:14px; border:2px solid var(--ink); border-radius:8px 12px 10px 9px;
+  background:var(--paper); overflow:hidden; filter:url(#pencil);
+}
+.progress-fill{
+  height:100%;
+  background:repeating-linear-gradient(45deg,var(--ink) 0,var(--ink) 3px,transparent 3px,transparent 8px);
+}
+
+/* ══════════════════════════════════════
+   SCREEN 1 — AUTH
+══════════════════════════════════════ */
+.auth-wrap {
+  min-height: calc(100vh - 42px);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 32px 16px;
+  position: relative;
+}
+
+/* декоративный лабиринт на фоне */
+.maze-bg {
+  position: absolute; inset: 0; overflow: hidden;
+  pointer-events: none; opacity: 0.06;
+}
+.maze-bg svg { width: 100%; height: 100%; }
+
+.auth-logo {
+  font-family: var(--fontb); font-size: 2.2rem;
+  margin-bottom: 6px; text-align: center;
+  filter: url(#pencil);
+}
+.auth-subtitle {
+  color: var(--ink2); font-size: .95rem;
+  margin-bottom: 28px; text-align: center;
+}
+
+.auth-card {
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 8px 16px 10px 14px;
+  box-shadow: 4px 5px 0 var(--ink3);
+  width: 100%; max-width: 380px;
+  filter: url(#pencil); overflow: hidden;
+}
+
+.auth-tabs {
+  display: flex; border-bottom: 2px solid var(--ink);
+}
+.auth-tab {
+  flex: 1; padding: 12px;
+  text-align: center; font-family: var(--fontb); font-size: 1rem;
+  cursor: pointer; color: var(--ink2);
+  border-right: 1px dashed var(--ink3);
+  transition: background .15s;
+}
+.auth-tab:last-child{border-right:none}
+.auth-tab.active{background:var(--hi);color:var(--ink)}
+.auth-tab:hover:not(.active){background:rgba(0,0,0,.03)}
+
+.auth-form { padding: 24px; }
+.form-row { margin-bottom: 16px; }
+
+.auth-footer {
+  text-align: center; padding: 0 24px 20px;
+  font-size: .85rem; color: var(--ink2);
+}
+
+/* ══════════════════════════════════════
+   SCREEN 2 — ADMIN
+══════════════════════════════════════ */
+.admin-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  grid-template-rows: auto 1fr;
+  min-height: calc(100vh - 42px);
+}
+
+.admin-header {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 20px;
+  border-bottom: 2px solid var(--ink);
+  background: var(--paper); filter: url(#pencil);
+}
+.admin-logo{font-family:var(--fontb);font-size:1.3rem}
+.admin-header-right{margin-left:auto;display:flex;gap:8px;align-items:center}
+
+.admin-sidebar {
+  border-right: 2px solid var(--ink);
+  background: var(--paper);
+  padding: 20px 0;
+  filter: url(#pencil);
+}
+.sidebar-section{
+  font-size:.75rem; color:var(--ink3); text-transform:uppercase;
+  letter-spacing:.08em; padding:0 16px 6px; margin-top:10px;
+}
+.sidebar-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 16px; cursor: pointer; color: var(--ink2);
+  font-size: .95rem; transition: all .1s;
+  border-left: 3px solid transparent;
+}
+.sidebar-item:hover{background:rgba(0,0,0,.03);color:var(--ink)}
+.sidebar-item.active{
+  background:var(--hi); color:var(--ink);
+  border-left-color:var(--ink); font-weight:600;
+}
+.sidebar-icon{font-size:1rem;width:18px;text-align:center}
+
+.admin-main { padding: 24px; overflow-y: auto; }
+.admin-page-title {
+  font-family: var(--fontb); font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+.admin-page-sub{color:var(--ink2);font-size:.9rem;margin-bottom:24px}
+
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px}
+.stat-card{
+  background:var(--paper); border:2px solid var(--ink);
+  border-radius:6px 12px 8px 10px; padding:14px 16px;
+  box-shadow:var(--shadow); filter:url(#pencil);
+}
+.stat-num{font-family:var(--fontb);font-size:1.8rem;line-height:1}
+.stat-label{font-size:.8rem;color:var(--ink2);margin-top:2px}
+
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.admin-grid .card{box-shadow:var(--shadow)}
+
+/* таблица */
+.tbl{width:100%;border-collapse:collapse;font-size:.92rem}
+.tbl th{
+  border-bottom:2px solid var(--ink); padding:7px 10px;
+  text-align:left; font-family:var(--fontb); font-size:.85rem;
+}
+.tbl td{padding:7px 10px;border-bottom:1px dashed var(--ink3);color:var(--ink2)}
+.tbl tr:last-child td{border-bottom:2px solid var(--ink)}
+.tbl tr:hover td{background:rgba(0,0,0,.02)}
+
+/* лабиринт-превью (svg-сетка) */
+.maze-preview{
+  border:2px solid var(--ink); border-radius:4px;
+  background:var(--paper); overflow:hidden;
+  filter:url(#pencil);
+}
+
+/* form grid */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ══════════════════════════════════════
+   SCREEN 3 — PLAYER
+══════════════════════════════════════ */
+.player-layout{
+  display:grid;
+  grid-template-columns:260px 1fr 220px;
+  grid-template-rows:auto 1fr auto;
+  min-height:calc(100vh - 42px);
+}
+
+.player-header{
+  grid-column:1 / -1;
+  display:flex; align-items:center; gap:12px;
+  padding:10px 20px; border-bottom:2px solid var(--ink);
+  background:var(--paper); filter:url(#pencil);
+}
+.player-logo{font-family:var(--fontb);font-size:1.3rem}
+
+.player-left{
+  border-right:2px solid var(--ink); background:var(--paper);
+  padding:16px; display:flex; flex-direction:column; gap:14px;
+  filter:url(#pencil);
+}
+.panel-title{font-family:var(--fontb);font-size:1rem;margin-bottom:8px;padding-bottom:6px;border-bottom:1.5px dashed var(--ink3)}
+
+.player-main{
+  padding:20px; display:flex; flex-direction:column;
+  align-items:center; justify-content:flex-start; gap:16px;
+  background:var(--bg);
+}
+
+.maze-area{
+  border:2px solid var(--ink); border-radius:6px;
+  background:var(--paper); filter:url(#pencil);
+  position:relative; overflow:hidden;
+}
+
+.player-right{
+  border-left:2px solid var(--ink); background:var(--paper);
+  padding:16px; display:flex; flex-direction:column; gap:14px;
+  filter:url(#pencil);
+}
+
+.player-footer{
+  grid-column:1 / -1;
+  display:flex; align-items:center; gap:12px;
+  padding:10px 20px; border-top:2px solid var(--ink);
+  background:var(--paper); filter:url(#pencil);
+  font-size:.88rem; color:var(--ink2);
+}
+
+/* dpad */
+.dpad{
+  display:grid; grid-template-columns:repeat(3,36px);
+  grid-template-rows:repeat(3,36px); gap:3px;
+  filter:url(#pencil);
+}
+.dpad-btn{
+  width:36px;height:36px; border:2px solid var(--ink); border-radius:4px 7px 4px 7px;
+  background:var(--paper); display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:1rem; transition:all .1s;
+}
+.dpad-btn:hover{background:var(--hi)}
+.dpad-btn:active{transform:scale(.93)}
+.dpad-empty{background:transparent;border:none;cursor:default}
+
+/* legend */
+.legend-item{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--ink2);margin-bottom:6px}
+.legend-dot{
+  width:14px;height:14px;border:1.5px solid var(--ink);border-radius:2px;flex-shrink:0;
+}
+
+/* score */
+.score-big{font-family:var(--fontb);font-size:2rem;text-align:center;line-height:1}
+.score-label{text-align:center;font-size:.8rem;color:var(--ink2)}
+
+/* tabs small */
+.tabs-sm{display:flex;border:2px solid var(--ink);border-radius:var(--r);overflow:hidden;filter:url(#pencil)}
+.tab-sm{
+  flex:1;padding:6px 8px;text-align:center;cursor:pointer;
+  font-size:.85rem;color:var(--ink2);transition:background .15s;
+  border-right:1px dashed var(--ink3);
+}
+.tab-sm:last-child{border-right:none}
+.tab-sm.active{background:var(--ink);color:var(--bg)}
+
+/* maze list */
+.maze-list-item{
+  padding:10px 12px; border:1.5px solid var(--ink3); border-radius:var(--r);
+  margin-bottom:8px; cursor:pointer; transition:all .1s; background:var(--bg);
+}
+.maze-list-item:hover{border-color:var(--ink);background:var(--paper)}
+.maze-list-item.selected{border-color:var(--ink);background:var(--hi);border-width:2px}
+.maze-list-title{font-family:var(--fontb);font-size:.95rem}
+.maze-list-meta{font-size:.78rem;color:var(--ink2)}
+
+/* range */
+.sketch-range{
+  -webkit-appearance:none; width:100%; height:4px; outline:none; cursor:pointer;
+  background:repeating-linear-gradient(to right,var(--ink) 0,var(--ink) 2px,transparent 2px,transparent 6px);
+}
+.sketch-range::-webkit-slider-thumb{
+  -webkit-appearance:none; width:16px;height:16px;
+  background:var(--paper); border:2px solid var(--ink); border-radius:50%; cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<svg class="filters">
+  <defs>
+    <filter id="pencil">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04 0.07" numOctaves="3" seed="2" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<!-- ── PROTOTYPE NAVIGATION ── -->
+<nav class="proto-nav">
+  <span class="proto-label">✏ прототип:</span>
+  <div class="proto-tab active" onclick="show('auth', this)">① Аутентификация</div>
+  <div class="proto-tab" onclick="show('admin', this)">② Админ-панель</div>
+  <div class="proto-tab" onclick="show('player', this)">③ Экран игрока</div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     SCREEN 1 — AUTH
+══════════════════════════════════════ -->
+<div id="screen-auth" class="screen active page">
+  <div class="auth-wrap">
+
+    <!-- фоновый лабиринт -->
+    <div class="maze-bg">
+      <canvas id="bgMazeCanvas" style="width:100%;height:100%;opacity:0.07"></canvas>
+    </div>
+
+    <div class="auth-logo">🌀 Лабиринт</div>
+    <div class="auth-subtitle">система генерации и прохождения лабиринтов</div>
+
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tab-login" onclick="authSwitch('login')">Вход</div>
+        <div class="auth-tab" id="tab-reg" onclick="authSwitch('reg')">Регистрация</div>
+      </div>
+
+      <!-- ВХОД -->
+      <div id="form-login" class="auth-form">
+        <div class="form-row">
+          <label class="label">Логин</label>
+          <input class="input" type="text" placeholder="введите логин...">
+        </div>
+        <div class="form-row">
+          <label class="label">Пароль</label>
+          <input class="input" type="password" placeholder="••••••••">
+        </div>
+        <button class="btn btn-primary btn-full btn-lg" style="margin-top:4px">Войти →</button>
+      </div>
+
+      <!-- РЕГИСТРАЦИЯ -->
+      <div id="form-reg" class="auth-form" style="display:none">
+        <div class="form-row">
+          <label class="label">Логин <span style="color:var(--danger)">*</span></label>
+          <input class="input" type="text" placeholder="придумайте логин...">
+          <div class="hint">от 4 до 8 символов</div>
+        </div>
+        <div class="form-row">
+          <label class="label">Пароль <span style="color:var(--danger)">*</span></label>
+          <input class="input" type="password" placeholder="••••••••">
+          <div class="hint">от 4 до 10 символов</div>
+        </div>
+        <div class="form-row">
+          <label class="label">Подтверждение пароля <span style="color:var(--danger)">*</span></label>
+          <input class="input" type="password" placeholder="повторите пароль...">
+        </div>
+        <div class="form-row">
+          <label class="check-item">
+            <span class="check-box"></span>
+            <span style="font-size:.85rem">Принимаю условия использования</span>
+          </label>
+        </div>
+        <button class="btn btn-success btn-full btn-lg">Зарегистрироваться →</button>
+      </div>
+    </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 2 — ADMIN
+══════════════════════════════════════ -->
+<div id="screen-admin" class="screen page">
+  <div class="admin-layout">
+
+    <!-- хедер -->
+    <header class="admin-header">
+      <span class="admin-logo">🌀 Лабиринт</span>
+      <span style="font-size:.8rem;color:var(--ink2);border-left:1.5px dashed var(--ink3);padding-left:12px">Панель администратора</span>
+      <div class="admin-header-right">
+        <span class="badge badge-accent">admin</span>
+        <span style="font-size:.9rem;color:var(--ink2)">Иван И.</span>
+        <button class="btn btn-sm btn-ghost">Выйти</button>
+      </div>
+    </header>
+
+    <!-- сайдбар -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-section">Лабиринты</div>
+      <div class="sidebar-item active" id="sb-list"   onclick="adminView('list')">  <span class="sidebar-icon">⊞</span> Все лабиринты</div>
+      <div class="sidebar-item"        id="sb-create" onclick="adminView('create')"><span class="sidebar-icon">✚</span> Создать новый</div>
+      <div class="sidebar-section">Информация</div>
+      <div class="sidebar-item"        id="sb-about"  onclick="adminView('about')"> <span class="sidebar-icon">👤</span> О разработчике</div>
+      <div class="sidebar-item"        id="sb-system" onclick="adminView('system')"><span class="sidebar-icon">⚙</span> О системе</div>
+    </aside>
+
+    <!-- основной контент -->
+    <main class="admin-main">
+
+      <!-- ══ ВИД: СПИСОК ══ -->
+      <div id="admin-view-list">
+        <div class="admin-page-title">Все лабиринты</div>
+        <div class="admin-page-sub">Управление созданными лабиринтами</div>
+
+                <div class="card" style="box-shadow:var(--shadow)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <span class="card-title" style="border:none;padding:0;margin:0">Список лабиринтов</span>
+            <div style="display:flex;gap:8px">
+              <input class="input" type="text" placeholder="поиск..." style="width:160px;font-size:.85rem;padding:5px 10px">
+              <button class="btn btn-sm btn-primary" onclick="adminView('create')">+ Создать</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="tbl">
+              <thead><tr><th>Название</th><th>Размер</th><th>Алгоритм</th><th>Тема</th><th></th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>Классический 11×11</td><td>11 × 11</td><td>Прим</td><td>❄️ Зима</td>
+                  <td style="display:flex;gap:4px"><button class="btn btn-sm btn-danger" style="border-style:dashed;box-shadow:none">удал.</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Большой лабиринт</td><td>21 × 15</td><td>Краскал</td><td>☀️ Лето</td>
+                  <td style="display:flex;gap:4px"><button class="btn btn-sm btn-danger" style="border-style:dashed;box-shadow:none">удал.</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Тёмные катакомбы</td><td>15 × 15</td><td>Краскал</td><td>🍂 Осень</td>
+                  <td style="display:flex;gap:4px"><button class="btn btn-sm btn-danger" style="border-style:dashed;box-shadow:none">удал.</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Мини 7×7</td><td>7 × 7</td><td>Прим</td><td>🌸 Весна</td>
+                  <td style="display:flex;gap:4px"><button class="btn btn-sm btn-danger" style="border-style:dashed;box-shadow:none">удал.</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ВИД: СОЗДАНИЕ / РЕДАКТИРОВАНИЕ (единый экран) ══ -->
+      <div id="admin-view-create" style="display:none">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+          <span style="cursor:pointer;color:var(--ink2);font-size:.9rem" onclick="adminView('list')">← к списку</span>
+          <div class="admin-page-title" id="editor-mode-title">Создать лабиринт</div>
+          <span class="badge badge-warn" id="editor-unsaved-badge" style="margin-left:4px">не сохранён</span>
+        </div>
+        <div class="admin-page-sub" id="editor-mode-sub">Задайте параметры, расставьте вход/выход и сгенерируйте лабиринт</div>
+
+        <div style="display:grid;grid-template-columns:1fr 260px;gap:16px;align-items:start">
+
+          <!-- ЛЕВАЯ: холст + тулбар -->
+          <div style="display:flex;flex-direction:column;gap:12px">
+
+            <!-- тулбар инструментов -->
+            <div class="card" style="padding:10px 14px;box-shadow:var(--shadow)">
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                <span style="font-size:.82rem;color:var(--ink2)">Инструмент:</span>
+                <button class="btn btn-sm btn-primary"  id="tool-wall" >▪ Стена</button>
+                <button class="btn btn-sm"              id="tool-pass" >□ Проход</button>
+                <button class="btn btn-sm btn-success"  id="tool-start">S Вход</button>
+                <button class="btn btn-sm btn-danger"   id="tool-end"  >E Выход</button>
+                <div style="flex:1"></div>
+                <button class="btn btn-sm btn-ghost">↺ Отмена</button>
+                <button class="btn btn-sm btn-ghost">↻ Повтор</button>
+              </div>
+            </div>
+
+            <!-- холст лабиринта -->
+            <div class="card" style="padding:16px;box-shadow:var(--shadow)">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                <span style="font-family:var(--fontb);font-size:.95rem" id="editor-canvas-label">новый · 11×11 · ❄️ Зима</span>
+                <span style="font-size:.78rem;color:var(--ink3);font-style:italic">кликните ячейку для переключения</span>
+              </div>
+              <div style="display:flex;justify-content:center">
+                <canvas id="editorCanvas" width="220" height="220"
+                  style="display:block;cursor:crosshair;border:2px solid var(--ink);border-radius:3px 7px 3px 7px;filter:url(#pencil)"></canvas>
+              </div>
+              <!-- легенда -->
+              <div style="display:flex;gap:14px;justify-content:center;margin-top:10px;flex-wrap:wrap">
+                <span style="display:flex;align-items:center;gap:5px;font-size:.78rem;color:var(--ink2)">
+                  <span style="width:12px;height:12px;background:#2c2416;display:inline-block;border-radius:2px"></span>стена</span>
+                <span style="display:flex;align-items:center;gap:5px;font-size:.78rem;color:var(--ink2)">
+                  <span style="width:12px;height:12px;background:#ede8de;border:1px solid #c4b8a8;display:inline-block;border-radius:2px"></span>проход</span>
+                <span style="display:flex;align-items:center;gap:5px;font-size:.78rem;color:var(--ink2)">
+                  <span style="width:12px;height:12px;background:#3a6b3a;opacity:.8;display:inline-block;border-radius:2px"></span>вход S</span>
+                <span style="display:flex;align-items:center;gap:5px;font-size:.78rem;color:var(--ink2)">
+                  <span style="width:12px;height:12px;background:#8c3a3a;opacity:.8;display:inline-block;border-radius:2px"></span>выход E</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ПРАВАЯ: параметры + статус + действия -->
+          <div style="display:flex;flex-direction:column;gap:12px">
+
+            <!-- Название -->
+            <div class="card" style="box-shadow:var(--shadow)">
+              <div class="card-title">Название</div>
+              <input class="input" type="text" placeholder="например: Зимний лабиринт…" id="editor-name">
+            </div>
+
+            <!-- Размеры — скрывается при редактировании -->
+            <div class="card" style="box-shadow:var(--shadow)" id="editor-size-card">
+              <div class="card-title">Размеры</div>
+              <div class="form-grid">
+                <div>
+                  <label class="label">Ширина</label>
+                  <input class="input" type="number" value="11" min="7" max="25" step="2">
+                  <div class="hint">7–25, нечётное</div>
+                </div>
+                <div>
+                  <label class="label">Высота</label>
+                  <input class="input" type="number" value="11" min="7" max="25" step="2">
+                  <div class="hint">7–25, нечётное</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Тема -->
+            <div class="card" style="box-shadow:var(--shadow)">
+              <div class="card-title">Тема оформления</div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <label class="check-item"><span class="radio-dot on"></span> ❄️ Зима</label>
+                <label class="check-item"><span class="radio-dot"></span> ☀️ Лето</label>
+                <label class="check-item"><span class="radio-dot"></span> 🍂 Осень</label>
+                <label class="check-item"><span class="radio-dot"></span> 🌸 Весна</label>
+              </div>
+            </div>
+
+            <!-- Вход / Выход -->
+            <div class="card" style="box-shadow:var(--shadow)">
+              <div class="card-title">Вход и выход</div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <label class="check-item"><span class="radio-dot on"></span> Авто (случайно на периметре)</label>
+                <label class="check-item"><span class="radio-dot"></span> Вручную (на холсте)</label>
+              </div>
+              <div class="hint" style="margin-top:6px">не в углах · вход ≠ выход</div>
+              <hr class="divider">
+              <div style="font-size:.85rem;display:flex;flex-direction:column;gap:5px;color:var(--ink2)">
+                <div style="display:flex;justify-content:space-between">
+                  <span>Вход (S):</span>
+                  <span style="font-family:var(--fontb);color:var(--success)">✓ задан</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                  <span>Выход (E):</span>
+                  <span style="font-family:var(--fontb);color:var(--danger)">✗ не задан</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Алгоритм + генерация -->
+            <div class="card" style="box-shadow:var(--shadow)">
+              <div class="card-title">Алгоритм генерации</div>
+              <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:10px">
+                <label class="check-item"><span class="radio-dot on"></span> Алгоритм Прима</label>
+                <label class="check-item"><span class="radio-dot"></span> Алгоритм Краскала</label>
+              </div>
+              <div class="hint" style="margin-bottom:10px">Прим — равномерный. Краскал — хаотичный.</div>
+              <button class="btn btn-accent btn-full">⚙ Сгенерировать</button>
+            </div>
+
+            <!-- Сохранение -->
+            <div class="card" style="box-shadow:var(--shadow)">
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <button class="btn btn-success btn-full">💾 Сохранить</button>
+                <button class="btn btn-ghost btn-full btn-sm" onclick="adminView('list')">✕ Закрыть без сохранения</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ══ ВИД: О РАЗРАБОТЧИКЕ ══ -->
+      <div id="admin-view-about" style="display:none">
+        <div class="admin-page-title">О разработчике</div>
+        <div class="admin-page-sub">Информация об авторах проекта</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="card" style="box-shadow:var(--shadow)">
+            <div class="card-title">Авторы</div>
+            <div style="font-size:.9rem;color:var(--ink2);line-height:1.9">
+              <b>Фокин Евгений Андреевич</b><br>
+              <b>Сидоров Артемий Олегович</b><br>
+              <b>Группа:</b> 6303<br>
+              <b>Учебное заведение:</b> Самарский национальный исследовательский университет имени академика С.П. Королёва<br>
+              <b>Год:</b> 2026
+            </div>
+          </div>
+          <div class="card" style="box-shadow:var(--shadow)">
+            <div class="card-title">Контакты</div>
+            <div style="font-size:.9rem;color:var(--ink2);line-height:1.9">
+              <b>GitHub:</b> github.com/student<br>
+              <b>Научный руководитель:</b> Петрова А.В.<br>
+              <b>Кафедра:</b> Информационных технологий
+            </div>
+          </div>
+          <div class="card" style="box-shadow:var(--shadow);grid-column:1/-1">
+            <div class="card-title">О проекте</div>
+            <div style="font-size:.9rem;color:var(--ink2);line-height:1.8">
+              Курсовая работа по дисциплине «Программная инженерия». Цель проекта — разработка интерактивной системы генерации и прохождения лабиринтов с визуализацией алгоритмов поиска пути. Реализованы алгоритмы генерации (Прима, Краскала) и алгоритмы поиска пути (BFS, DFS).
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ВИД: О СИСТЕМЕ ══ -->
+      <div id="admin-view-system" style="display:none">
+        <div class="admin-page-title">О системе</div>
+        <div class="admin-page-sub">Возможности и руководство администратора</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="card" style="box-shadow:var(--shadow)">
+            <div class="card-title">⊞ Все лабиринты</div>
+            <div style="font-size:.9rem;color:var(--ink2);line-height:1.8">
+              Список всех лабиринтов. Найдите нужный через <b>поиск</b>, удалите кнопкой <b>«удал.»</b>, создайте новый через кнопку <b>«+ Создать»</b>.
+            </div>
+          </div>
+          <div class="card" style="box-shadow:var(--shadow)">
+            <div class="card-title">✚ Создать новый</div>
+            <div style="font-size:.9rem;color:var(--ink2);line-height:1.8">
+              Укажите <b>название</b> и <b>размеры</b> (7–25, нечётное), выберите <b>тему</b> и способ расстановки <b>входа/выхода</b>, затем выберите <b>алгоритм</b> и нажмите <b>«⚙ Сгенерировать»</b>. Сохраните кнопкой <b>«💾 Сохранить»</b>.
+            </div>
+          </div>
+          <div class="card" style="box-shadow:var(--shadow)">
+            <div class="card-title">Алгоритмы генерации</div>
+            <div style="font-size:.9rem;color:var(--ink2);line-height:1.8">
+              <b>Алгоритм Прима</b> — равномерный, короткие тупики.<br>
+              <b>Алгоритм Краскала</b> — хаотичный, длинные коридоры.<br><br>
+              Размер задаётся нечётным числом: <b>7, 9, 11 … 25</b>.
+            </div>
+          </div>
+          <div class="card" style="box-shadow:var(--shadow)">
+            <div class="card-title">Темы оформления</div>
+            <div style="font-size:.9rem;color:var(--ink2);line-height:1.8">
+              Доступны 4 темы: <b>❄️ Зима, ☀️ Лето, 🍂 Осень, 🌸 Весна</b>.<br>
+              Игрок может сменить тему локально в своей сессии.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 3 — PLAYER
+══════════════════════════════════════ -->
+<div id="screen-player" class="screen page">
+  <div class="player-layout">
+
+    <!-- хедер -->
+    <header class="player-header">
+      <span class="player-logo">🌀 Лабиринт</span>
+      <span style="font-size:.8rem;color:var(--ink2);border-left:1.5px dashed var(--ink3);padding-left:12px">Экран игрока</span>
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+        <span class="badge badge-success">игрок</span>
+        <span style="font-size:.9rem;color:var(--ink2)">Мария С.</span>
+        <button class="btn btn-sm btn-ghost">Выйти</button>
+      </div>
+    </header>
+
+    <!-- левая панель -->
+    <aside class="player-left">
+
+      <div>
+        <div class="panel-title">Выбор лабиринта</div>
+        <input class="input" type="text" placeholder="поиск..." style="font-size:.85rem;padding:5px 10px;margin-bottom:10px">
+        <div style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:0">
+          <div class="maze-list-item selected">
+            <div class="maze-list-title">❄️ Классический 11×11</div>
+            <div class="maze-list-meta">Прим · Зима · ★★☆</div>
+          </div>
+          <div class="maze-list-item">
+            <div class="maze-list-title">☀️ Большой 21×15</div>
+            <div class="maze-list-meta">Краскал · Лето · ★★★</div>
+          </div>
+          <div class="maze-list-item">
+            <div class="maze-list-title">🌸 Мини 7×7</div>
+            <div class="maze-list-meta">Прим · Весна · ★☆☆</div>
+          </div>
+          <div class="maze-list-item">
+            <div class="maze-list-title">🍂 Тёмные катакомбы 15×15</div>
+            <div class="maze-list-meta">Краскал · Осень · ★★★</div>
+          </div>
+          <div class="maze-list-item">
+            <div class="maze-list-title">❄️ Ледяной лабиринт 19×19</div>
+            <div class="maze-list-meta">Прим · Зима · ★★★</div>
+          </div>
+          <div class="maze-list-item">
+            <div class="maze-list-title">☀️ Солнечный сад 13×13</div>
+            <div class="maze-list-meta">Краскал · Лето · ★★☆</div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div>
+        <div class="panel-title">Тема оформления</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <label class="check-item"><span class="radio-dot on"></span> ❄️ Зима</label>
+          <label class="check-item"><span class="radio-dot"></span> ☀️ Лето</label>
+          <label class="check-item"><span class="radio-dot"></span> 🍂 Осень</label>
+          <label class="check-item"><span class="radio-dot"></span> 🌸 Весна</label>
+        </div>
+        <div class="hint" style="margin-top:6px">изменение локально для сессии</div>
+      </div>
+
+      <hr class="divider">
+
+      <div>
+        <div class="panel-title">Информация</div>
+        <button class="btn btn-ghost btn-sm btn-full" onclick="document.getElementById('player-about-modal').style.display='flex'" style="margin-bottom:6px">👤 О разработчике</button>
+        <button class="btn btn-ghost btn-sm btn-full" onclick="document.getElementById('player-system-modal').style.display='flex'">⚙ О системе</button>
+      </div>
+
+    </aside>
+
+    <!-- центральная зона: лабиринт -->
+    <main class="player-main">
+
+      <div style="display:flex;align-items:center;gap:12px;width:100%;max-width:500px">
+        <div style="font-family:var(--fontb);font-size:1.1rem">❄️ Классический 11×11</div>
+        <span class="badge badge-accent">в процессе</span>
+      </div>
+
+      <!-- лабиринт -->
+      <div class="maze-area" style="border:none;background:transparent;filter:none">
+        <canvas id="mazeCanvas" width="286" height="286" style="display:block;border:2px solid var(--ink);border-radius:4px 8px 4px 6px;filter:url(#pencil)"></canvas>
+      </div>
+
+      <!-- управление: ручное или авто -->
+      <div style="width:100%;max-width:500px">
+        <div class="tabs-sm" style="margin-bottom:14px">
+          <div class="tab-sm active" id="ctrl-manual-tab" onclick="playerCtrl('manual')">🕹 Ручное</div>
+          <div class="tab-sm" id="ctrl-auto-tab" onclick="playerCtrl('auto')">⚙ Авто-решение</div>
+        </div>
+
+        <!-- ручное управление -->
+        <div id="ctrl-manual" style="display:flex;gap:20px;align-items:center">
+          <div class="dpad">
+            <div class="dpad-btn dpad-empty"></div>
+            <div class="dpad-btn">↑</div>
+            <div class="dpad-btn dpad-empty"></div>
+            <div class="dpad-btn">←</div>
+            <div class="dpad-btn dpad-empty"></div>
+            <div class="dpad-btn">→</div>
+            <div class="dpad-btn dpad-empty"></div>
+            <div class="dpad-btn">↓</div>
+            <div class="dpad-btn dpad-empty"></div>
+          </div>
+          <div style="font-size:.82rem;color:var(--ink2);font-style:italic;line-height:1.6">
+            стрелки клавиатуры<br>или кнопки d-pad<br>для перемещения
+          </div>
+        </div>
+
+        <!-- авто управление -->
+        <div id="ctrl-auto" style="display:none;flex-direction:column;gap:10px">
+          <div>
+            <label class="label">Алгоритм поиска пути</label>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <label class="check-item"><span class="radio-dot on"></span> BFS (обход в ширину) — кратчайший путь</label>
+              <label class="check-item"><span class="radio-dot"></span> DFS (обход в глубину) — случайный путь</label>
+            </div>
+          </div>
+          <hr class="divider">
+          <div>
+            <label class="label">Режим отображения</label>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <label class="check-item"><span class="radio-dot on"></span> С анимацией (пошагово)</label>
+              <label class="check-item"><span class="radio-dot"></span> Мгновенный результат</label>
+            </div>
+          </div>
+          <div id="speed-section">
+            <label class="label" style="margin-bottom:8px">Скорость перемещения</label>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:.78rem;color:var(--ink3)">1/с</span>
+              <input type="range" id="speed-slider" min="1" max="10" value="3" step="1"
+                style="flex:1;accent-color:var(--ink);cursor:pointer;height:6px">
+              <span style="font-size:.78rem;color:var(--ink3)">10/с</span>
+            </div>
+            <div style="text-align:center;font-size:.82rem;color:var(--ink2);margin-top:4px">
+              <span id="speed-value">3 шага/сек</span>
+            </div>
+          </div>
+          <button class="btn btn-accent">▶ Запустить решение</button>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- правая панель -->
+    <aside class="player-right">
+
+      <div>
+        <div class="panel-title">Статистика</div>
+        <div style="font-size:.88rem;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between">
+            <span style="color:var(--ink2)">Шагов:</span>
+            <span style="font-family:var(--fontb)">8</span>
+          </div>
+          <div style="display:flex;justify-content:space-between">
+            <span style="color:var(--ink2)">Тупиков:</span>
+            <span style="font-family:var(--fontb)">1</span>
+          </div>
+          <div style="display:flex;justify-content:space-between">
+            <span style="color:var(--ink2)">Время:</span>
+            <span style="font-family:var(--fontb)">0:47</span>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div>
+        <div class="panel-title">Легенда</div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#3a6b3a;opacity:.6"></div> Старт (S)
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#8c3a3a;opacity:.6"></div> Финиш (E)
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#2c2416;border-radius:50%"></div> Игрок (@)
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#3a5a8c;opacity:.5;border-radius:50%"></div> След пути
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div>
+        <button class="btn btn-ghost btn-sm btn-full">↺ Сбросить</button>
+        <button class="btn btn-danger btn-sm btn-full" style="margin-top:8px;border-style:dashed">✕ Выйти из уровня</button>
+      </div>
+
+    </aside>
+
+    <!-- футер -->
+    <footer class="player-footer">
+      <span>❄️ Классический 11×11</span>
+      <span style="margin:0 8px;color:var(--ink3)">·</span>
+      <span>Тема: Зима</span>
+      <span style="margin:0 8px;color:var(--ink3)">·</span>
+      <span>Режим: ручное управление</span>
+      <span style="margin-left:auto;font-size:.8rem;color:var(--ink3)">WASD / стрелки</span>
+    </footer>
+
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО О РАЗРАБОТЧИКЕ -->
+  <div id="player-about-modal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(44,36,22,.45);align-items:center;justify-content:center;padding:24px">
+    <div style="background:var(--paper);border:2px solid var(--ink);border-radius:8px 16px 10px 14px;box-shadow:5px 6px 0 var(--ink3);max-width:480px;width:100%;filter:url(#pencil);overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px 12px;border-bottom:1.5px dashed var(--ink3)">
+        <span style="font-family:var(--fontb);font-size:1.2rem">👤 О разработчике</span>
+        <button onclick="document.getElementById('player-about-modal').style.display='none'"
+          style="width:26px;height:26px;border:1.5px solid var(--ink);border-radius:50%;background:transparent;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;font-family:var(--font)">✕</button>
+      </div>
+      <div style="padding:18px 20px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:.9rem;color:var(--ink2);line-height:1.9">
+          <b>Фокин Евгений Андреевич</b><br>
+          <b>Сидоров Артемий Олегович</b><br>
+          <b>Группа:</b> 6303<br>
+          <b>Учебное заведение:</b> Самарский национальный исследовательский университет имени академика С.П. Королёва<br>
+          <b>Год:</b> 2026<br>
+          <b>Научный руководитель:</b> Петрова А.В.
+        </div>
+        <div style="font-size:.85rem;color:var(--ink3);font-style:italic;border-top:1.5px dashed var(--ink3);padding-top:10px">
+          Курсовая работа по дисциплине «Программная инженерия»
+        </div>
+      </div>
+      <div style="padding:10px 20px 14px;border-top:1.5px dashed var(--ink3);text-align:right">
+        <button class="btn btn-sm btn-primary" onclick="document.getElementById('player-about-modal').style.display='none'">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО О СИСТЕМЕ -->
+  <div id="player-system-modal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(44,36,22,.45);align-items:center;justify-content:center;padding:24px">
+    <div style="background:var(--paper);border:2px solid var(--ink);border-radius:8px 16px 10px 14px;box-shadow:5px 6px 0 var(--ink3);max-width:500px;width:100%;filter:url(#pencil);overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px 12px;border-bottom:1.5px dashed var(--ink3)">
+        <span style="font-family:var(--fontb);font-size:1.2rem">⚙ Как пользоваться</span>
+        <button onclick="document.getElementById('player-system-modal').style.display='none'"
+          style="width:26px;height:26px;border:1.5px solid var(--ink);border-radius:50%;background:transparent;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;font-family:var(--font)">✕</button>
+      </div>
+      <div style="padding:18px 20px;display:flex;flex-direction:column;gap:14px;max-height:70vh;overflow-y:auto">
+        <div>
+          <div style="font-family:var(--fontb);font-size:1rem;margin-bottom:5px;padding-bottom:4px;border-bottom:1.5px dashed var(--ink3)">📋 Выбор лабиринта</div>
+          <div style="font-size:.9rem;color:var(--ink2);line-height:1.7">В левой панели найдите нужный лабиринт — используйте поиск или прокрутите список. Кликните по названию, чтобы загрузить его на поле.</div>
+        </div>
+        <div>
+          <div style="font-family:var(--fontb);font-size:1rem;margin-bottom:5px;padding-bottom:4px;border-bottom:1.5px dashed var(--ink3)">🕹 Ручное управление</div>
+          <div style="font-size:.9rem;color:var(--ink2);line-height:1.7">Нажмите вкладку <b>«🕹 Ручное»</b>. Перемещайте персонажа <b>стрелками на клавиатуре</b> или кликайте кнопки <b>d-pad</b>. Персонаж идёт только по проходам.</div>
+        </div>
+        <div>
+          <div style="font-family:var(--fontb);font-size:1rem;margin-bottom:5px;padding-bottom:4px;border-bottom:1.5px dashed var(--ink3)">⚙ Авто-решение</div>
+          <div style="font-size:.9rem;color:var(--ink2);line-height:1.7">Нажмите вкладку <b>«⚙ Авто-решение»</b>. Выберите алгоритм (<b>BFS</b> — кратчайший, <b>DFS</b> — случайный), режим и скорость, затем нажмите <b>«▶ Запустить решение»</b>.</div>
+        </div>
+        <div>
+          <div style="font-family:var(--fontb);font-size:1rem;margin-bottom:5px;padding-bottom:4px;border-bottom:1.5px dashed var(--ink3)">🎨 Тема оформления</div>
+          <div style="font-size:.9rem;color:var(--ink2);line-height:1.7">В левой панели выберите тему: <b>❄️ Зима, ☀️ Лето, 🍂 Осень, 🌸 Весна</b>. Изменение действует только в вашей сессии.</div>
+        </div>
+        <div>
+          <div style="font-family:var(--fontb);font-size:1rem;margin-bottom:5px;padding-bottom:4px;border-bottom:1.5px dashed var(--ink3)">↺ Сброс и выход</div>
+          <div style="font-size:.9rem;color:var(--ink2);line-height:1.7">Кнопка <b>«↺ Сбросить»</b> возвращает персонажа на старт. Кнопка <b>«✕ Выйти из уровня»</b> возвращает к выбору.</div>
+        </div>
+      </div>
+      <div style="padding:10px 20px 14px;border-top:1.5px dashed var(--ink3);text-align:right">
+        <button class="btn btn-sm btn-primary" onclick="document.getElementById('player-system-modal').style.display='none'">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /screen-player -->
+
+<script>
+// ══ GLOBAL FUNCTIONS (must be global for onclick) ══
+
+function show(id, el) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.proto-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+}
+
+function authSwitch(tab) {
+  document.getElementById('form-login').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('form-reg').style.display   = tab === 'reg'   ? 'block' : 'none';
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-reg').classList.toggle('active',   tab === 'reg');
+}
+
+function adminView(view) {
+  ['list','create','about','system'].forEach(v => {
+    const el = document.getElementById('admin-view-' + v);
+    if (el) el.style.display = (v === view) ? 'block' : 'none';
+  });
+
+  const titleEl   = document.getElementById('editor-mode-title');
+  const subEl     = document.getElementById('editor-mode-sub');
+  const sizeCard  = document.getElementById('editor-size-card');
+  const nameInput = document.getElementById('editor-name');
+  const labelEl   = document.getElementById('editor-canvas-label');
+
+  if (view === 'create') {
+    if (titleEl)   titleEl.textContent = 'Создать лабиринт';
+    if (subEl)     subEl.textContent   = 'Задайте параметры, расставьте вход/выход и сгенерируйте лабиринт';
+    if (sizeCard)  sizeCard.style.display = 'block';
+    if (nameInput) nameInput.value = '';
+    if (labelEl)   labelEl.textContent = 'новый · 11×11 · ❄️ Зима';
+    setTimeout(() => drawMaze('editorCanvas', 5, 20), 50);
+  }
+
+  document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+  const map = { list:'sb-list', create:'sb-create', about:'sb-about', system:'sb-system' };
+  const sbId = map[view];
+  if (sbId) { const sb = document.getElementById(sbId); if (sb) sb.classList.add('active'); }
+}
+
+function playerCtrl(mode) {
+  document.getElementById('ctrl-manual').style.display = mode === 'manual' ? 'flex' : 'none';
+  document.getElementById('ctrl-auto').style.display   = mode === 'auto'   ? 'flex' : 'none';
+  document.getElementById('ctrl-manual-tab').classList.toggle('active', mode === 'manual');
+  document.getElementById('ctrl-auto-tab').classList.toggle('active',   mode === 'auto');
+}
+
+// ══ DOM READY ══
+document.addEventListener('DOMContentLoaded', function() {
+
+  // Слайдер скорости
+  const speedSlider = document.getElementById('speed-slider');
+  const speedValue  = document.getElementById('speed-value');
+  if (speedSlider && speedValue) {
+    speedSlider.addEventListener('input', function() {
+      const v = parseInt(this.value);
+      const suffix = v === 1 ? '' : v < 5 ? 'а' : 'ов';
+      speedValue.textContent = v + ' шаг' + suffix + '/сек';
+    });
+  }
+
+  // Скрывать/показывать скорости в зависимости от режима
+  document.addEventListener('click', function(e) {
+    const target = e.target.closest('.check-item');
+    if (!target) return;
+    const ctrlAuto = document.getElementById('ctrl-auto');
+    if (!ctrlAuto || !ctrlAuto.contains(target)) return;
+    const text = target.textContent.trim();
+    const speedSection = document.getElementById('speed-section');
+    if (!speedSection) return;
+    if (text.includes('Мгновенный')) speedSection.style.display = 'none';
+    if (text.includes('анимацией'))  speedSection.style.display = 'block';
+  });
+
+  // Интерактивность чекбоксов
+  document.querySelectorAll('.check-box').forEach(box => {
+    box.addEventListener('click', () => box.classList.toggle('on'));
+  });
+
+  // Радио-кнопки (по группам внутри .card)
+  document.querySelectorAll('.radio-dot').forEach(dot => {
+    dot.addEventListener('click', function() {
+      const parent = this.closest('.card, .player-left, [id]');
+      if (parent) parent.querySelectorAll('.radio-dot').forEach(d => d.classList.remove('on'));
+      this.classList.add('on');
+    });
+  });
+
+  // d-pad клавиатура
+  document.addEventListener('keydown', e => {
+    const map = {ArrowUp:'↑',ArrowDown:'↓',ArrowLeft:'←',ArrowRight:'→'};
+    if (map[e.key]) {
+      const btn = [...document.querySelectorAll('.dpad-btn')].find(b => b.textContent === map[e.key]);
+      if (btn) { btn.style.background='var(--hi)'; setTimeout(() => btn.style.background='', 150); }
+    }
+  });
+
+  // Фоновый лабиринт на экране входа
+  (function() {
+    const canvas = document.getElementById('bgMazeCanvas');
+    if (!canvas) return;
+    const W = canvas.parentElement.offsetWidth  || 800;
+    const H = canvas.parentElement.offsetHeight || 600;
+    canvas.width  = W;
+    canvas.height = H;
+    const cell = 18;
+    const N = Math.floor(Math.min(W, H) / (cell * 2));
+    const { grid, size } = generateMaze(N);
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#2c2416';
+    for (let r = 0; r < size; r++)
+      for (let c = 0; c < size; c++)
+        if (grid[r][c] === 1)
+          ctx.fillRect(c * cell, r * cell, cell, cell);
+  })();
+
+  // Лабиринт игрока
+  drawMaze('mazeCanvas', 5, 26, {
+    trail:  [[1,1],[3,1],[3,3],[5,3],[5,5]],
+    player: [5, 7]
+  });
+
+}); // end DOMContentLoaded
+
+function generateMaze(N) {
+  const size = 2 * N + 1;
+  const grid = Array.from({length: size}, () => new Array(size).fill(1));
+  for (let r = 1; r < size; r += 2)
+    for (let c = 1; c < size; c += 2)
+      grid[r][c] = 0;
+  const visited = Array.from({length: N}, () => new Array(N).fill(false));
+  const dirs = [[0,1],[0,-1],[1,0],[-1,0]];
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+  function dfs(r, c) {
+    visited[r][c] = true;
+    for (const [dr, dc] of shuffle([...dirs])) {
+      const nr = r + dr, nc = c + dc;
+      if (nr >= 0 && nr < N && nc >= 0 && nc < N && !visited[nr][nc]) {
+        grid[r*2+1 + dr][c*2+1 + dc] = 0;
+        dfs(nr, nc);
+      }
+    }
+  }
+  dfs(0, 0);
+  grid[0][1] = 0;
+  grid[size-1][size-2] = 0;
+  return { grid, size };
+}
+
+function drawMaze(canvasId, N, cellSize, opts = {}) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const size = 2 * N + 1;
+  const total = size * cellSize;
+  canvas.width  = total;
+  canvas.height = total;
+  const { grid } = generateMaze(N);
+  const ctx = canvas.getContext('2d');
+  const wallColor   = opts.wallColor   || '#2c2416';
+  const floorColor  = opts.floorColor  || '#ede8de';
+  const startColor  = opts.startColor  || '#3a6b3a';
+  const endColor    = opts.endColor    || '#8c3a3a';
+  const trailColor  = opts.trailColor  || '#3a5a8c';
+  const playerColor = opts.playerColor || '#2c2416';
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      ctx.fillStyle = grid[r][c] === 1 ? wallColor : floorColor;
+      ctx.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
+    }
+  }
+  ctx.fillStyle = startColor; ctx.globalAlpha = 0.35;
+  ctx.fillRect(1 * cellSize, 0, cellSize, cellSize);
+  ctx.fillRect(1 * cellSize, cellSize, cellSize, cellSize);
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = endColor; ctx.globalAlpha = 0.35;
+  ctx.fillRect((size-2) * cellSize, (size-1) * cellSize, cellSize, cellSize);
+  ctx.fillRect((size-2) * cellSize, (size-2) * cellSize, cellSize, cellSize);
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = startColor;
+  ctx.font = `bold ${Math.round(cellSize * 0.85)}px 'Caveat Brush', cursive`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('S', 1 * cellSize + cellSize/2, cellSize/2);
+  ctx.fillStyle = endColor;
+  ctx.fillText('E', (size-2) * cellSize + cellSize/2, (size-1) * cellSize + cellSize/2);
+  if (opts.player) {
+    const trail = opts.trail || [];
+    ctx.fillStyle = trailColor; ctx.globalAlpha = 0.5;
+    for (const [tr, tc] of trail) {
+      ctx.beginPath();
+      ctx.arc(tc * cellSize + cellSize/2, tr * cellSize + cellSize/2, cellSize * 0.22, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    const [pr, pc] = opts.player;
+    ctx.fillStyle = playerColor;
+    ctx.beginPath();
+    ctx.arc(pc * cellSize + cellSize/2, pr * cellSize + cellSize/2, cellSize * 0.38, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = '#faf8f3';
+    ctx.font = `bold ${Math.round(cellSize * 0.55)}px 'Caveat', cursive`;
+    ctx.fillText('@', pc * cellSize + cellSize/2, pr * cellSize + cellSize/2);
+  }
+}
+</script>
+</body>
+</html>
