@@ -435,6 +435,50 @@ svg.filters{position:absolute;width:0;height:0;overflow:hidden}
   -webkit-appearance:none; width:16px;height:16px;
   background:var(--paper); border:2px solid var(--ink); border-radius:50%; cursor:pointer;
 }
+
+/* ══ WIZARD STEPPER ══ */
+.wiz-stepper{display:flex;align-items:center;margin-bottom:20px}
+.wiz-dot{
+  width:30px;height:30px;flex-shrink:0;
+  border:2px solid var(--ink);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--fontb);font-size:.95rem;
+  background:var(--paper);filter:url(#pencil);position:relative;z-index:1;
+}
+.wiz-dot.s-done{background:var(--success);border-color:var(--success);color:var(--bg)}
+.wiz-dot.s-active{background:var(--hi);border-color:var(--ink);color:var(--ink)}
+.wiz-lbl{font-size:.82rem;color:var(--ink2);margin-left:8px;white-space:nowrap}
+.wiz-lbl.s-active{color:var(--ink);font-weight:600}
+.wiz-line{
+  flex:1;height:2px;margin:0 8px;
+  background:repeating-linear-gradient(to right,var(--ink3) 0,var(--ink3) 4px,transparent 4px,transparent 8px);
+}
+.wiz-line.s-done{
+  background:repeating-linear-gradient(to right,var(--success) 0,var(--success) 4px,transparent 4px,transparent 8px);
+}
+.wiz-step{display:none}
+.wiz-step.wiz-active{display:block}
+
+/* шаг 1 */
+.wiz-params{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:16px}
+.wiz-params .card{box-shadow:var(--shadow)}
+
+/* шаг 2 */
+.wiz-editor{display:grid;grid-template-columns:1fr 220px;gap:14px}
+.wiz-editor-left{display:flex;flex-direction:column;gap:10px}
+.wiz-canvas-body{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;gap:12px;min-height:320px;
+}
+
+/* шаг 3 */
+.wiz-save{max-width:460px}
+.wiz-save .card{box-shadow:var(--shadow)}
+.sum-row{display:flex;justify-content:space-between;font-size:.9rem;color:var(--ink2);margin-bottom:6px}
+.sum-val{font-family:var(--fontb);color:var(--ink)}
+
+/* навигация */
+.wiz-nav{display:flex;align-items:center;gap:10px;margin-top:16px;padding-top:14px;border-top:1.5px dashed var(--ink3)}
 </style>
 </head>
 <body>
@@ -592,69 +636,38 @@ svg.filters{position:absolute;width:0;height:0;overflow:hidden}
         </div>
       </div>
 
-      <!-- ══ ВИД: СОЗДАНИЕ / РЕДАКТИРОВАНИЕ (единый экран) ══ -->
+      <!-- ══ ВИД: СОЗДАНИЕ (wizard) ══ -->
       <div id="admin-view-create" style="display:none">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+
+        <!-- заголовок -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
           <span style="cursor:pointer;color:var(--ink2);font-size:.9rem" onclick="adminView('list')">← к списку</span>
           <div class="admin-page-title" id="editor-mode-title">Создать лабиринт</div>
           <span class="badge badge-warn" id="editor-unsaved-badge" style="margin-left:4px">не сохранён</span>
         </div>
-        <div class="admin-page-sub" id="editor-mode-sub">Задайте параметры, расставьте вход/выход и сгенерируйте лабиринт</div>
 
-        <div style="display:grid;grid-template-columns:1fr 260px;gap:16px;align-items:start">
+        <!-- степпер -->
+        <div class="wiz-stepper">
+          <div class="wiz-dot s-active" id="sd1">1</div>
+          <span class="wiz-lbl s-active" id="sl1">Параметры</span>
+          <div class="wiz-line" id="sline1"></div>
+          <div class="wiz-dot" id="sd2">2</div>
+          <span class="wiz-lbl" id="sl2">Редактор</span>
+          <div class="wiz-line" id="sline2"></div>
+          <div class="wiz-dot" id="sd3">3</div>
+          <span class="wiz-lbl" id="sl3">Сохранить</span>
+        </div>
 
-          <!-- ЛЕВАЯ: холст + тулбар -->
-          <div style="display:flex;flex-direction:column;gap:12px">
+        <!-- ШАГ 1: Параметры -->
+        <div class="wiz-step wiz-active" id="wiz-step-1">
+          <div class="wiz-params">
 
-            <!-- тулбар инструментов -->
-            <div class="card" style="padding:10px 14px;box-shadow:var(--shadow)">
-              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-                <span style="font-size:.82rem;color:var(--ink2)">Инструмент:</span>
-                <button class="btn btn-sm btn-primary"  id="tool-wall" >▪ Стена</button>
-                <button class="btn btn-sm"              id="tool-pass" >□ Проход</button>
-                <button class="btn btn-sm btn-success"  id="tool-start">S Вход</button>
-                <button class="btn btn-sm btn-danger"   id="tool-end"  >E Выход</button>
-                <div style="flex:1"></div>
-                <button class="btn btn-sm btn-ghost">↺ Отмена</button>
-                <button class="btn btn-sm btn-ghost">↻ Повтор</button>
-              </div>
-            </div>
-
-            <!-- холст лабиринта -->
-            <div class="card" style="padding:16px;box-shadow:var(--shadow)">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-                <span style="font-family:var(--fontb);font-size:.95rem" id="editor-canvas-label">новый · 11×11 · ❄️ Зима</span>
-                <span style="font-size:.78rem;color:var(--ink3);font-style:italic">кликните ячейку для переключения</span>
-              </div>
-              <div style="display:flex;justify-content:center">
-                <canvas id="editorCanvas" width="220" height="220"
-                  style="display:block;cursor:crosshair;border:2px solid var(--ink);border-radius:3px 7px 3px 7px;filter:url(#pencil)"></canvas>
-              </div>
-              <!-- легенда -->
-              <div style="display:flex;gap:14px;justify-content:center;margin-top:10px;flex-wrap:wrap">
-                <span style="display:flex;align-items:center;gap:5px;font-size:.78rem;color:var(--ink2)">
-                  <span style="width:12px;height:12px;background:#2c2416;display:inline-block;border-radius:2px"></span>стена</span>
-                <span style="display:flex;align-items:center;gap:5px;font-size:.78rem;color:var(--ink2)">
-                  <span style="width:12px;height:12px;background:#ede8de;border:1px solid #c4b8a8;display:inline-block;border-radius:2px"></span>проход</span>
-                <span style="display:flex;align-items:center;gap:5px;font-size:.78rem;color:var(--ink2)">
-                  <span style="width:12px;height:12px;background:#3a6b3a;opacity:.8;display:inline-block;border-radius:2px"></span>вход S</span>
-                <span style="display:flex;align-items:center;gap:5px;font-size:.78rem;color:var(--ink2)">
-                  <span style="width:12px;height:12px;background:#8c3a3a;opacity:.8;display:inline-block;border-radius:2px"></span>выход E</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- ПРАВАЯ: параметры + статус + действия -->
-          <div style="display:flex;flex-direction:column;gap:12px">
-
-            <!-- Название -->
-            <div class="card" style="box-shadow:var(--shadow)">
-              <div class="card-title">Название</div>
+            <div class="card" style="grid-column:1/-1">
+              <div class="card-title">Название лабиринта</div>
               <input class="input" type="text" placeholder="например: Зимний лабиринт…" id="editor-name">
             </div>
 
-            <!-- Размеры — скрывается при редактировании -->
-            <div class="card" style="box-shadow:var(--shadow)" id="editor-size-card">
+            <div class="card" id="editor-size-card">
               <div class="card-title">Размеры</div>
               <div class="form-grid">
                 <div>
@@ -670,10 +683,9 @@ svg.filters{position:absolute;width:0;height:0;overflow:hidden}
               </div>
             </div>
 
-            <!-- Тема -->
-            <div class="card" style="box-shadow:var(--shadow)">
+            <div class="card">
               <div class="card-title">Тема оформления</div>
-              <div style="display:flex;flex-direction:column;gap:7px">
+              <div style="display:flex;flex-direction:column;gap:8px">
                 <label class="check-item"><span class="radio-dot on"></span> ❄️ Зима</label>
                 <label class="check-item"><span class="radio-dot"></span> ☀️ Лето</label>
                 <label class="check-item"><span class="radio-dot"></span> 🍂 Осень</label>
@@ -681,48 +693,123 @@ svg.filters{position:absolute;width:0;height:0;overflow:hidden}
               </div>
             </div>
 
-            <!-- Вход / Выход -->
-            <div class="card" style="box-shadow:var(--shadow)">
+            <div class="card">
               <div class="card-title">Вход и выход</div>
-              <div style="display:flex;flex-direction:column;gap:7px">
-                <label class="check-item"><span class="radio-dot on"></span> Авто (случайно на периметре)</label>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <label class="check-item"><span class="radio-dot on"></span> Авто (на периметре)</label>
                 <label class="check-item"><span class="radio-dot"></span> Вручную (на холсте)</label>
               </div>
               <div class="hint" style="margin-top:6px">не в углах · вход ≠ выход</div>
-              <hr class="divider">
-              <div style="font-size:.85rem;display:flex;flex-direction:column;gap:5px;color:var(--ink2)">
-                <div style="display:flex;justify-content:space-between">
-                  <span>Вход (S):</span>
-                  <span style="font-family:var(--fontb);color:var(--success)">✓ задан</span>
-                </div>
-                <div style="display:flex;justify-content:space-between">
-                  <span>Выход (E):</span>
-                  <span style="font-family:var(--fontb);color:var(--danger)">✗ не задан</span>
-                </div>
-              </div>
             </div>
 
-            <!-- Алгоритм + генерация -->
-            <div class="card" style="box-shadow:var(--shadow)">
+            <div class="card">
               <div class="card-title">Алгоритм генерации</div>
-              <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:10px">
+              <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px">
                 <label class="check-item"><span class="radio-dot on"></span> Алгоритм Прима</label>
                 <label class="check-item"><span class="radio-dot"></span> Алгоритм Краскала</label>
               </div>
-              <div class="hint" style="margin-bottom:10px">Прим — равномерный. Краскал — хаотичный.</div>
-              <button class="btn btn-accent btn-full">⚙ Сгенерировать</button>
+              <div class="hint">Прим — равномерный. Краскал — хаотичный.</div>
             </div>
 
-            <!-- Сохранение -->
-            <div class="card" style="box-shadow:var(--shadow)">
-              <div style="display:flex;flex-direction:column;gap:8px">
-                <button class="btn btn-success btn-full">💾 Сохранить</button>
-                <button class="btn btn-ghost btn-full btn-sm" onclick="adminView('list')">✕ Закрыть без сохранения</button>
+          </div>
+        </div>
+
+        <!-- ШАГ 2: Редактор -->
+        <div class="wiz-step" id="wiz-step-2">
+          <div class="wiz-editor">
+
+            <!-- левая: тулбар + холст -->
+            <div class="wiz-editor-left">
+
+              <div class="card" style="padding:10px 14px;box-shadow:var(--shadow)">
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                  <span style="font-size:.82rem;color:var(--ink2)">Инструмент:</span>
+                  <button class="btn btn-sm btn-primary" id="tool-wall">▪ Стена</button>
+                  <button class="btn btn-sm" id="tool-pass">□ Проход</button>
+                  <button class="btn btn-sm" id="tool-start" style="border-color:var(--success);color:var(--success)">S Вход</button>
+                  <button class="btn btn-sm" id="tool-end" style="border-color:var(--danger);color:var(--danger)">E Выход</button>
+                  <div style="flex:1"></div>
+                  <button class="btn btn-sm btn-ghost">↺ Отмена</button>
+                  <button class="btn btn-sm btn-ghost">↻ Повтор</button>
+                </div>
+              </div>
+
+              <div class="card" style="box-shadow:var(--shadow);padding:0">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1.5px dashed var(--ink3)">
+                  <span style="font-family:var(--fontb);font-size:.95rem" id="editor-canvas-label">новый · 11×11 · ❄️ Зима</span>
+                  <span style="font-size:.78rem;color:var(--ink3);font-style:italic">кликните ячейку</span>
+                </div>
+                <div class="wiz-canvas-body">
+                  <canvas id="editorCanvas" width="220" height="220"
+                    style="display:block;cursor:crosshair;border:2px solid var(--ink);border-radius:3px 7px 3px 7px;filter:url(#pencil)"></canvas>
+                  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+                    <span style="display:flex;align-items:center;gap:5px;font-size:.78rem;color:var(--ink2)"><span style="width:12px;height:12px;background:#2c2416;display:inline-block;border-radius:2px"></span>стена</span>
+                    <span style="display:flex;align-items:center;gap:5px;font-size:.78rem;color:var(--ink2)"><span style="width:12px;height:12px;background:#ede8de;border:1px solid #c4b8a8;display:inline-block;border-radius:2px"></span>проход</span>
+                    <span style="display:flex;align-items:center;gap:5px;font-size:.78rem;color:var(--ink2)"><span style="width:12px;height:12px;background:#3a6b3a;opacity:.8;display:inline-block;border-radius:2px"></span>вход S</span>
+                    <span style="display:flex;align-items:center;gap:5px;font-size:.78rem;color:var(--ink2)"><span style="width:12px;height:12px;background:#8c3a3a;opacity:.8;display:inline-block;border-radius:2px"></span>выход E</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- правая: итоги + перегенерация -->
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div class="card" style="box-shadow:var(--shadow)">
+                <div class="card-title">Параметры</div>
+                <div class="sum-row"><span>Название:</span><span class="sum-val" id="sum-name">—</span></div>
+                <div class="sum-row"><span>Размер:</span><span class="sum-val" id="sum-size">11 × 11</span></div>
+                <div class="sum-row"><span>Тема:</span><span class="sum-val" id="sum-theme">❄️ Зима</span></div>
+                <div class="sum-row"><span>Алгоритм:</span><span class="sum-val" id="sum-algo">Прима</span></div>
+                <div class="sum-row"><span>Вход/Выход:</span><span class="sum-val" id="sum-entry">Авто</span></div>
+                <hr class="divider">
+                <button class="btn btn-accent btn-full" onclick="setTimeout(()=>drawMaze('editorCanvas',5,20),50)">⚙ Перегенерировать</button>
+              </div>
+              <div class="card" style="box-shadow:var(--shadow)">
+                <div class="card-title">Статус</div>
+                <div class="sum-row"><span>Вход (S):</span><span style="font-family:var(--fontb);color:var(--success)">✓ задан</span></div>
+                <div class="sum-row"><span>Выход (E):</span><span style="font-family:var(--fontb);color:var(--danger)">✗ не задан</span></div>
               </div>
             </div>
 
           </div>
         </div>
+
+        <!-- ШАГ 3: Сохранение -->
+        <div class="wiz-step" id="wiz-step-3">
+          <div class="wiz-save">
+            <div class="card" style="margin-bottom:14px">
+              <div class="card-title">Подтверждение</div>
+              <div style="display:flex;gap:16px;align-items:flex-start">
+                <canvas id="previewCanvas" width="88" height="88"
+                  style="border:2px solid var(--ink);border-radius:3px 7px 3px 7px;flex-shrink:0;filter:url(#pencil)"></canvas>
+                <div>
+                  <div class="sum-row"><span>Название:</span>&nbsp;<span class="sum-val" id="sum3-name">Зимний лабиринт</span></div>
+                  <div class="sum-row"><span>Размер:</span>&nbsp;<span class="sum-val" id="sum3-size">11 × 11</span></div>
+                  <div class="sum-row"><span>Тема:</span>&nbsp;<span class="sum-val" id="sum3-theme">❄️ Зима</span></div>
+                  <div class="sum-row"><span>Алгоритм:</span>&nbsp;<span class="sum-val" id="sum3-algo">Прима</span></div>
+                  <div style="display:flex;gap:12px;margin-top:6px">
+                    <span style="font-size:.85rem;color:var(--success)">S: ✓ задан</span>
+                    <span style="font-size:.85rem;color:var(--success)">E: ✓ задан</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="btn btn-success btn-full btn-lg">💾 Сохранить лабиринт</button>
+              <button class="btn btn-ghost btn-full btn-sm" onclick="adminView('list')">✕ Отмена</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- навигация -->
+        <div class="wiz-nav">
+          <button class="btn btn-ghost btn-sm" id="wiz-prev" style="display:none" onclick="wizStep(-1)">← Назад</button>
+          <div style="flex:1"></div>
+          <button class="btn btn-ghost btn-sm" onclick="adminView('list')">✕ Отмена</button>
+          <button class="btn btn-primary" id="wiz-next" onclick="wizStep(1)">Далее — Сгенерировать →</button>
+        </div>
+
       </div>
 
 
@@ -744,9 +831,8 @@ svg.filters{position:absolute;width:0;height:0;overflow:hidden}
           <div class="card" style="box-shadow:var(--shadow)">
             <div class="card-title">Контакты</div>
             <div style="font-size:.9rem;color:var(--ink2);line-height:1.9">
-              <b>GitHub:</b> github.com/student<br>
-              <b>Научный руководитель:</b> Петрова А.В.<br>
-              <b>Кафедра:</b> Информационных технологий
+              <b>Научный руководитель:</b> Зеленко Лариса Сергеевна<br>
+              <b>Кафедра:</b> Информационных систем
             </div>
           </div>
           <div class="card" style="box-shadow:var(--shadow);grid-column:1/-1">
@@ -1019,7 +1105,8 @@ svg.filters{position:absolute;width:0;height:0;overflow:hidden}
           <b>Группа:</b> 6303<br>
           <b>Учебное заведение:</b> Самарский национальный исследовательский университет имени академика С.П. Королёва<br>
           <b>Год:</b> 2026<br>
-          <b>Научный руководитель:</b> Петрова А.В.
+          <b>Научный руководитель:</b> Зеленко Лариса Сергеевна<br>
+          <b>Кафедра:</b> Информационных систем
         </div>
         <div style="font-size:.85rem;color:var(--ink3);font-style:italic;border-top:1.5px dashed var(--ink3);padding-top:10px">
           Курсовая работа по дисциплине «Программная инженерия»
@@ -1086,25 +1173,75 @@ function authSwitch(tab) {
   document.getElementById('tab-reg').classList.toggle('active',   tab === 'reg');
 }
 
+// ══ WIZARD ══
+let wizCurrentStep = 1;
+
+function wizReset() {
+  wizCurrentStep = 1;
+  for (let i = 1; i <= 3; i++) {
+    const s = document.getElementById('wiz-step-' + i);
+    if (s) s.classList.toggle('wiz-active', i === 1);
+    const dot = document.getElementById('sd' + i);
+    const lbl = document.getElementById('sl' + i);
+    if (dot) { dot.className = i === 1 ? 'wiz-dot s-active' : 'wiz-dot'; dot.textContent = i; }
+    if (lbl) lbl.className  = i === 1 ? 'wiz-lbl s-active' : 'wiz-lbl';
+    if (i < 3) { const line = document.getElementById('sline' + i); if (line) line.className = 'wiz-line'; }
+  }
+  const prev = document.getElementById('wiz-prev');
+  const next = document.getElementById('wiz-next');
+  if (prev) prev.style.display = 'none';
+  if (next) { next.textContent = 'Далее — Сгенерировать →'; next.style.display = 'inline-block'; }
+}
+
+function wizStep(delta) {
+  const newStep = wizCurrentStep + delta;
+  if (newStep < 1 || newStep > 3) return;
+  document.getElementById('wiz-step-' + wizCurrentStep).classList.remove('wiz-active');
+  wizCurrentStep = newStep;
+  document.getElementById('wiz-step-' + wizCurrentStep).classList.add('wiz-active');
+
+  for (let i = 1; i <= 3; i++) {
+    const dot = document.getElementById('sd' + i);
+    const lbl = document.getElementById('sl' + i);
+    if (!dot || !lbl) continue;
+    if (i < wizCurrentStep) {
+      dot.className = 'wiz-dot s-done'; dot.textContent = '✓'; lbl.className = 'wiz-lbl';
+    } else if (i === wizCurrentStep) {
+      dot.className = 'wiz-dot s-active'; dot.textContent = i; lbl.className = 'wiz-lbl s-active';
+    } else {
+      dot.className = 'wiz-dot'; dot.textContent = i; lbl.className = 'wiz-lbl';
+    }
+    if (i < 3) {
+      const line = document.getElementById('sline' + i);
+      if (line) line.className = 'wiz-line' + (i < wizCurrentStep ? ' s-done' : '');
+    }
+  }
+
+  const prev = document.getElementById('wiz-prev');
+  const next = document.getElementById('wiz-next');
+  if (prev) prev.style.display = wizCurrentStep > 1 ? 'inline-block' : 'none';
+  if (next) {
+    if (wizCurrentStep === 1) { next.textContent = 'Далее — Сгенерировать →'; next.style.display = 'inline-block'; }
+    else if (wizCurrentStep === 2) { next.textContent = 'Далее — Проверить →'; next.style.display = 'inline-block'; }
+    else { next.style.display = 'none'; }
+  }
+
+  if (wizCurrentStep === 2) setTimeout(() => drawMaze('editorCanvas', 5, 20), 50);
+  if (wizCurrentStep === 3) setTimeout(() => drawMaze('previewCanvas', 4, 12), 50);
+}
+
 function adminView(view) {
   ['list','create','about','system'].forEach(v => {
     const el = document.getElementById('admin-view-' + v);
     if (el) el.style.display = (v === view) ? 'block' : 'none';
   });
 
-  const titleEl   = document.getElementById('editor-mode-title');
-  const subEl     = document.getElementById('editor-mode-sub');
-  const sizeCard  = document.getElementById('editor-size-card');
-  const nameInput = document.getElementById('editor-name');
-  const labelEl   = document.getElementById('editor-canvas-label');
-
   if (view === 'create') {
-    if (titleEl)   titleEl.textContent = 'Создать лабиринт';
-    if (subEl)     subEl.textContent   = 'Задайте параметры, расставьте вход/выход и сгенерируйте лабиринт';
-    if (sizeCard)  sizeCard.style.display = 'block';
+    const nameInput = document.getElementById('editor-name');
+    const labelEl   = document.getElementById('editor-canvas-label');
     if (nameInput) nameInput.value = '';
     if (labelEl)   labelEl.textContent = 'новый · 11×11 · ❄️ Зима';
-    setTimeout(() => drawMaze('editorCanvas', 5, 20), 50);
+    wizReset();
   }
 
   document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
