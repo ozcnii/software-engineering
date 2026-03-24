@@ -524,38 +524,44 @@ svg.filters{position:absolute;width:0;height:0;overflow:hidden}
       <div id="form-login" class="auth-form">
         <div class="form-row">
           <label class="label">Логин</label>
-          <input class="input" type="text" placeholder="введите логин...">
+          <input class="input" id="login-input" type="text" placeholder="введите логин...">
+          <div class="err" id="err-login-input"></div>
         </div>
         <div class="form-row">
           <label class="label">Пароль</label>
-          <input class="input" type="password" placeholder="••••••••">
+          <input class="input" id="login-pass" type="password" placeholder="••••••••">
+          <div class="err" id="err-login-pass"></div>
         </div>
-        <button class="btn btn-primary btn-full btn-lg" style="margin-top:4px">Войти →</button>
+        <button class="btn btn-primary btn-full btn-lg" style="margin-top:4px" onclick="validateLogin()">Войти →</button>
       </div>
 
       <!-- РЕГИСТРАЦИЯ -->
       <div id="form-reg" class="auth-form" style="display:none">
         <div class="form-row">
           <label class="label">Логин <span style="color:var(--danger)">*</span></label>
-          <input class="input" type="text" placeholder="придумайте логин...">
+          <input class="input" id="reg-login" type="text" placeholder="придумайте логин...">
           <div class="hint">от 4 до 8 символов</div>
+          <div class="err" id="err-reg-login"></div>
         </div>
         <div class="form-row">
           <label class="label">Пароль <span style="color:var(--danger)">*</span></label>
-          <input class="input" type="password" placeholder="••••••••">
+          <input class="input" id="reg-pass" type="password" placeholder="••••••••">
           <div class="hint">от 4 до 10 символов</div>
+          <div class="err" id="err-reg-pass"></div>
         </div>
         <div class="form-row">
           <label class="label">Подтверждение пароля <span style="color:var(--danger)">*</span></label>
-          <input class="input" type="password" placeholder="повторите пароль...">
+          <input class="input" id="reg-pass2" type="password" placeholder="повторите пароль...">
+          <div class="err" id="err-reg-pass2"></div>
         </div>
         <div class="form-row">
           <label class="check-item">
             <span class="check-box"></span>
             <span style="font-size:.85rem">Принимаю условия использования</span>
           </label>
+          <div class="err" id="err-reg-terms"></div>
         </div>
-        <button class="btn btn-success btn-full btn-lg">Зарегистрироваться →</button>
+        <button class="btn btn-success btn-full btn-lg" onclick="validateReg()">Зарегистрироваться →</button>
       </div>
     </div>
     </div>
@@ -1418,6 +1424,53 @@ function drawMaze(canvasId, N, cellSize, opts = {}) {
     ctx.font = `bold ${Math.round(cellSize * 0.55)}px 'Caveat', cursive`;
     ctx.fillText('@', pc * cellSize + cellSize/2, pr * cellSize + cellSize/2);
   }
+}
+
+// ══ AUTH VALIDATION ══
+
+function clearErrs(prefix) {
+  document.querySelectorAll('[id^="err-' + prefix + '"]').forEach(e => e.textContent = '');
+}
+
+function setErr(id, msg) {
+  document.getElementById(id).textContent = msg;
+}
+
+function validateLogin() {
+  clearErrs('login');
+  let ok = true;
+  const login = document.getElementById('login-input').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+
+  if (!login) { setErr('err-login-input', 'Введите логин'); ok = false; }
+  else if (login.length < 4 || login.length > 8) { setErr('err-login-input', 'Логин должен содержать от 4 до 8 символов'); ok = false; }
+
+  if (!pass) { setErr('err-login-pass', 'Введите пароль'); ok = false; }
+  else if (pass.length < 4 || pass.length > 10) { setErr('err-login-pass', 'Пароль должен содержать от 4 до 10 символов'); ok = false; }
+
+  if (ok) show('admin');
+}
+
+function validateReg() {
+  clearErrs('reg');
+  let ok = true;
+  const login = document.getElementById('reg-login').value.trim();
+  const pass  = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+  const terms = document.querySelector('#form-reg .check-box').classList.contains('on');
+
+  if (!login) { setErr('err-reg-login', 'Введите логин'); ok = false; }
+  else if (login.length < 4 || login.length > 8) { setErr('err-reg-login', 'Логин должен содержать от 4 до 8 символов'); ok = false; }
+
+  if (!pass) { setErr('err-reg-pass', 'Введите пароль'); ok = false; }
+  else if (pass.length < 4 || pass.length > 10) { setErr('err-reg-pass', 'Пароль должен содержать от 4 до 10 символов'); ok = false; }
+
+  if (!pass2) { setErr('err-reg-pass2', 'Подтвердите пароль'); ok = false; }
+  else if (pass !== pass2) { setErr('err-reg-pass2', 'Пароли не совпадают'); ok = false; }
+
+  if (!terms) { setErr('err-reg-terms', 'Необходимо принять условия использования'); ok = false; }
+
+  if (ok) show('admin');
 }
 </script>
 </body>
