@@ -32,7 +32,7 @@ Player --|> User
 
 ' --- Пользователь ---
 usecase "Просмотреть сведения\nо системе" as UC_InfoSys
-usecase "Просмотреть сведения\nо разработчиках" as UC_InfoDev
+usecase "Просмотреть сведения\nо разработчике" as UC_InfoDev
 usecase "Авторизоваться" as UC_Auth
 usecase "Ввести логин" as UC_Login
 usecase "Ввести пароль" as UC_Password

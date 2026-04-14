@@ -618,26 +618,45 @@ svg.filters{position:absolute;width:0;height:0;overflow:hidden}
               <tbody>
                 <tr>
                   <td>Классический 11×11</td><td>11 × 11</td><td>Прим</td><td>❄️ Зима</td>
-                  <td style="display:flex;gap:4px"><button class="btn btn-sm btn-danger" style="border-style:dashed;box-shadow:none">удал.</button>
+                  <td style="display:flex;gap:4px"><button class="btn btn-sm btn-danger" style="border-style:dashed;box-shadow:none" onclick="openDeleteModal('Классический 11×11')">удал.</button>
                   </td>
                 </tr>
                 <tr>
                   <td>Большой лабиринт</td><td>21 × 15</td><td>Краскал</td><td>☀️ Лето</td>
-                  <td style="display:flex;gap:4px"><button class="btn btn-sm btn-danger" style="border-style:dashed;box-shadow:none">удал.</button>
+                  <td style="display:flex;gap:4px"><button class="btn btn-sm btn-danger" style="border-style:dashed;box-shadow:none" onclick="openDeleteModal('Большой лабиринт')">удал.</button>
                   </td>
                 </tr>
                 <tr>
                   <td>Тёмные катакомбы</td><td>15 × 15</td><td>Краскал</td><td>🍂 Осень</td>
-                  <td style="display:flex;gap:4px"><button class="btn btn-sm btn-danger" style="border-style:dashed;box-shadow:none">удал.</button>
+                  <td style="display:flex;gap:4px"><button class="btn btn-sm btn-danger" style="border-style:dashed;box-shadow:none" onclick="openDeleteModal('Тёмные катакомбы')">удал.</button>
                   </td>
                 </tr>
                 <tr>
                   <td>Мини 7×7</td><td>7 × 7</td><td>Прим</td><td>🌸 Весна</td>
-                  <td style="display:flex;gap:4px"><button class="btn btn-sm btn-danger" style="border-style:dashed;box-shadow:none">удал.</button>
+                  <td style="display:flex;gap:4px"><button class="btn btn-sm btn-danger" style="border-style:dashed;box-shadow:none" onclick="openDeleteModal('Мини 7×7')">удал.</button>
                   </td>
                 </tr>
               </tbody>
             </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- модальное подтверждение удаления -->
+      <div id="admin-delete-modal" style="display:none;position:fixed;inset:0;z-index:250;background:rgba(44,36,22,.45);align-items:center;justify-content:center;padding:24px">
+        <div style="background:var(--paper);border:2px solid var(--ink);border-radius:8px 16px 10px 14px;box-shadow:5px 6px 0 var(--ink3);max-width:420px;width:100%;filter:url(#pencil);overflow:hidden">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px 12px;border-bottom:1.5px dashed var(--ink3)">
+            <span style="font-family:var(--fontb);font-size:1.1rem">Подтверждение удаления</span>
+            <button onclick="closeDeleteModal()"
+              style="width:26px;height:26px;border:1.5px solid var(--ink);border-radius:50%;background:transparent;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;font-family:var(--font)">✕</button>
+          </div>
+          <div style="padding:18px 20px;display:flex;flex-direction:column;gap:10px">
+            <div style="font-size:.95rem;color:var(--ink2);line-height:1.7">Удалить выбранный лабиринт?</div>
+            <div id="admin-delete-target" style="font-family:var(--fontb);font-size:1.05rem;color:var(--ink)">—</div>
+          </div>
+          <div style="padding:10px 20px 14px;border-top:1.5px dashed var(--ink3);display:flex;justify-content:flex-end;gap:8px">
+            <button class="btn btn-sm btn-ghost" onclick="closeDeleteModal()">Отмена</button>
+            <button class="btn btn-sm btn-danger" onclick="confirmDeleteModal()">Подтвердить удаление</button>
           </div>
         </div>
       </div>
@@ -1254,6 +1273,22 @@ function adminView(view) {
   const map = { list:'sb-list', create:'sb-create', about:'sb-about', system:'sb-system' };
   const sbId = map[view];
   if (sbId) { const sb = document.getElementById(sbId); if (sb) sb.classList.add('active'); }
+}
+
+function openDeleteModal(name) {
+  const modal = document.getElementById('admin-delete-modal');
+  const target = document.getElementById('admin-delete-target');
+  if (target) target.textContent = name || 'Выбранный лабиринт';
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeDeleteModal() {
+  const modal = document.getElementById('admin-delete-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+function confirmDeleteModal() {
+  closeDeleteModal();
 }
 
 function playerCtrl(mode) {
