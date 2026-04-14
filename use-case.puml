@@ -43,6 +43,7 @@ usecase "Ввести подтверждение\nпароля" as UC_PasswordCo
 usecase "Изменить тему\nоформления" as UC_Theme
 
 ' --- Администратор ---
+usecase "Просмотреть список\nлабиринтов" as UC_ViewList
 usecase "Создать лабиринт" as UC_Create
 usecase "Ввести название\nлабиринта" as UC_Name
 usecase "Ввести ширину\nлабиринта" as UC_Width
@@ -55,6 +56,8 @@ usecase "Расставить\nвручную" as UC_InOutManual
 usecase "Задать вход" as UC_SetEntry
 usecase "Задать выход" as UC_SetExit
 usecase "Сохранить лабиринт" as UC_Save
+usecase "Удалить лабиринт" as UC_Delete
+usecase "Подтвердить\nудаление" as UC_DeleteConfirm
 
 ' --- Игрок ---
 usecase "Выбрать лабиринт\nиз списка" as UC_Select
@@ -84,8 +87,13 @@ UC_Register ..> UC_Password         : <<include>>
 UC_Register ..> UC_PasswordConfirm  : <<include>>
 
 ' Администратор
+Admin -- UC_ViewList
 Admin -- UC_Create
 Admin -- UC_Save
+Admin -- UC_Delete
+
+UC_Delete ..> UC_ViewList      : <<extend>>
+UC_Delete ..> UC_DeleteConfirm : <<include>>
 
 UC_Create ..> UC_Name   : <<include>>
 UC_Create ..> UC_Width  : <<include>>
@@ -107,6 +115,7 @@ Player -- UC_Select
 Player -- UC_Play
 
 UC_Theme ..> UC_Select : <<extend>>
+UC_Theme ..> UC_Play   : <<extend>>
 
 UC_Manual ..> UC_Play : <<extend>>
 UC_Auto   ..> UC_Play : <<extend>>
