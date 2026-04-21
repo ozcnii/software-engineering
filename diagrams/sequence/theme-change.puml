@@ -1,0 +1,39 @@
+@startuml
+title Диаграмма последовательности «Изменить тему оформления»
+autonumber
+hide footbox
+
+skinparam backgroundColor #FFFFFF
+skinparam sequence {
+  ArrowColor #000000
+  LifeLineBorderColor #000000
+  LifeLineBackgroundColor #FFFFFF
+  ParticipantBorderColor #000000
+  ParticipantBackgroundColor #FFFFFF
+  ActorBorderColor #000000
+  ActorBackgroundColor #FFFFFF
+}
+
+actor "Игрок" as Player
+participant "Форма\nэкрана игрока" as PlayerForm
+participant "Область\nвизуализации лабиринта" as MazeView
+
+Player -> PlayerForm: Начать(ВИ "Изменить тему оформления")
+PlayerForm --> Player: Отобразить(экран игрока)
+Player -> PlayerForm: Нажать(радиокнопка темы оформления)
+
+alt A1: Нажата кнопка "Выйти из уровня" (после шага 2)
+  Player -> PlayerForm: Нажать(кнопка "Выйти из уровня")
+  PlayerForm -> PlayerForm: Закрыть(текущий уровень)
+  PlayerForm -> PlayerForm: Не сохранять(выбранную тему)
+  PlayerForm -> PlayerForm: Сбросить(тему к теме выбранного лабиринта)
+  PlayerForm ->] : Переход к ВИ\n"Выбрать лабиринт из списка"
+else Основной поток
+  PlayerForm -> PlayerForm: Обновить(группу радиокнопок:\nвыбранная активна,\nпредыдущая снята)
+  PlayerForm -> PlayerForm: Применить(тему локально для сессии)
+  PlayerForm -> MazeView: Перерисовать(визуализацию лабиринта)
+  MazeView --> Player: Отобразить(лабиринт с выбранной темой)
+  PlayerForm --> Player: Завершить ВИ\n"Изменить тему оформления"\n(успешно)
+end
+
+@enduml

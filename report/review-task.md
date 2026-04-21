@@ -39,29 +39,29 @@
 ### Созданные при выполнении задачи:
 | Файл | Назначение |
 |---|---|
-| `state-general.puml` + `state-general.png` | Общая диаграмма состояний системы |
-| `state-admin.puml` + `state-admin.png` | Диаграмма состояний для администратора |
-| `state-player.puml` + `state-player.png` | Диаграмма состояний для игрока |
-| `review-task.md` | Этот файл — задача проверки |
+| `diagrams/state/general.puml` + `.png` | Общая диаграмма состояний системы |
+| `diagrams/state/admin.puml` + `.png` | Диаграмма состояний для администратора |
+| `diagrams/state/player.puml` + `.png` | Диаграмма состояний для игрока |
+| `report/review-task.md` | Этот файл — задача проверки |
 
 ### Изменённые при выполнении задачи:
 | Файл | Что добавлено |
 |---|---|
-| `use-case.puml` + `use-case.png` | `UC_ViewList`, `UC_Delete`, `UC_DeleteConfirm`, `UC_Theme <<extend>> UC_Play` |
+| `diagrams/use-case/use-case.puml` + `.png` | `UC_ViewList`, `UC_Delete`, `UC_DeleteConfirm`, `UC_Theme <<extend>> UC_Play` |
 
 ### Использованные как референсы (без изменений):
 | Файл | Что в нём |
 |---|---|
-| `scenarios.md` | Текстовые сценарии для двух use cases (Сценарий 1: «Ввести название лабиринта» — admin; Сценарий 2: «Изменить тему оформления» — player) |
-| `index.html` | UI прототип (1476 строк) — три экрана: auth, admin, player |
-| `3 Диаграмма состояний_2025.pdf` | Методичка препода по диаграмме состояний UML (29 слайдов) |
-| `6413_Гижевская_и_Николаев_Пазлы_без_подписей_вообще.pdf` | Курсовая другой команды по теме «Пазлы» — содержит раздел 2.5.4 с эталонными диаграммами состояний |
+| `report/sections/2.4.3-scenarios.md` | Текстовые сценарии для двух use cases (Сценарий 1: «Ввести название лабиринта» — admin; Сценарий 2: «Изменить тему оформления» — player) |
+| `sandbox/index.html` | UI прототип (1476 строк) — три экрана: auth, admin, player |
+| `refs/state-diagram-lecture.pdf` | Методичка препода по диаграмме состояний UML (29 слайдов) |
+| `refs/reference-6413-puzzles.pdf` | Курсовая другой команды по теме «Пазлы» — содержит раздел 2.5.4 с эталонными диаграммами состояний |
 
 ---
 
 ## 4. Содержимое для проверки
 
-### 4.1 `state-general.puml`
+### 4.1 `diagrams/state/general.puml`
 
 ```plantuml
 @startuml
@@ -122,7 +122,7 @@ state "Завершение работы\nс приложением" as Заве
 @enduml
 ```
 
-### 4.2 `state-admin.puml`
+### 4.2 `diagrams/state/admin.puml`
 
 ```plantuml
 @startuml
@@ -230,7 +230,7 @@ state "Просмотр сведений\nо системе" as Система {
 @enduml
 ```
 
-### 4.3 `state-player.puml`
+### 4.3 `diagrams/state/player.puml`
 
 ```plantuml
 @startuml
@@ -310,7 +310,7 @@ state "Просмотр сведений\nо системе" as Система {
 @enduml
 ```
 
-### 4.4 `use-case.puml` (для сверки покрытия)
+### 4.4 `diagrams/use-case/use-case.puml` (для сверки покрытия)
 
 ```plantuml
 @startuml
@@ -432,7 +432,7 @@ UC_Manual ..> UC_Trace : <<include>>
 @enduml
 ```
 
-### 4.5 Сценарии (`scenarios.md`) — выжимка
+### 4.5 Сценарии (`report/sections/2.4.3-scenarios.md`) — выжимка
 
 **Сценарий 1: «Ввести название лабиринта»** (Admin, включаемый в «Создать лабиринт»)
 - Предусловие: админ авторизован, выбрал «Создать лабиринт»

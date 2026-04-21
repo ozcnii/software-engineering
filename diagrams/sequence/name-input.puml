@@ -1,0 +1,73 @@
+@startuml
+title Диаграмма последовательности «Ввести название лабиринта»
+autonumber
+hide footbox
+
+skinparam backgroundColor #FFFFFF
+skinparam sequence {
+  ArrowColor #000000
+  LifeLineBorderColor #000000
+  LifeLineBackgroundColor #FFFFFF
+  ParticipantBorderColor #000000
+  ParticipantBackgroundColor #FFFFFF
+  ActorBorderColor #000000
+  ActorBackgroundColor #FFFFFF
+}
+
+actor "Администратор" as Admin
+participant "Форма\nсоздания лабиринта" as CreateForm
+participant "Класс\n«Параметры лабиринта»" as MazeParams
+participant "Окно\nОшибка" as ErrorDialog
+
+Admin -> CreateForm: Начать(ВИ "Ввести название лабиринта")
+CreateForm --> Admin: Отобразить(шаг 1 "Параметры")
+Admin -> CreateForm: Нажать(поле "Название лабиринта")
+
+alt A1: Нажата кнопка "Отмена" (после шага 2)
+  Admin -> CreateForm: Нажать(кнопка "Отмена")
+  CreateForm -> CreateForm: Закрыть(форму создания лабиринта)
+  CreateForm ->] : Переход к ВИ\n"Просмотреть список лабиринтов"
+else Основной поток
+  CreateForm --> Admin: Активировать(поле "Название лабиринта")
+  loop Цикл ввода названия лабиринта
+    Admin -> CreateForm: Ввести(название лабиринта)
+
+    alt A1: Нажата кнопка "Отмена" (после шага 4)
+      break [A1]
+        Admin -> CreateForm: Нажать(кнопка "Отмена")
+        CreateForm -> CreateForm: Закрыть(форму создания лабиринта)
+        CreateForm ->] : Переход к ВИ\n"Просмотреть список лабиринтов"
+      end
+    else Продолжение основного потока
+      Admin -> CreateForm: Нажать(кнопка "Далее — Сгенерировать")
+      CreateForm -> MazeParams: Передать(название лабиринта)
+      activate MazeParams
+
+      alt [A2: Поле "Название лабиринта" пустое]
+        MazeParams --> CreateForm: Ошибка("Введите название лабиринта")
+        deactivate MazeParams
+
+        create ErrorDialog
+        CreateForm -> ErrorDialog: Открыть(модальное окно ошибки)
+        activate ErrorDialog
+        ErrorDialog --> Admin: Показать("Введите название лабиринта")
+        Admin -> ErrorDialog: Нажать(кнопка "ОК")
+        ErrorDialog --> CreateForm: Закрыть(модальное окно)
+        deactivate ErrorDialog
+        destroy ErrorDialog
+
+        CreateForm --> Admin: Возврат к шагу 2
+        Admin -> CreateForm: Нажать(поле "Название лабиринта")
+        CreateForm --> Admin: Активировать(поле "Название лабиринта")
+      else [Название заполнено]
+        MazeParams -> MazeParams: Запомнить(название лабиринта)
+        MazeParams --> CreateForm: Данные корректны
+        deactivate MazeParams
+      end
+    end
+  end
+
+  CreateForm --> Admin: Завершить ВИ\n"Ввести название лабиринта"\n(успешно)
+end
+
+@enduml
