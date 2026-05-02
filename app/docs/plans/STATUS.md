@@ -19,7 +19,7 @@
 - ORM: Prisma
 - Infrastructure: Docker Compose for PostgreSQL
 - Package manager: npm
-- Auth: cookie-based session or token stored by backend contract, final mechanism фиксируется в auth-плане
+- Auth: JWT in httpOnly cookie
 
 ## Plan Status
 
@@ -27,11 +27,11 @@
 |---|---|---|---|
 | Roadmap | `00-implementation-roadmap.md` | Planned | Общая декомпозиция PRD на этапы реализации |
 | Project scaffold | `01-project-scaffold.md` | Planned | Структура `frontend`, `backend`, `shared`, базовые команды |
-| Backend auth and DB | `02-backend-auth-db.md` | Not started | Users, roles, seed-admin, login/register/logout |
-| Backend labyrinths and algorithms | `03-backend-labyrinths-algorithms.md` | Not started | CRUD, generation, solving, difficulty |
-| Frontend auth and admin | `04-frontend-auth-admin.md` | Not started | Auth UI, admin list, create wizard, delete modal |
-| Frontend player | `05-frontend-player.md` | Not started | Player screen, manual movement, themes, auto-solve UI |
-| Integration acceptance | `06-integration-acceptance.md` | Not started | End-to-end manual verification by `CHECKLIST.md` |
+| Backend auth and DB | `02-backend-auth-db.md` | Planned | Users, roles, seed-admin, login/register/logout; decisions reviewed |
+| Backend labyrinths and algorithms | `03-backend-labyrinths-algorithms.md` | Planned | CRUD, generation, solving, difficulty; decisions reviewed |
+| Frontend auth and admin | `04-frontend-auth-admin.md` | Planned | Auth UI, admin list, create wizard, delete modal; decisions reviewed |
+| Frontend player | `05-frontend-player.md` | Planned | Player screen, manual movement, themes, auto-solve UI; decisions reviewed |
+| Integration acceptance | `06-integration-acceptance.md` | Planned | End-to-end manual verification by `CHECKLIST.md`; decisions reviewed |
 
 ## Implementation Status
 
