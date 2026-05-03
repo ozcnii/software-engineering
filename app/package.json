@@ -1,0 +1,21 @@
+{
+  "name": "labyrinth-app",
+  "private": true,
+  "scripts": {
+    "dev": "npm run dev:backend --workspace backend & npm run dev:frontend --workspace frontend",
+    "dev:frontend": "npm run dev --workspace frontend",
+    "dev:backend": "npm run start:dev --workspace backend",
+    "build": "npm run build --workspace frontend && npm run build --workspace backend",
+    "typecheck": "npm run typecheck --workspace frontend && npm run typecheck --workspace backend",
+    "docker:up": "docker compose up -d postgres",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f postgres",
+    "prisma:generate": "npm run prisma:generate --workspace backend",
+    "prisma:migrate": "npm run prisma:migrate --workspace backend",
+    "seed": "npm run seed --workspace backend"
+  },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ]
+}

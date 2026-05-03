@@ -208,18 +208,18 @@ Feature folders are created empty except for placeholder `.gitkeep` files if nee
 
 ## Implementation Steps
 
-- [ ] Create root `app/package.json` with npm workspaces and orchestration scripts.
-- [ ] Create `app/README.md` with stack, folder structure, and local commands.
-- [ ] Create `app/.env.example` documenting frontend and backend env expectations.
-- [ ] Create `app/docker-compose.yml` with PostgreSQL service and persistent volume.
-- [ ] Scaffold `app/frontend` as React + Vite + TypeScript.
-- [ ] Scaffold `app/backend` as NestJS + TypeScript.
-- [ ] Add Prisma to backend and create initial PostgreSQL `prisma/schema.prisma`.
-- [ ] Create shared type files in `app/shared/types`.
-- [ ] Create empty feature/module directories according to the target structure.
-- [ ] Run dependency installation if needed.
-- [ ] Run TypeScript/build verification commands available after scaffold.
-- [ ] Update `app/docs/plans/STATUS.md`: mark `Project scaffold` as `Done` only after verification passes.
+- [x] Create root `app/package.json` with npm workspaces and orchestration scripts.
+- [x] Create `app/README.md` with stack, folder structure, and local commands.
+- [x] Create `app/.env.example` documenting frontend and backend env expectations.
+- [x] Create `app/docker-compose.yml` with PostgreSQL service and persistent volume.
+- [x] Scaffold `app/frontend` as React + Vite + TypeScript.
+- [x] Scaffold `app/backend` as NestJS + TypeScript.
+- [x] Add Prisma to backend and create initial PostgreSQL `prisma/schema.prisma`.
+- [x] Create shared type files in `app/shared/types`.
+- [x] Create empty feature/module directories according to the target structure.
+- [x] Run dependency installation if needed.
+- [x] Run TypeScript/build verification commands available after scaffold.
+- [x] Update `app/docs/plans/STATUS.md`: mark `Project scaffold` as `Done` only after verification passes.
 
 ## Verification
 
