@@ -76,7 +76,6 @@ Player state should track:
 - player position;
 - trail coordinates;
 - step count;
-- dead-end count if available from implemented movement logic;
 - elapsed time;
 - active control mode: `manual` or `auto`;
 - auto algorithm: `bfs` or `dfs`;
@@ -124,7 +123,6 @@ Theme override is local frontend state only. It is reset when leaving the level 
 
 ## Stats And Timer
 
-- Dead-end count is computed statically from the loaded grid: count path-like cells with exactly one accessible neighbor, excluding `entry` and `exit`.
 - Timer starts after the first successful manual move or after starting auto-solve.
 - Timer stops when the player reaches exit manually or when instant/animated auto-solve finishes.
 
@@ -155,7 +153,6 @@ Theme override is local frontend state only. It is reset when leaving the level 
 - [ ] Prevent movement through walls and out of bounds.
 - [ ] Implement step/trail updates for valid moves.
 - [ ] Implement wall-move visual feedback.
-- [ ] Implement static dead-end count from loaded grid.
 - [ ] Implement elapsed timer start/stop rules.
 - [ ] Implement finish modal/message.
 - [ ] Implement reset button.
@@ -215,7 +212,6 @@ Additional checks from answered planning questions:
 - arrow keys and WASD move the player only on the manual tab;
 - wall move shows short visual feedback and does not increment steps;
 - backtracking increments steps and trail keeps all visited cells;
-- dead-end count is computed statically from grid;
 - timer starts after first successful manual move or auto-solve start;
 - timer stops at manual finish or auto-solve completion;
 - reset asks confirmation only when `steps > 0`;

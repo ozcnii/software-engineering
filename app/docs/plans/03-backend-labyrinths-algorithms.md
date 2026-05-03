@@ -356,8 +356,6 @@ Solve response returns only:
 - `path`;
 - `steps`.
 
-Backend does not compute dead-end count in this plan.
-
 ## Implementation Steps
 
 - [x] Extend Prisma schema with `Labyrinth` model and enums.
