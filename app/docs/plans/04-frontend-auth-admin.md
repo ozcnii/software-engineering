@@ -142,27 +142,27 @@ Admin controls should follow the sandbox UI:
 
 ## Implementation Steps
 
-- [ ] Create shared API client with `VITE_API_URL`, `credentials: "include"`, and JSON request/response handling.
-- [ ] Create auth API functions for login/register/logout.
-- [ ] Create labyrinth API functions for list/search/generate/create/delete.
-- [ ] Configure `react-router` routes and guards.
-- [ ] Implement app-level current user state.
-- [ ] Implement AuthScreen with login/register tabs.
-- [ ] Implement login validation messages from checklist.
-- [ ] Implement register validation messages from checklist.
-- [ ] Route admin users to AdminLayout after login.
-- [ ] Implement AdminLayout header/sidebar/main area.
-- [ ] Implement admin list with search and empty states.
-- [ ] Implement delete confirmation modal.
-- [ ] Implement create wizard stepper and parameter form.
-- [ ] Implement parameter validation before generate.
-- [ ] Implement maze editor as an HTML grid with tool state.
-- [ ] Implement working editor undo/redo actions.
-- [ ] Implement regenerate action.
-- [ ] Implement save confirmation step.
-- [ ] Implement admin about and system pages.
-- [ ] Wire logout button.
-- [ ] Update `app/docs/plans/STATUS.md` after implementation and verification.
+- [x] Create shared API client with `VITE_API_URL`, `credentials: "include"`, and JSON request/response handling.
+- [x] Create auth API functions for login/register/logout.
+- [x] Create labyrinth API functions for list/search/generate/create/delete.
+- [x] Configure `react-router` routes and guards.
+- [x] Implement app-level current user state.
+- [x] Implement AuthScreen with login/register tabs.
+- [x] Implement login validation messages from checklist.
+- [x] Implement register validation messages from checklist.
+- [x] Route admin users to AdminLayout after login.
+- [x] Implement AdminLayout header/sidebar/main area.
+- [x] Implement admin list with search and empty states.
+- [x] Implement delete confirmation modal.
+- [x] Implement create wizard stepper and parameter form.
+- [x] Implement parameter validation before generate.
+- [x] Implement maze editor as an HTML grid with tool state.
+- [x] Implement working editor undo/redo actions.
+- [x] Implement regenerate action.
+- [x] Implement save confirmation step.
+- [x] Implement admin about and system pages.
+- [x] Wire logout button.
+- [x] Update `app/docs/plans/STATUS.md` after implementation and verification.
 
 ## Verification
 
