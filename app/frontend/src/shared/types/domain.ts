@@ -10,6 +10,8 @@ export type LabyrinthTheme = 'winter' | 'summer' | 'autumn' | 'spring';
 
 export type GenerationAlgorithm = 'prim' | 'kruskal';
 
+export type SolvingAlgorithm = 'bfs' | 'dfs';
+
 export type EntryMode = 'auto' | 'manual';
 
 export type MazeCell = 'wall' | 'path' | 'entry' | 'exit';
@@ -37,6 +39,12 @@ export interface LabyrinthDetail extends LabyrinthListItem {
   grid: MazeGrid;
   entry: Coordinate;
   exit: Coordinate;
+}
+
+export interface SolveLabyrinthResponse {
+  algorithm: SolvingAlgorithm;
+  path: Coordinate[];
+  steps: number;
 }
 
 export interface ApiFieldErrors {

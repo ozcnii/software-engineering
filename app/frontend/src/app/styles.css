@@ -883,12 +883,478 @@ a {
   margin: 0;
 }
 
-.player-placeholder {
+.divider {
+  width: 100%;
+  margin: 2px 0;
+  border: 0;
+  border-top: 1.5px dashed var(--ink3);
+}
+
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.compact-error {
+  margin: 10px 0;
+  padding: 8px 10px;
+  font-size: 0.84rem;
+}
+
+.tabs-sm {
+  display: flex;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-radius: 4px 8px 3px 7px;
+}
+
+.tab-sm {
+  flex: 1;
+  min-height: 34px;
+  padding: 6px 8px;
+  border: 0;
+  border-right: 1px dashed var(--ink3);
+  background: var(--paper);
+  color: var(--ink2);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.tab-sm:last-child {
+  border-right: 0;
+}
+
+.tab-sm.active {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.tab-sm:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+}
+
+.player-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 220px;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   min-height: 100vh;
 }
 
-.placeholder-main {
+.player-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  border-bottom: 2px solid var(--ink);
+  background: var(--paper);
+}
+
+.player-logo {
+  font-size: 1.32rem;
+  font-weight: 800;
+}
+
+.player-role-label {
+  padding-left: 12px;
+  border-left: 1.5px dashed var(--ink3);
+  color: var(--ink2);
+  font-size: 0.84rem;
+}
+
+.player-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.player-left,
+.player-right {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  background: var(--paper);
+}
+
+.player-left {
+  border-right: 2px solid var(--ink);
+}
+
+.player-right {
+  border-left: 2px solid var(--ink);
+}
+
+.panel-title {
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1.5px dashed var(--ink3);
+  font-weight: 800;
+}
+
+.player-search {
+  min-height: 32px;
+  margin-bottom: 10px;
+  padding: 5px 10px;
+  font-size: 0.88rem;
+}
+
+.player-maze-list {
+  display: flex;
+  max-height: 220px;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.player-maze-list-item {
+  display: grid;
+  width: 100%;
+  gap: 3px;
+  margin-bottom: 8px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--ink3);
+  border-radius: 4px 8px 3px 7px;
+  background: var(--bg);
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.player-maze-list-item:hover,
+.player-maze-list-item.selected {
+  border-color: var(--ink);
+  background: var(--paper);
+}
+
+.player-maze-list-item.selected {
+  border-width: 2px;
+  background: var(--hi);
+}
+
+.player-maze-list-title {
+  font-weight: 800;
+}
+
+.player-maze-list-meta {
+  color: var(--ink2);
+  font-size: 0.8rem;
+}
+
+.player-empty-state {
+  padding: 18px 8px;
+}
+
+.info-button,
+.player-actions .btn + .btn {
+  margin-top: 8px;
+}
+
+.player-main {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  overflow: auto;
+}
+
+.player-level-head {
+  display: flex;
+  width: min(100%, 560px);
+  align-items: center;
+  gap: 12px;
+}
+
+.player-level-title {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  font-size: 1.08rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player-maze-area {
+  display: flex;
+  width: min(100%, 640px);
+  min-height: 260px;
+  align-items: center;
+  justify-content: center;
+}
+
+.player-maze-grid {
+  display: grid;
+  width: min(100%, calc(min(58vh, 620px) * var(--maze-ratio)), 620px);
+  border: 2px solid var(--ink);
+  border-radius: 4px 8px 4px 6px;
+  background: var(--ink);
+  gap: 1px;
+}
+
+.player-maze-grid.wall-feedback {
+  animation: wall-shake 0.22s linear;
+  box-shadow: 0 0 0 3px rgba(140, 58, 58, 0.18);
+}
+
+.player-maze-cell {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: clamp(0.48rem, 1.2vw, 0.86rem);
+  font-weight: 800;
+}
+
+.player-cell-wall {
+  background: var(--ink);
+}
+
+.theme-winter .player-cell-path {
+  background: #eaf2f6;
+}
+
+.theme-summer .player-cell-path {
+  background: #f7efd0;
+}
+
+.theme-autumn .player-cell-path {
+  background: #f1dfcf;
+}
+
+.theme-spring .player-cell-path {
+  background: #e8f3df;
+}
+
+.player-cell-entry {
+  background: rgba(58, 107, 58, 0.72);
+}
+
+.player-cell-exit {
+  background: rgba(140, 58, 58, 0.72);
+}
+
+.trail-dot {
+  width: 46%;
+  height: 46%;
+  border-radius: 50%;
+  background: rgba(58, 90, 140, 0.46);
+}
+
+.player-token {
+  position: absolute;
+  inset: 16%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.72em;
+}
+
+.cell-label {
+  position: absolute;
+  z-index: 1;
+  color: var(--paper);
+  font-size: 0.74em;
+}
+
+.maze-placeholder .player-maze-cell {
+  background: linear-gradient(90deg, rgba(196, 184, 168, 0.26), rgba(240, 230, 140, 0.22));
+}
+
+.choose-level-state {
+  width: min(100%, 420px);
   padding: 24px;
+  border: 2px solid var(--ink);
+  border-radius: 6px 12px 8px 10px;
+  background: var(--paper);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.player-controls-card {
+  display: grid;
+  width: min(100%, 560px);
+  gap: 14px;
+}
+
+.manual-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 36px);
+  grid-template-rows: repeat(3, 36px);
+  gap: 3px;
+}
+
+.dpad-btn {
+  display: flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 4px 7px 4px 7px;
+  background: var(--paper);
+  cursor: pointer;
+}
+
+.dpad-btn:hover:not(:disabled) {
+  background: var(--hi);
+}
+
+.dpad-empty {
+  width: 36px;
+  height: 36px;
+}
+
+.manual-hint {
+  color: var(--ink2);
+  font-size: 0.84rem;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.auto-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.speed-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.speed-edge {
+  color: var(--ink3);
+  font-size: 0.78rem;
+}
+
+.speed-value {
+  margin-top: 4px;
+  color: var(--ink2);
+  font-size: 0.84rem;
+  text-align: center;
+}
+
+.sketch-range {
+  width: 100%;
+  height: 5px;
+  accent-color: var(--ink);
+  cursor: pointer;
+}
+
+.stats-list {
+  display: grid;
+  gap: 7px;
+  font-size: 0.9rem;
+}
+
+.stats-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.stat-value {
+  font-weight: 800;
+}
+
+.legend-entry {
+  background: rgba(58, 107, 58, 0.62);
+}
+
+.legend-exit {
+  background: rgba(140, 58, 58, 0.62);
+}
+
+.legend-player {
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.legend-trail {
+  border-radius: 50%;
+  background: rgba(58, 90, 140, 0.5);
+}
+
+.player-footer {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  border-top: 2px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink2);
+  font-size: 0.88rem;
+}
+
+.footer-separator {
+  color: var(--ink3);
+}
+
+.footer-time {
+  margin-left: auto;
+  color: var(--ink3);
+}
+
+.player-system-modal {
+  width: min(100%, 520px);
+}
+
+.player-system-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.player-info-block h3 {
+  margin: 0 0 5px;
+  padding-bottom: 4px;
+  border-bottom: 1.5px dashed var(--ink3);
+  font-size: 1rem;
+}
+
+.player-info-block p {
+  margin: 0;
+  color: var(--ink2);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.modal-info-list {
+  font-size: 0.9rem;
+}
+
+@keyframes wall-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-4px);
+  }
+
+  75% {
+    transform: translateX(4px);
+  }
 }
 
 @media (max-width: 760px) {
@@ -944,5 +1410,45 @@ a {
 
   .info-list div {
     grid-template-columns: 1fr;
+  }
+
+  .player-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+  }
+
+  .player-header,
+  .player-header-right,
+  .player-level-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .player-left,
+  .player-right {
+    border-right: 0;
+    border-left: 0;
+  }
+
+  .player-left {
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .player-right {
+    border-top: 2px solid var(--ink);
+  }
+
+  .player-maze-list {
+    max-height: 180px;
+  }
+
+  .manual-controls,
+  .player-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .footer-time {
+    margin-left: 0;
   }
 }

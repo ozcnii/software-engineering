@@ -6,6 +6,8 @@ import type {
   LabyrinthListItem,
   LabyrinthTheme,
   MazeGrid,
+  SolvingAlgorithm,
+  SolveLabyrinthResponse,
 } from '../types/domain';
 
 export interface LabyrinthListResponse {
@@ -74,6 +76,17 @@ export const labyrinthsApi = {
   delete(id: string) {
     return apiRequest<void>(`/api/labyrinths/${id}`, {
       method: 'DELETE',
+    });
+  },
+
+  detail(id: string) {
+    return apiRequest<LabyrinthDetail>(`/api/labyrinths/${id}`);
+  },
+
+  solve(id: string, algorithm: SolvingAlgorithm) {
+    return apiRequest<SolveLabyrinthResponse>(`/api/labyrinths/${id}/solve`, {
+      method: 'POST',
+      body: { algorithm },
     });
   },
 };

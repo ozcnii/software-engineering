@@ -143,29 +143,29 @@ Theme override is local frontend state only. It is reset when leaving the level 
 
 ## Implementation Steps
 
-- [ ] Implement player layout shell.
-- [ ] Implement labyrinth list with search, infinite scroll, and empty states.
-- [ ] Implement selected labyrinth loading.
-- [ ] Implement local theme picker and theme reset on exit.
-- [ ] Implement `MazeGrid` renderer for wall/path/entry/exit/player/trail.
-- [ ] Implement keyboard movement.
-- [ ] Implement d-pad movement.
-- [ ] Prevent movement through walls and out of bounds.
-- [ ] Implement step/trail updates for valid moves.
-- [ ] Implement wall-move visual feedback.
-- [ ] Implement elapsed timer start/stop rules.
-- [ ] Implement finish modal/message.
-- [ ] Implement reset button.
-- [ ] Implement exit-level button.
-- [ ] Implement reset and exit-level confirmations.
-- [ ] Implement auto-solve panel controls.
-- [ ] Implement instant auto-solve rendering.
-- [ ] Implement animated auto-solve rendering with speed.
-- [ ] Implement auto-solve warning modal before resetting manual progress.
-- [ ] Hide or disable speed when instant mode is selected.
-- [ ] Implement player about/system modals.
-- [ ] Wire logout button.
-- [ ] Update `app/docs/plans/STATUS.md` after implementation and verification.
+- [x] Implement player layout shell.
+- [x] Implement labyrinth list with search, infinite scroll, and empty states.
+- [x] Implement selected labyrinth loading.
+- [x] Implement local theme picker and theme reset on exit.
+- [x] Implement `MazeGrid` renderer for wall/path/entry/exit/player/trail.
+- [x] Implement keyboard movement.
+- [x] Implement d-pad movement.
+- [x] Prevent movement through walls and out of bounds.
+- [x] Implement step/trail updates for valid moves.
+- [x] Implement wall-move visual feedback.
+- [x] Implement elapsed timer start/stop rules.
+- [x] Implement finish modal/message.
+- [x] Implement reset button.
+- [x] Implement exit-level button.
+- [x] Implement reset and exit-level confirmations.
+- [x] Implement auto-solve panel controls.
+- [x] Implement instant auto-solve rendering.
+- [x] Implement animated auto-solve rendering with speed.
+- [x] Implement auto-solve warning modal before resetting manual progress.
+- [x] Hide or disable speed when instant mode is selected.
+- [x] Implement player about/system modals.
+- [x] Wire logout button.
+- [x] Update `app/docs/plans/STATUS.md` after implementation and verification.
 
 ## Verification
 

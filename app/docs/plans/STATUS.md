@@ -30,7 +30,7 @@
 | Backend auth and DB | `02-backend-auth-db.md` | Done | DB-backed auth smoke checks pass: seed admin login, register player, duplicate/mismatch validation, `/me`, logout |
 | Backend labyrinths and algorithms | `03-backend-labyrinths-algorithms.md` | Done | DB-backed labyrinth smoke checks pass: list/search, generate auto/manual, create/detail/delete, BFS/DFS, role errors |
 | Frontend auth and admin | `04-frontend-auth-admin.md` | Done | Auth/admin frontend implemented; `typecheck`, `build`, Docker/migrate/seed, API smoke checks, and headless browser smoke checks pass |
-| Frontend player | `05-frontend-player.md` | Planned | Player screen, manual movement, themes, auto-solve UI; decisions reviewed |
+| Frontend player | `05-frontend-player.md` | Done | Player screen, manual movement, themes, auto-solve UI verified with command, API, and headless browser checks |
 | Integration acceptance | `06-integration-acceptance.md` | Planned | End-to-end manual verification by `CHECKLIST.md`; decisions reviewed |
 
 ## Implementation Status
@@ -48,10 +48,10 @@
 | Labyrinth generation | Done | API-05, ADM-CREATE-05, ADM-CREATE-07 |
 | Labyrinth persistence | Done | API-03, API-04, API-06, API-07 |
 | Difficulty calculation | Done | API-03 |
-| Player screen | Not started | PLAYER-01..PLAYER-04 |
-| Manual movement | Not started | PLAYER-05..PLAYER-08 |
-| Auto-solve BFS/DFS | Backend done; player UI not started | AUTO-01..AUTO-05, API-08, API-09 |
-| Info screens | Done for admin, player not started | INFO-01..INFO-04 |
+| Player screen | Done | PLAYER-01..PLAYER-04 |
+| Manual movement | Done | PLAYER-05..PLAYER-08 |
+| Auto-solve BFS/DFS | Done | AUTO-01..AUTO-05, API-08, API-09 |
+| Info screens | Done | INFO-01..INFO-04 |
 | Full acceptance pass | Not started | Section 9 of `CHECKLIST.md` |
 
 ## Status Legend
