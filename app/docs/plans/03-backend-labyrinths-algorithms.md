@@ -360,28 +360,28 @@ Backend does not compute dead-end count in this plan.
 
 ## Implementation Steps
 
-- [ ] Extend Prisma schema with `Labyrinth` model and enums.
-- [ ] Add migration for labyrinth persistence.
-- [ ] Add PostgreSQL partial unique index for active labyrinth names.
-- [ ] Implement shared domain types or imports for maze cells and coordinates.
-- [ ] Implement `computeDifficulty(width, height)`.
-- [ ] Implement soft delete filtering for list/detail.
-- [ ] Implement validation helpers for odd size, bounds, entry/exit and grid.
-- [ ] Implement validation for trimmed unique name length 1-40.
-- [ ] Implement `labyrinth.mapper.ts` as the single DB-to-API response mapper.
-- [ ] Implement Prim generator.
-- [ ] Implement Kruskal generator.
-- [ ] Implement BFS solver.
-- [ ] Implement DFS solver.
-- [ ] Extend seed flow with 2-4 active demo labyrinth fixtures.
-- [ ] Implement `POST /api/labyrinths/generate` with admin role guard and `entryMode`-specific output.
-- [ ] Implement `POST /api/labyrinths` with admin role guard and final editor grid validation.
-- [ ] Implement `GET /api/labyrinths` with case-insensitive substring search by name and cursor pagination.
-- [ ] Implement `GET /api/labyrinths/{id}`.
-- [ ] Implement `DELETE /api/labyrinths/{id}` as soft delete with admin role guard.
-- [ ] Implement `POST /api/labyrinths/{id}/solve` with player role guard.
-- [ ] Map all errors to PRD error shape.
-- [ ] Update `app/docs/plans/STATUS.md` after implementation and verification.
+- [x] Extend Prisma schema with `Labyrinth` model and enums.
+- [x] Add migration for labyrinth persistence.
+- [x] Add PostgreSQL partial unique index for active labyrinth names.
+- [x] Implement shared domain types or imports for maze cells and coordinates.
+- [x] Implement `computeDifficulty(width, height)`.
+- [x] Implement soft delete filtering for list/detail.
+- [x] Implement validation helpers for odd size, bounds, entry/exit and grid.
+- [x] Implement validation for trimmed unique name length 1-40.
+- [x] Implement `labyrinth.mapper.ts` as the single DB-to-API response mapper.
+- [x] Implement Prim generator.
+- [x] Implement Kruskal generator.
+- [x] Implement BFS solver.
+- [x] Implement DFS solver.
+- [x] Extend seed flow with 2-4 active demo labyrinth fixtures.
+- [x] Implement `POST /api/labyrinths/generate` with admin role guard and `entryMode`-specific output.
+- [x] Implement `POST /api/labyrinths` with admin role guard and final editor grid validation.
+- [x] Implement `GET /api/labyrinths` with case-insensitive substring search by name and cursor pagination.
+- [x] Implement `GET /api/labyrinths/{id}`.
+- [x] Implement `DELETE /api/labyrinths/{id}` as soft delete with admin role guard.
+- [x] Implement `POST /api/labyrinths/{id}/solve` with player role guard.
+- [x] Map all errors to PRD error shape.
+- [x] Update `app/docs/plans/STATUS.md` after implementation and verification.
 
 ## Verification
 

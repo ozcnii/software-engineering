@@ -12,10 +12,46 @@ enum UserRole {
   PLAYER
 }
 
+enum LabyrinthTheme {
+  WINTER
+  SUMMER
+  AUTUMN
+  SPRING
+}
+
+enum GenerationAlgorithm {
+  PRIM
+  KRUSKAL
+}
+
+enum EntryMode {
+  AUTO
+  MANUAL
+}
+
 model User {
   id           String   @id @default(uuid())
   login        String   @unique
   passwordHash String
   role         UserRole
   createdAt    DateTime @default(now())
+  labyrinths   Labyrinth[]
+}
+
+model Labyrinth {
+  id                  String              @id @default(uuid())
+  name                String
+  width               Int
+  height              Int
+  theme               LabyrinthTheme
+  generationAlgorithm GenerationAlgorithm
+  entryMode           EntryMode
+  grid                Json
+  createdById         String
+  createdBy           User                @relation(fields: [createdById], references: [id])
+  createdAt           DateTime            @default(now())
+  deletedAt           DateTime?
+
+  @@index([createdById])
+  @@index([deletedAt, createdAt, id])
 }

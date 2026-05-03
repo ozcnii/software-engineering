@@ -1,0 +1,42 @@
+import { Transform, Type } from 'class-transformer';
+import { IsArray, IsIn, IsInt, IsString, Max, Min } from 'class-validator';
+import {
+  ENTRY_MODES,
+  GENERATION_ALGORITHMS,
+  LABYRINTH_THEMES,
+  EntryModeValue,
+  GenerationAlgorithmValue,
+  LabyrinthThemeValue,
+} from '../domain/maze-types';
+
+export class CreateLabyrinthDto {
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
+  @IsString({ message: 'Name is required' })
+  name!: string;
+
+  @Type(() => Number)
+  @IsInt({ message: 'Width must be an integer' })
+  @Min(7, { message: 'Width must be at least 7' })
+  @Max(25, { message: 'Width must be at most 25' })
+  width!: number;
+
+  @Type(() => Number)
+  @IsInt({ message: 'Height must be an integer' })
+  @Min(7, { message: 'Height must be at least 7' })
+  @Max(25, { message: 'Height must be at most 25' })
+  height!: number;
+
+  @IsIn(LABYRINTH_THEMES, { message: 'Invalid theme' })
+  theme!: LabyrinthThemeValue;
+
+  @IsIn(GENERATION_ALGORITHMS, { message: 'Invalid generation algorithm' })
+  generationAlgorithm!: GenerationAlgorithmValue;
+
+  @IsIn(ENTRY_MODES, { message: 'Invalid entry mode' })
+  entryMode!: EntryModeValue;
+
+  @IsArray({ message: 'Grid must be an array' })
+  grid!: unknown[];
+}

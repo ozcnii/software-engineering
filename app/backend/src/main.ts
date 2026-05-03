@@ -21,6 +21,7 @@ async function bootstrap() {
     new ValidationPipe({
       transform: true,
       whitelist: true,
+      forbidNonWhitelisted: false,
       exceptionFactory: (errors) => ApiError.validation(toValidationFields(errors)),
     }),
   );
