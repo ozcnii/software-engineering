@@ -220,23 +220,23 @@ Response:
 
 ## Implementation Steps
 
-- [ ] Extend Prisma schema with `User` model and role enum.
-- [ ] Add Prisma migration for users.
-- [ ] Add `bcrypt` dependency and service-level hashing helper.
-- [ ] Implement `UsersService` for create/find-by-login/find-by-id.
-- [ ] Implement seed script that creates admin if missing.
-- [ ] Implement DTOs for login and register request bodies.
-- [ ] Implement `AuthService.registerPlayer`.
-- [ ] Implement `AuthService.login`.
-- [ ] Implement `AuthService.logout`.
-- [ ] Implement `AuthService.getCurrentUser`.
-- [ ] Implement `AuthController` routes under `/api/auth`.
-- [ ] Add JWT cookie creation and clearing.
-- [ ] Add CORS config for `http://localhost:5173` with credentials.
-- [ ] Add global API error filter matching PRD error shape.
-- [ ] Add role metadata decorator and guard for later admin/player endpoints.
-- [ ] Update backend README or root README with seed env variables and local admin example.
-- [ ] Update `app/docs/plans/STATUS.md` after implementation and verification.
+- [x] Extend Prisma schema with `User` model and role enum.
+- [x] Add Prisma migration for users.
+- [x] Add `bcrypt` dependency and service-level hashing helper.
+- [x] Implement `UsersService` for create/find-by-login/find-by-id.
+- [x] Implement seed script that creates admin if missing.
+- [x] Implement DTOs for login and register request bodies.
+- [x] Implement `AuthService.registerPlayer`.
+- [x] Implement `AuthService.login`.
+- [x] Implement `AuthService.logout`.
+- [x] Implement `AuthService.getCurrentUser`.
+- [x] Implement `AuthController` routes under `/api/auth`.
+- [x] Add JWT cookie creation and clearing.
+- [x] Add CORS config for `http://localhost:5173` with credentials.
+- [x] Add global API error filter matching PRD error shape.
+- [x] Add role metadata decorator and guard for later admin/player endpoints.
+- [x] Update backend README or root README with seed env variables and local admin example.
+- [x] Update `app/docs/plans/STATUS.md` after implementation and verification.
 
 ## Verification
 

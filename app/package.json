@@ -12,10 +12,16 @@
     "docker:logs": "docker compose logs -f postgres",
     "prisma:generate": "npm run prisma:generate --workspace backend",
     "prisma:migrate": "npm run prisma:migrate --workspace backend",
-    "seed": "npm run seed --workspace backend"
+    "seed": "npm run seed --workspace backend",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,cjs,mjs,json,css,html,prisma,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,cjs,mjs,json,css,html,prisma,yml,yaml}\""
   },
   "workspaces": [
     "frontend",
     "backend"
-  ]
+  ],
+  "devDependencies": {
+    "prettier": "^3.8.3",
+    "prettier-plugin-prisma": "^5.0.0"
+  }
 }

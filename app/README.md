@@ -37,6 +37,13 @@ cp .env.example .env
 cp backend/.env.example backend/.env
 ```
 
+The backend auth plan uses these local seed values by default:
+
+```text
+SEED_ADMIN_LOGIN=admin
+SEED_ADMIN_PASSWORD=admin
+```
+
 Start PostgreSQL:
 
 ```bash
@@ -47,6 +54,13 @@ Generate Prisma client:
 
 ```bash
 npm run prisma:generate
+```
+
+Apply database migrations and create the initial admin:
+
+```bash
+npm run prisma:migrate
+npm run seed
 ```
 
 Run both apps:

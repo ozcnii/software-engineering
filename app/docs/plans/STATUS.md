@@ -27,7 +27,7 @@
 |---|---|---|---|
 | Roadmap | `00-implementation-roadmap.md` | Planned | Общая декомпозиция PRD на этапы реализации |
 | Project scaffold | `01-project-scaffold.md` | Done | Scaffold created; `typecheck`, `build`, `prisma:generate` pass; Docker verification accepted by user |
-| Backend auth and DB | `02-backend-auth-db.md` | Planned | Users, roles, seed-admin, login/register/logout; decisions reviewed |
+| Backend auth and DB | `02-backend-auth-db.md` | Blocked | Code implemented; DB-backed verification blocked because Docker daemon/PostgreSQL is unavailable |
 | Backend labyrinths and algorithms | `03-backend-labyrinths-algorithms.md` | Planned | CRUD, generation, solving, difficulty; decisions reviewed |
 | Frontend auth and admin | `04-frontend-auth-admin.md` | Planned | Auth UI, admin list, create wizard, delete modal; decisions reviewed |
 | Frontend player | `05-frontend-player.md` | Planned | Player screen, manual movement, themes, auto-solve UI; decisions reviewed |
@@ -39,9 +39,9 @@
 |---|---|---|
 | Repository/app scaffold | Done | Code scaffold passes checks; Docker verification accepted by user |
 | Auth UI | Not started | AUTH-01..AUTH-07 |
-| Auth API | Not started | API-01, API-02, API-10 |
-| Seed admin | Not started | AUTH-04 |
-| Role access control | Not started | ADM-LIST-04 |
+| Auth API | Blocked: DB unavailable for full verification | API-01, API-02, API-10 |
+| Seed admin | Blocked: DB unavailable for seed verification | AUTH-04 |
+| Role access control | Blocked: DB unavailable for role-session verification | ADM-LIST-04 |
 | Admin labyrinth list | Not started | ADM-LIST-01..ADM-LIST-03 |
 | Admin create wizard | Not started | ADM-CREATE-01..ADM-CREATE-10 |
 | Admin delete flow | Not started | ADM-DELETE-01..ADM-DELETE-03 |
