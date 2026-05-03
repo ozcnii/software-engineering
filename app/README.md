@@ -87,4 +87,4 @@ npm run build
 
 - Frontend: `http://localhost:5173`
 - Backend: `http://localhost:3001`
-- PostgreSQL: `localhost:5432`
+- PostgreSQL: `localhost:5433`

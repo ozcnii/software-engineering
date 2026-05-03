@@ -90,10 +90,7 @@ The root `app/package.json` should provide orchestration commands:
     "prisma:migrate": "npm run prisma:migrate --workspace backend",
     "seed": "npm run seed --workspace backend"
   },
-  "workspaces": [
-    "frontend",
-    "backend"
-  ]
+  "workspaces": ["frontend", "backend"]
 }
 ```
 
@@ -147,7 +144,7 @@ services:
       POSTGRES_USER: labyrinth
       POSTGRES_PASSWORD: labyrinth
     ports:
-      - "5432:5432"
+      - '5433:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -161,7 +158,7 @@ Root `app/.env.example` should document shared local values:
 POSTGRES_DB=labyrinth
 POSTGRES_USER=labyrinth
 POSTGRES_PASSWORD=labyrinth
-POSTGRES_PORT=5432
+POSTGRES_PORT=5433
 BACKEND_PORT=3001
 FRONTEND_PORT=5173
 ```
@@ -192,7 +189,7 @@ datasource db {
 Backend `.env.example`:
 
 ```text
-DATABASE_URL="postgresql://labyrinth:labyrinth@localhost:5432/labyrinth?schema=public"
+DATABASE_URL="postgresql://labyrinth:labyrinth@localhost:5433/labyrinth?schema=public"
 PORT=3001
 ```
 
@@ -236,7 +233,7 @@ Expected result:
 
 - frontend TypeScript passes;
 - backend TypeScript passes;
-- PostgreSQL container starts and accepts connections on localhost port 5432;
+- PostgreSQL container starts and accepts connections on localhost port 5433;
 - frontend build succeeds;
 - backend build succeeds.
 
