@@ -236,13 +236,13 @@ Keep code local inside a feature when:
 - Modify: `app/docs/plans/07-frontend-refactor.md`
 - Modify: `app/docs/plans/STATUS.md`
 
-- [ ] Confirm `git status --short` before starting.
-- [ ] Read `app/docs/plans/STATUS.md`, `app/docs/PRD.md`, `app/docs/CHECKLIST.md`, `sandbox/index.html`, `app/docs/plans/00-implementation-roadmap.md`, `01-project-scaffold.md`, `02-backend-auth-db.md`, `03-backend-labyrinths-algorithms.md`, `04-frontend-auth-admin.md`, `05-frontend-player.md`, `06-integration-acceptance.md`, and this plan.
-- [ ] Confirm plans `01`..`05` are marked `Done`; if not, stop and report the dependency gap.
-- [ ] Update `STATUS.md`: `Frontend refactor` -> `In progress`.
-- [ ] Record the current largest frontend files with `wc -l app/frontend/src/**/*.tsx app/frontend/src/app/styles.css` or equivalent shell glob that works locally.
-- [ ] Scan for duplicate helpers and leftover junk with `rg "function |const .* = \\(|TODO|FIXME|console\\." app/frontend/src`.
-- [ ] Run baseline command check:
+- [x] Confirm `git status --short` before starting.
+- [x] Read `app/docs/plans/STATUS.md`, `app/docs/PRD.md`, `app/docs/CHECKLIST.md`, `sandbox/index.html`, `app/docs/plans/00-implementation-roadmap.md`, `01-project-scaffold.md`, `02-backend-auth-db.md`, `03-backend-labyrinths-algorithms.md`, `04-frontend-auth-admin.md`, `05-frontend-player.md`, `06-integration-acceptance.md`, and this plan.
+- [x] Confirm plans `01`..`05` are marked `Done`; if not, stop and report the dependency gap.
+- [x] Update `STATUS.md`: `Frontend refactor` -> `In progress`.
+- [x] Record the current largest frontend files with `wc -l app/frontend/src/**/*.tsx app/frontend/src/app/styles.css` or equivalent shell glob that works locally.
+- [x] Scan for duplicate helpers and leftover junk with `rg "function |const .* = \\(|TODO|FIXME|console\\." app/frontend/src`.
+- [x] Run baseline command check:
 
 ```bash
 cd app
@@ -260,9 +260,9 @@ Expected: command passes before refactor. If it fails because of existing code, 
 - Create folders under `features/admin/{components,hooks,lib,model}/`
 - Create folders under `features/player/{components,hooks,lib,model}/`
 
-- [ ] Create only folders needed by the next tasks. Use `.gitkeep` only if a folder must exist before files are added.
-- [ ] Do not move route entry files yet.
-- [ ] Confirm imports still compile:
+- [x] Create only folders needed by the next tasks. Use `.gitkeep` only if a folder must exist before files are added.
+- [x] Do not move route entry files yet.
+- [x] Confirm imports still compile:
 
 ```bash
 cd app
@@ -287,12 +287,12 @@ Extract only pure helpers with identical behavior, for example:
 - difficulty-to-label or difficulty-to-stars formatting;
 - coordinate/key helpers used by both admin and player maze rendering.
 
-- [ ] Move duplicated pure helpers to `shared/lib/*`.
-- [ ] Keep helper names concrete, for example `getErrorMessage`, `formatElapsedTime`, `formatDifficultyStars`.
-- [ ] Replace local duplicates with imports.
-- [ ] Do not change visible text returned by helpers.
-- [ ] Do not move feature-specific validation into shared unless both auth forms use exactly the same rule.
-- [ ] Run:
+- [x] Move duplicated pure helpers to `shared/lib/*`.
+- [x] Keep helper names concrete, for example `getErrorMessage`, `formatElapsedTime`, `formatDifficultyStars`.
+- [x] Replace local duplicates with imports.
+- [x] Do not change visible text returned by helpers.
+- [x] Do not move feature-specific validation into shared unless both auth forms use exactly the same rule.
+- [x] Run:
 
 ```bash
 cd app
@@ -316,12 +316,12 @@ Targeted smoke:
 - Create if needed: `app/frontend/src/shared/hooks/useIntersectionLoadMore.ts`
 - Modify: admin/player list components and player timer/animation code as needed.
 
-- [ ] Extract debounce behavior used by search inputs into `useDebouncedValue`.
-- [ ] Extract interval behavior only if both timer and animation/list logic benefit from the same generic hook.
-- [ ] Extract intersection observer load-more behavior only if admin and player lists can use one product-agnostic hook without hiding their API details.
-- [ ] Ensure hooks clean up timers/observers on unmount.
-- [ ] Ensure stale request guards in list components are preserved.
-- [ ] Run:
+- [x] Extract debounce behavior used by search inputs into `useDebouncedValue`.
+- [x] Extract interval behavior only if both timer and animation/list logic benefit from the same generic hook.
+- [x] Extract intersection observer load-more behavior only if admin and player lists can use one product-agnostic hook without hiding their API details.
+- [x] Ensure hooks clean up timers/observers on unmount.
+- [x] Ensure stale request guards in list components are preserved.
+- [x] Run:
 
 ```bash
 cd app
@@ -346,13 +346,13 @@ Targeted smoke:
 - Create if needed: `app/frontend/src/shared/ui/RadioGroup.tsx`
 - Modify modal/error/skeleton/radio call sites.
 
-- [ ] Extract modal shell only if admin delete modal, player confirmations, finish modal, and info modals can keep identical semantics.
-- [ ] Preserve accessible attributes and focus-relevant markup already present.
-- [ ] Extract inline error rendering only for repeated same-level error blocks.
-- [ ] Extract list skeleton only if admin and player placeholders remain visually equivalent.
-- [ ] Extract radio group only if theme, algorithm, display mode, and auth/admin usage can keep clear labels and controlled state without generic complexity.
-- [ ] Do not create a shared `Button` or `Card` unless there is a direct duplicate and the result stays simpler than current markup.
-- [ ] Run:
+- [x] Extract modal shell only if admin delete modal, player confirmations, finish modal, and info modals can keep identical semantics.
+- [x] Preserve accessible attributes and focus-relevant markup already present.
+- [x] Extract inline error rendering only for repeated same-level error blocks.
+- [x] Extract list skeleton only if admin and player placeholders remain visually equivalent.
+- [x] Extract radio group only if theme, algorithm, display mode, and auth/admin usage can keep clear labels and controlled state without generic complexity.
+- [x] Do not create a shared `Button` or `Card` unless there is a direct duplicate and the result stays simpler than current markup.
+- [x] Run:
 
 ```bash
 cd app
@@ -376,11 +376,11 @@ Targeted smoke:
 - Create if useful: `app/frontend/src/features/auth/lib/authValidation.ts`
 - Create if useful: `app/frontend/src/features/auth/components/AuthField.tsx`
 
-- [ ] Extract repeated auth validation only when rules are identical.
-- [ ] Extract repeated field markup only if it keeps labels, `autoComplete`, disabled/loading states and error text unchanged.
-- [ ] Keep `LoginForm.tsx` and `RegisterForm.tsx` as readable feature entry components.
-- [ ] Preserve redirects and app auth state update behavior.
-- [ ] Run:
+- [x] Extract repeated auth validation only when rules are identical.
+- [x] Extract repeated field markup only if it keeps labels, `autoComplete`, disabled/loading states and error text unchanged.
+- [x] Keep `LoginForm.tsx` and `RegisterForm.tsx` as readable feature entry components.
+- [x] Preserve redirects and app auth state update behavior.
+- [x] Run:
 
 ```bash
 cd app
@@ -404,12 +404,12 @@ Targeted smoke:
 - Create if useful: `app/frontend/src/features/admin/components/AdminListToolbar.tsx`
 - Create if useful: `app/frontend/src/features/admin/hooks/useAdminLabyrinthList.ts`
 
-- [ ] Move API/search/pagination state to `useAdminLabyrinthList` only if it makes `AdminLabyrinthList.tsx` primarily render layout.
-- [ ] Move individual card markup to `AdminLabyrinthCard`.
-- [ ] Keep delete flow and selected item behavior unchanged.
-- [ ] Preserve admin-only access behavior from existing routes/layout.
-- [ ] Preserve empty, search-empty, loading, loading-more and error states.
-- [ ] Run:
+- [x] Move API/search/pagination state to `useAdminLabyrinthList` only if it makes `AdminLabyrinthList.tsx` primarily render layout.
+- [x] Move individual card markup to `AdminLabyrinthCard`.
+- [x] Keep delete flow and selected item behavior unchanged.
+- [x] Preserve admin-only access behavior from existing routes/layout.
+- [x] Preserve empty, search-empty, loading, loading-more and error states.
+- [x] Run:
 
 ```bash
 cd app
@@ -438,13 +438,13 @@ Targeted smoke:
 - Create if useful: `app/frontend/src/features/admin/lib/createWizardValidation.ts`
 - Create if useful: `app/frontend/src/features/admin/hooks/useCreateWizard.ts`
 
-- [ ] Separate wizard step indicator/navigation from step content.
-- [ ] Move parameter validation into feature `lib` or `model` if it is pure and reused across handlers.
-- [ ] Move generation/save orchestration into a hook only if it reduces `AdminCreateWizard.tsx` without hiding UI decisions.
-- [ ] Preserve generated/manual creation modes exactly.
-- [ ] Preserve all validation messages, disabled states, loading states and success/error handling.
-- [ ] Keep API calls through `labyrinthsApi`.
-- [ ] Run:
+- [x] Separate wizard step indicator/navigation from step content.
+- [x] Move parameter validation into feature `lib` or `model` if it is pure and reused across handlers.
+- [x] Move generation/save orchestration into a hook only if it reduces `AdminCreateWizard.tsx` without hiding UI decisions.
+- [x] Preserve generated/manual creation modes exactly.
+- [x] Preserve all validation messages, disabled states, loading states and success/error handling.
+- [x] Keep API calls through `labyrinthsApi`.
+- [x] Run:
 
 ```bash
 cd app
@@ -469,12 +469,12 @@ Targeted smoke:
 - Create if useful: `app/frontend/src/features/admin/hooks/useMazeEditor.ts`
 - Create if useful: `app/frontend/src/features/admin/lib/mazeEditorRules.ts`
 
-- [ ] Split toolbar controls from grid rendering.
-- [ ] Move editor state transitions into `useMazeEditor` only if it keeps props smaller than the current file's internal complexity.
-- [ ] Preserve wall/path/entry/exit editing behavior.
-- [ ] Preserve generated maze editing behavior.
-- [ ] Preserve validation that prevents invalid maze save.
-- [ ] Run:
+- [x] Split toolbar controls from grid rendering.
+- [x] Move editor state transitions into `useMazeEditor` only if it keeps props smaller than the current file's internal complexity.
+- [x] Preserve wall/path/entry/exit editing behavior.
+- [x] Preserve generated maze editing behavior.
+- [x] Preserve validation that prevents invalid maze save.
+- [x] Run:
 
 ```bash
 cd app
@@ -498,12 +498,12 @@ Targeted smoke:
 - Create if useful: `app/frontend/src/features/player/components/PlayerListToolbar.tsx`
 - Create if useful: `app/frontend/src/features/player/hooks/usePlayerLabyrinthList.ts`
 
-- [ ] Reuse shared debounce/load-more helpers where already extracted.
-- [ ] Move card markup to `PlayerLabyrinthCard`.
-- [ ] Preserve selected item state, detail loading callback and detail error behavior.
-- [ ] Preserve global empty and search-empty copy.
-- [ ] Preserve difficulty stars and theme labels.
-- [ ] Run:
+- [x] Reuse shared debounce/load-more helpers where already extracted.
+- [x] Move card markup to `PlayerLabyrinthCard`.
+- [x] Preserve selected item state, detail loading callback and detail error behavior.
+- [x] Preserve global empty and search-empty copy.
+- [x] Preserve difficulty stars and theme labels.
+- [x] Run:
 
 ```bash
 cd app
@@ -534,14 +534,14 @@ Targeted smoke:
 - Create if useful: `app/frontend/src/features/player/components/PlayerBoardSection.tsx`
 - Create if useful: `app/frontend/src/features/player/components/PlayerSidebar.tsx`
 
-- [ ] Move `playerState.ts` into `model/` and update imports.
-- [ ] Extract pure movement rules into `playerMovement.ts` if they can be tested manually through existing UI behavior.
-- [ ] Extract keyboard subscription into a hook that preserves manual-only activation and cleanup.
-- [ ] Extract timer logic into a hook while preserving start/stop rules.
-- [ ] Extract auto-solve orchestration only if the hook interface remains explicit: labyrinth id, display mode, speed, current progress source and callbacks.
-- [ ] Keep `PlayerLayout.tsx` as the route-level coordinator for selected labyrinth, modals, mode and child composition.
-- [ ] Preserve the solved bugs from the previous implementation: square maze grid, stale list request guards, solve double-start guard, and manual-only auto warning.
-- [ ] Run:
+- [x] Move `playerState.ts` into `model/` and update imports.
+- [x] Extract pure movement rules into `playerMovement.ts` if they can be tested manually through existing UI behavior.
+- [x] Extract keyboard subscription into a hook that preserves manual-only activation and cleanup.
+- [x] Extract timer logic into a hook while preserving start/stop rules.
+- [x] Extract auto-solve orchestration only if the hook interface remains explicit: labyrinth id, display mode, speed, current progress source and callbacks.
+- [x] Keep `PlayerLayout.tsx` as the route-level coordinator for selected labyrinth, modals, mode and child composition.
+- [x] Preserve the solved bugs from the previous implementation: square maze grid, stale list request guards, solve double-start guard, and manual-only auto warning.
+- [x] Run:
 
 ```bash
 cd app
@@ -578,12 +578,12 @@ CSS remains one file. Reorganize it into stable sections:
 /* 9. Responsive */
 ```
 
-- [ ] Move rules into sections without changing selectors unnecessarily.
-- [ ] Merge exact duplicate declarations only when cascade behavior stays the same.
-- [ ] Remove dead selectors only after `rg` confirms no matching class usage in `app/frontend/src`.
-- [ ] Keep responsive breakpoints and player grid sizing behavior intact.
-- [ ] Do not introduce CSS Modules or new styling tools.
-- [ ] Run:
+- [x] Move rules into sections without changing selectors unnecessarily.
+- [x] Merge exact duplicate declarations only when cascade behavior stays the same.
+- [x] Remove dead selectors only after `rg` confirms no matching class usage in `app/frontend/src`.
+- [x] Keep responsive breakpoints and player grid sizing behavior intact.
+- [x] Do not introduce CSS Modules or new styling tools.
+- [x] Run:
 
 ```bash
 cd app
@@ -607,7 +607,7 @@ Targeted smoke:
 - Modify: `app/docs/plans/07-frontend-refactor.md`
 - Modify: `app/docs/plans/STATUS.md`
 
-- [ ] Run leftover scan:
+- [x] Run leftover scan:
 
 ```bash
 cd app
@@ -616,7 +616,7 @@ rg "TODO|FIXME|console\\.|mock|hardcoded" frontend/src
 
 Expected: no newly introduced leftover junk. Existing legitimate text must be reviewed before changing.
 
-- [ ] Run broad type/build verification:
+- [x] Run broad type/build verification:
 
 ```bash
 cd app
@@ -626,7 +626,7 @@ npm run build
 
 Expected: both commands pass.
 
-- [ ] Run final browser smoke with backend/frontend dev servers:
+- [x] Run final browser smoke with backend/frontend dev servers:
 
 ```bash
 cd app
@@ -648,10 +648,10 @@ Verify:
 - player manual movement and finish/reset/exit states;
 - player instant and animated auto-solve.
 
-- [ ] Confirm no API, backend, DB, PRD or checklist files changed; only this plan and `STATUS.md` should change in documentation during the refactor unless the user separately approves more.
-- [ ] Update `STATUS.md`: `Frontend refactor` -> `Done` only after verification passes; otherwise `Blocked` with reason.
-- [ ] Mark all checkboxes in this plan that were completed.
-- [ ] Ask: `Провести deep review?`
+- [x] Confirm no API, backend, DB, PRD or checklist files changed; only this plan and `STATUS.md` should change in documentation during the refactor unless the user separately approves more.
+- [x] Update `STATUS.md`: `Frontend refactor` -> `Done` only after verification passes; otherwise `Blocked` with reason.
+- [x] Mark all checkboxes in this plan that were completed.
+- [x] Ask: `Провести deep review?`
 
 ## Verification Steps
 

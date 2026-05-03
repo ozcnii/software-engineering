@@ -1,3 +1,5 @@
+import { AppModal } from '../../shared/ui/AppModal';
+
 type PlayerModal = 'about' | 'system' | null;
 
 interface PlayerInfoModalsProps {
@@ -11,24 +13,20 @@ export function PlayerInfoModals({ activeModal, onClose }: PlayerInfoModalsProps
   }
 
   return (
-    <div className="modal-backdrop">
-      <div className={`modal ${activeModal === 'system' ? 'player-system-modal' : ''}`}>
-        <div className="modal-head">
-          <h2>{activeModal === 'about' ? 'О разработчике' : 'Как пользоваться'}</h2>
-          <button className="modal-close" type="button" onClick={onClose} aria-label="Закрыть">
-            x
-          </button>
-        </div>
-
-        {activeModal === 'about' ? <AboutBody /> : <SystemBody />}
-
-        <div className="modal-actions">
+    <AppModal
+      title={activeModal === 'about' ? 'О разработчике' : 'Как пользоваться'}
+      className={activeModal === 'system' ? 'player-system-modal' : ''}
+      onClose={onClose}
+      actions={
+        <>
           <button className="btn btn-sm btn-primary" type="button" onClick={onClose}>
             Закрыть
           </button>
-        </div>
-      </div>
-    </div>
+        </>
+      }
+    >
+      {activeModal === 'about' ? <AboutBody /> : <SystemBody />}
+    </AppModal>
   );
 }
 

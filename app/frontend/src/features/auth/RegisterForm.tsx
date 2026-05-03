@@ -2,6 +2,8 @@ import { FormEvent, useState } from 'react';
 import { authApi } from '../../shared/api/authApi';
 import { ApiClientError } from '../../shared/api/client';
 import type { ApiFieldErrors, User } from '../../shared/types/domain';
+import { AuthField } from './components/AuthField';
+import { validateRegisterFields } from './lib/authValidation';
 
 interface RegisterFormProps {
   onUser: (user: User) => void;
@@ -19,7 +21,7 @@ export function RegisterForm({ onUser }: RegisterFormProps) {
   async function submit(event: FormEvent) {
     event.preventDefault();
 
-    const errors = validateRegister(login, password, passwordConfirm, acceptedTerms);
+    const errors = validateRegisterFields(login, password, passwordConfirm, acceptedTerms);
     setFieldErrors(errors);
     setGeneralError('');
 
@@ -53,54 +55,40 @@ export function RegisterForm({ onUser }: RegisterFormProps) {
     <form className="auth-form" onSubmit={(event) => void submit(event)}>
       {generalError ? <div className="form-error">{generalError}</div> : null}
 
-      <div className="form-row">
-        <label className="label" htmlFor="register-login">
-          Логин <span className="required">*</span>
-        </label>
-        <input
-          className="input"
-          id="register-login"
-          type="text"
-          placeholder="придумайте логин..."
-          value={login}
-          onChange={(event) => setLogin(event.target.value)}
-        />
-        <div className="hint">от 4 до 8 символов</div>
-        {fieldErrors.login ? <div className="err">{fieldErrors.login}</div> : null}
-      </div>
+      <AuthField
+        id="register-login"
+        label="Логин"
+        type="text"
+        placeholder="придумайте логин..."
+        value={login}
+        hint="от 4 до 8 символов"
+        error={fieldErrors.login}
+        required
+        onChange={setLogin}
+      />
 
-      <div className="form-row">
-        <label className="label" htmlFor="register-password">
-          Пароль <span className="required">*</span>
-        </label>
-        <input
-          className="input"
-          id="register-password"
-          type="password"
-          placeholder="••••••••"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-        />
-        <div className="hint">от 4 до 10 символов</div>
-        {fieldErrors.password ? <div className="err">{fieldErrors.password}</div> : null}
-      </div>
+      <AuthField
+        id="register-password"
+        label="Пароль"
+        type="password"
+        placeholder="••••••••"
+        value={password}
+        hint="от 4 до 10 символов"
+        error={fieldErrors.password}
+        required
+        onChange={setPassword}
+      />
 
-      <div className="form-row">
-        <label className="label" htmlFor="register-password-confirm">
-          Подтверждение пароля <span className="required">*</span>
-        </label>
-        <input
-          className="input"
-          id="register-password-confirm"
-          type="password"
-          placeholder="повторите пароль..."
-          value={passwordConfirm}
-          onChange={(event) => setPasswordConfirm(event.target.value)}
-        />
-        {fieldErrors.passwordConfirm ? (
-          <div className="err">{fieldErrors.passwordConfirm}</div>
-        ) : null}
-      </div>
+      <AuthField
+        id="register-password-confirm"
+        label="Подтверждение пароля"
+        type="password"
+        placeholder="повторите пароль..."
+        value={passwordConfirm}
+        error={fieldErrors.passwordConfirm}
+        required
+        onChange={setPasswordConfirm}
+      />
 
       <div className="form-row">
         <label className="check-item">
@@ -123,40 +111,4 @@ export function RegisterForm({ onUser }: RegisterFormProps) {
       </button>
     </form>
   );
-}
-
-function validateRegister(
-  login: string,
-  password: string,
-  passwordConfirm: string,
-  acceptedTerms: boolean,
-): ApiFieldErrors {
-  const errors: ApiFieldErrors = {};
-  const normalizedLogin = login.trim();
-  const normalizedPassword = password.trim();
-  const normalizedConfirm = passwordConfirm.trim();
-
-  if (!normalizedLogin) {
-    errors.login = 'Введите логин';
-  } else if (normalizedLogin.length < 4 || normalizedLogin.length > 8) {
-    errors.login = 'Длина логина от 4 до 8 символов';
-  }
-
-  if (!normalizedPassword) {
-    errors.password = 'Введите пароль';
-  } else if (normalizedPassword.length < 4 || normalizedPassword.length > 10) {
-    errors.password = 'Длина пароля от 4 до 10 символов';
-  }
-
-  if (!normalizedConfirm) {
-    errors.passwordConfirm = 'Повторите пароль';
-  } else if (normalizedConfirm !== normalizedPassword) {
-    errors.passwordConfirm = 'Пароли не совпадают';
-  }
-
-  if (!acceptedTerms) {
-    errors.acceptedTerms = 'Примите условия использования';
-  }
-
-  return errors;
 }

@@ -1,5 +1,5 @@
 import type { SolvingAlgorithm } from '../../shared/types/domain';
-import type { AutoDisplayMode } from './playerState';
+import type { AutoDisplayMode } from './model/playerState';
 
 interface AutoSolvePanelProps {
   algorithm: SolvingAlgorithm;

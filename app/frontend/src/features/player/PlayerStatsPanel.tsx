@@ -1,4 +1,4 @@
-import { formatElapsed, type PlayerRunState } from './playerState';
+import { formatElapsed, type PlayerRunState } from './model/playerState';
 
 interface PlayerStatsPanelProps {
   run: PlayerRunState | null;

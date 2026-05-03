@@ -1,3 +1,4 @@
+/* 1. Design tokens */
 :root {
   --bg: #faf8f3;
   --paper: #fffef9;
@@ -15,6 +16,7 @@
   background: var(--bg);
 }
 
+/* 2. Base */
 *,
 *::before,
 *::after {
@@ -39,6 +41,7 @@ a {
   text-decoration: none;
 }
 
+/* 4. Shared controls */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -166,6 +169,7 @@ a {
   background: rgba(140, 58, 58, 0.06);
 }
 
+/* 6. Auth */
 .app-loading,
 .auth-wrap {
   position: relative;
@@ -249,6 +253,7 @@ a {
   margin-bottom: 16px;
 }
 
+/* 4. Shared controls continued */
 .check-item {
   display: flex;
   align-items: center;
@@ -307,6 +312,7 @@ a {
   font-size: 0.9rem;
 }
 
+/* 7. Admin */
 .admin-layout {
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
@@ -399,6 +405,7 @@ a {
   font-size: 0.92rem;
 }
 
+/* 3. Shared layout */
 .card {
   padding: 20px;
   box-shadow: var(--shadow);
@@ -448,6 +455,7 @@ a {
   color: var(--warn);
 }
 
+/* 5. Shared feedback and modals */
 .list-title-row,
 .card-toolbar,
 .wizard-head,
@@ -614,6 +622,7 @@ a {
   border-bottom: 0;
 }
 
+/* 7. Admin create and info */
 .wiz-stepper {
   display: flex;
   align-items: center;
@@ -901,6 +910,7 @@ a {
   font-size: 0.84rem;
 }
 
+/* 4. Shared controls continued */
 .tabs-sm {
   display: flex;
   overflow: hidden;
@@ -934,6 +944,7 @@ a {
   opacity: 0.68;
 }
 
+/* 8. Player */
 .player-layout {
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr) 220px;
@@ -1357,6 +1368,7 @@ a {
   }
 }
 
+/* 9. Responsive */
 @media (max-width: 760px) {
   .admin-layout {
     grid-template-columns: 1fr;

@@ -1,113 +1,20 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ApiClientError } from '../../shared/api/client';
 import { labyrinthsApi } from '../../shared/api/labyrinthsApi';
+import { getErrorMessage } from '../../shared/lib/errors';
 import type { LabyrinthListItem } from '../../shared/types/domain';
+import { ListSkeleton } from '../../shared/ui/ListSkeleton';
 import { algorithmLabels, themeLabels, themeMarks } from '../../shared/ui/labels';
 import { AdminDeleteModal } from './AdminDeleteModal';
-
-const SEARCH_DEBOUNCE_MS = 500;
-const PAGE_LIMIT = 20;
+import { AdminLabyrinthCard } from './components/AdminLabyrinthCard';
+import { useAdminLabyrinthList } from './hooks/useAdminLabyrinthList';
 
 export function AdminLabyrinthList() {
-  const [items, setItems] = useState<LabyrinthListItem[]>([]);
-  const [searchInput, setSearchInput] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
-  const [isLoadingInitial, setIsLoadingInitial] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [error, setError] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<LabyrinthListItem | null>(null);
   const [deleteError, setDeleteError] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [toast, setToast] = useState('');
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setDebouncedSearch(searchInput.trim());
-    }, SEARCH_DEBOUNCE_MS);
-
-    return () => window.clearTimeout(timer);
-  }, [searchInput]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    setIsLoadingInitial(true);
-    setError('');
-
-    labyrinthsApi
-      .list({ search: debouncedSearch, limit: PAGE_LIMIT })
-      .then((response) => {
-        if (!isMounted) {
-          return;
-        }
-
-        setItems(response.items);
-        setNextCursor(response.nextCursor);
-      })
-      .catch((loadError: unknown) => {
-        if (isMounted) {
-          setError(errorMessage(loadError, 'Не удалось загрузить лабиринты'));
-          setItems([]);
-          setNextCursor(null);
-        }
-      })
-      .finally(() => {
-        if (isMounted) {
-          setIsLoadingInitial(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [debouncedSearch]);
-
-  const loadMore = useCallback(async () => {
-    if (!nextCursor || isLoadingMore || isLoadingInitial) {
-      return;
-    }
-
-    setIsLoadingMore(true);
-
-    try {
-      const response = await labyrinthsApi.list({
-        search: debouncedSearch,
-        cursor: nextCursor,
-        limit: PAGE_LIMIT,
-      });
-
-      setItems((current) => [...current, ...response.items]);
-      setNextCursor(response.nextCursor);
-    } catch (loadError) {
-      setError(errorMessage(loadError, 'Не удалось загрузить следующую страницу'));
-    } finally {
-      setIsLoadingMore(false);
-    }
-  }, [debouncedSearch, isLoadingInitial, isLoadingMore, nextCursor]);
-
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-
-    if (!sentinel) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          void loadMore();
-        }
-      },
-      { rootMargin: '240px' },
-    );
-
-    observer.observe(sentinel);
-
-    return () => observer.disconnect();
-  }, [loadMore]);
+  const list = useAdminLabyrinthList();
 
   async function confirmDelete() {
     if (!deleteTarget) {
@@ -119,18 +26,23 @@ export function AdminLabyrinthList() {
 
     try {
       await labyrinthsApi.delete(deleteTarget.id);
-      setItems((current) => current.filter((item) => item.id !== deleteTarget.id));
+      list.setItems((current) => current.filter((item) => item.id !== deleteTarget.id));
       setToast(`Лабиринт «${deleteTarget.name}» удалён`);
       setDeleteTarget(null);
     } catch (deleteRequestError) {
-      setDeleteError(errorMessage(deleteRequestError, 'Не удалось удалить лабиринт'));
+      setDeleteError(getErrorMessage(deleteRequestError, 'Не удалось удалить лабиринт'));
     } finally {
       setIsDeleting(false);
     }
   }
 
-  const isEmpty = !isLoadingInitial && items.length === 0 && !error;
-  const emptyText = debouncedSearch ? 'Ничего не найдено' : 'Нет лабиринтов';
+  const isEmpty = !list.isLoadingInitial && list.items.length === 0 && !list.error;
+  const emptyText = list.debouncedSearch ? 'Ничего не найдено' : 'Нет лабиринтов';
+
+  function openDeleteModal(item: LabyrinthListItem) {
+    setDeleteError('');
+    setDeleteTarget(item);
+  }
 
   return (
     <div>
@@ -160,16 +72,16 @@ export function AdminLabyrinthList() {
             className="input search-input"
             type="text"
             placeholder="поиск..."
-            value={searchInput}
-            onChange={(event) => setSearchInput(event.target.value)}
+            value={list.searchInput}
+            onChange={(event) => list.setSearchInput(event.target.value)}
           />
         </div>
 
-        {error ? <div className="form-error">{error}</div> : null}
+        {list.error ? <div className="form-error">{list.error}</div> : null}
 
-        {isLoadingInitial ? <ListSkeleton /> : null}
+        {list.isLoadingInitial ? <ListSkeleton label="Загрузка списка" /> : null}
 
-        {!isLoadingInitial && items.length > 0 ? (
+        {!list.isLoadingInitial && list.items.length > 0 ? (
           <>
             <div className="table-wrap">
               <table className="tbl">
@@ -183,7 +95,7 @@ export function AdminLabyrinthList() {
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((item) => (
+                  {list.items.map((item) => (
                     <tr key={item.id}>
                       <td>{item.name}</td>
                       <td>
@@ -197,10 +109,7 @@ export function AdminLabyrinthList() {
                         <button
                           className="btn btn-sm btn-danger btn-dashed"
                           type="button"
-                          onClick={() => {
-                            setDeleteError('');
-                            setDeleteTarget(item);
-                          }}
+                          onClick={() => openDeleteModal(item)}
                         >
                           удал.
                         </button>
@@ -212,24 +121,8 @@ export function AdminLabyrinthList() {
             </div>
 
             <div className="mobile-list">
-              {items.map((item) => (
-                <article className="maze-list-card" key={item.id}>
-                  <div className="maze-list-title">{item.name}</div>
-                  <div className="maze-list-meta">
-                    {item.width} x {item.height} · {algorithmLabels[item.generationAlgorithm]} ·{' '}
-                    {themeLabels[item.theme]}
-                  </div>
-                  <button
-                    className="btn btn-sm btn-danger btn-dashed"
-                    type="button"
-                    onClick={() => {
-                      setDeleteError('');
-                      setDeleteTarget(item);
-                    }}
-                  >
-                    удал.
-                  </button>
-                </article>
+              {list.items.map((item) => (
+                <AdminLabyrinthCard item={item} key={item.id} onDelete={openDeleteModal} />
               ))}
             </div>
           </>
@@ -237,8 +130,8 @@ export function AdminLabyrinthList() {
 
         {isEmpty ? <div className="empty-state">{emptyText}</div> : null}
 
-        <div ref={sentinelRef} className="scroll-sentinel" />
-        {isLoadingMore ? <div className="hint centered">загружаем ещё...</div> : null}
+        <div ref={list.sentinelRef} className="scroll-sentinel" />
+        {list.isLoadingMore ? <div className="hint centered">загружаем ещё...</div> : null}
       </section>
 
       <AdminDeleteModal
@@ -253,19 +146,4 @@ export function AdminLabyrinthList() {
       />
     </div>
   );
-}
-
-function ListSkeleton() {
-  return (
-    <div className="skeleton-list" aria-label="Загрузка списка">
-      <div />
-      <div />
-      <div />
-      <div />
-    </div>
-  );
-}
-
-function errorMessage(error: unknown, fallback: string) {
-  return error instanceof ApiClientError ? error.message : fallback;
 }

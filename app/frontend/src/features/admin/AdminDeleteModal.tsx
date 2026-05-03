@@ -1,4 +1,5 @@
 import type { LabyrinthListItem } from '../../shared/types/domain';
+import { AppModal } from '../../shared/ui/AppModal';
 
 interface AdminDeleteModalProps {
   labyrinth: LabyrinthListItem | null;
@@ -20,28 +21,26 @@ export function AdminDeleteModal({
   }
 
   return (
-    <div className="modal-backdrop" role="presentation">
-      <section className="modal" role="dialog" aria-modal="true" aria-labelledby="delete-title">
-        <div className="modal-head">
-          <h2 id="delete-title">Подтверждение удаления</h2>
-          <button className="modal-close" type="button" onClick={onCancel} aria-label="Закрыть">
-            x
-          </button>
-        </div>
-        <div className="modal-body">
-          <p className="muted">Удалить выбранный лабиринт?</p>
-          <strong>{labyrinth.name}</strong>
-          {error ? <div className="form-error">{error}</div> : null}
-        </div>
-        <div className="modal-actions">
+    <AppModal
+      title="Подтверждение удаления"
+      titleId="delete-title"
+      onClose={onCancel}
+      actions={
+        <>
           <button className="btn btn-sm btn-ghost" type="button" onClick={onCancel} disabled={isDeleting}>
             Отмена
           </button>
           <button className="btn btn-sm btn-danger" type="button" onClick={onConfirm} disabled={isDeleting}>
             {isDeleting ? 'Удаляем...' : 'Подтвердить удаление'}
           </button>
-        </div>
-      </section>
-    </div>
+        </>
+      }
+    >
+      <div className="modal-body">
+        <p className="muted">Удалить выбранный лабиринт?</p>
+        <strong>{labyrinth.name}</strong>
+        {error ? <div className="form-error">{error}</div> : null}
+      </div>
+    </AppModal>
   );
 }

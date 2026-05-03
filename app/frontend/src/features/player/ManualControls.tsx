@@ -1,4 +1,4 @@
-import type { Direction } from './playerState';
+import type { Direction } from './model/playerState';
 
 interface ManualControlsProps {
   disabled: boolean;

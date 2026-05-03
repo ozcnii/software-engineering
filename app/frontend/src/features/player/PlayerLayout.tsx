@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { ReactNode } from 'react';
-import { ApiClientError } from '../../shared/api/client';
 import { labyrinthsApi } from '../../shared/api/labyrinthsApi';
+import { getErrorMessage } from '../../shared/lib/errors';
 import type {
   Coordinate,
   LabyrinthDetail,
@@ -10,6 +9,7 @@ import type {
   SolvingAlgorithm,
   User,
 } from '../../shared/types/domain';
+import { AppModal } from '../../shared/ui/AppModal';
 import { themeLabels, themeMarks } from '../../shared/ui/labels';
 import { AutoSolvePanel } from './AutoSolvePanel';
 import { ManualControls } from './ManualControls';
@@ -18,19 +18,18 @@ import { PlayerInfoModals } from './PlayerInfoModals';
 import { PlayerLabyrinthList } from './PlayerLabyrinthList';
 import { PlayerStatsPanel } from './PlayerStatsPanel';
 import { PlayerThemePicker } from './PlayerThemePicker';
+import { usePlayerKeyboardMovement } from './hooks/usePlayerKeyboardMovement';
+import { usePlayerTimer } from './hooks/usePlayerTimer';
+import { getCell, isWalkableCell, moveCoordinate, sameCoordinate } from './lib/playerMovement';
 import {
   createInitialRunState,
   formatElapsed,
-  getCell,
   hasProgress,
-  isWalkableCell,
-  moveCoordinate,
-  sameCoordinate,
   type AutoDisplayMode,
   type ControlMode,
   type Direction,
   type PlayerRunState,
-} from './playerState';
+} from './model/playerState';
 
 type PlayerModal = 'about' | 'system' | null;
 type ConfirmAction = 'reset' | 'exit' | 'auto' | null;
@@ -67,24 +66,18 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
   const canUseLevel = Boolean(selectedLabyrinth && run);
   const isBusy = isSolveLoading || isAnimationRunning || animationPath !== null;
 
-  useEffect(() => {
-    if (!isTimerRunning) {
-      return undefined;
-    }
+  const incrementTimer = useCallback(() => {
+    setRun((current) =>
+      current
+        ? {
+            ...current,
+            elapsedSeconds: current.elapsedSeconds + 1,
+          }
+        : current,
+    );
+  }, []);
 
-    const timer = window.setInterval(() => {
-      setRun((current) =>
-        current
-          ? {
-              ...current,
-              elapsedSeconds: current.elapsedSeconds + 1,
-            }
-          : current,
-      );
-    }, 1000);
-
-    return () => window.clearInterval(timer);
-  }, [isTimerRunning]);
+  usePlayerTimer(isTimerRunning, incrementTimer);
 
   useEffect(() => {
     if (!animationPath) {
@@ -235,7 +228,7 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
         setSelectedId(null);
         setSelectedLabyrinth(null);
         setRun(null);
-        setDetailError(errorMessage(error, 'Не удалось загрузить лабиринт'));
+        setDetailError(getErrorMessage(error, 'Не удалось загрузить лабиринт'));
       })
       .finally(() => {
         if (detailRequestIdRef.current === requestId) {
@@ -287,57 +280,10 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
     [controlMode, isAnimationRunning, isSolveLoading, isTimerRunning, run, selectedLabyrinth],
   );
 
-  useEffect(() => {
-    function onKeyDown(event: KeyboardEvent) {
-      if (!selectedLabyrinth || controlMode !== 'manual' || activeModal || confirmAction) {
-        return;
-      }
-
-      const target = event.target as HTMLElement | null;
-      if (
-        target &&
-        (target.tagName === 'INPUT' ||
-          target.tagName === 'TEXTAREA' ||
-          target.tagName === 'SELECT' ||
-          target.isContentEditable)
-      ) {
-        return;
-      }
-
-      const directionByKey: Record<string, Direction | undefined> = {
-        ArrowUp: 'up',
-        w: 'up',
-        W: 'up',
-        ц: 'up',
-        Ц: 'up',
-        ArrowDown: 'down',
-        s: 'down',
-        S: 'down',
-        ы: 'down',
-        Ы: 'down',
-        ArrowLeft: 'left',
-        a: 'left',
-        A: 'left',
-        ф: 'left',
-        Ф: 'left',
-        ArrowRight: 'right',
-        d: 'right',
-        D: 'right',
-        в: 'right',
-        В: 'right',
-      };
-      const direction = directionByKey[event.key];
-
-      if (direction) {
-        event.preventDefault();
-        movePlayer(direction);
-      }
-    }
-
-    window.addEventListener('keydown', onKeyDown);
-
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [activeModal, confirmAction, controlMode, movePlayer, selectedLabyrinth]);
+  usePlayerKeyboardMovement({
+    enabled: Boolean(selectedLabyrinth && controlMode === 'manual' && !activeModal && !confirmAction),
+    onMove: movePlayer,
+  });
 
   const runAutoSolve = useCallback(async () => {
     if (!selectedLabyrinth || isBusy) {
@@ -385,7 +331,7 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
         return;
       }
 
-      setSolveError(errorMessage(error, 'Не удалось построить путь'));
+      setSolveError(getErrorMessage(error, 'Не удалось построить путь'));
       setIsTimerRunning(false);
       setRun(initialRun);
     } finally {
@@ -598,32 +544,21 @@ function MazeSkeleton() {
   );
 }
 
-function SimpleModal({
-  title,
-  children,
-  onClose,
-}: {
-  title: string;
-  children: ReactNode;
-  onClose: () => void;
-}) {
+function SimpleModal({ title, children, onClose }: Parameters<typeof AppModal>[0]) {
   return (
-    <div className="modal-backdrop">
-      <div className="modal">
-        <div className="modal-head">
-          <h2>{title}</h2>
-          <button className="modal-close" type="button" onClick={onClose} aria-label="Закрыть">
-            x
-          </button>
-        </div>
-        <div className="modal-body">{children}</div>
-        <div className="modal-actions">
+    <AppModal
+      title={title}
+      onClose={onClose}
+      actions={
+        <>
           <button className="btn btn-sm btn-primary" type="button" onClick={onClose}>
             Закрыть
           </button>
-        </div>
-      </div>
-    </div>
+        </>
+      }
+    >
+      <div className="modal-body">{children}</div>
+    </AppModal>
   );
 }
 
@@ -655,30 +590,23 @@ function ConfirmModal({
   }[action];
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal">
-        <div className="modal-head">
-          <h2>{copy.title}</h2>
-          <button className="modal-close" type="button" onClick={onCancel} aria-label="Закрыть">
-            x
-          </button>
-        </div>
-        <div className="modal-body">
-          <p>{copy.text}</p>
-        </div>
-        <div className="modal-actions">
+    <AppModal
+      title={copy.title}
+      onClose={onCancel}
+      actions={
+        <>
           <button className="btn btn-sm btn-ghost" type="button" onClick={onCancel}>
             Отмена
           </button>
           <button className="btn btn-sm btn-primary" type="button" onClick={onConfirm}>
             {copy.confirm}
           </button>
-        </div>
+        </>
+      }
+    >
+      <div className="modal-body">
+        <p>{copy.text}</p>
       </div>
-    </div>
+    </AppModal>
   );
-}
-
-function errorMessage(error: unknown, fallback: string) {
-  return error instanceof ApiClientError ? error.message : fallback;
 }
