@@ -31,6 +31,7 @@
 | Backend labyrinths and algorithms | `03-backend-labyrinths-algorithms.md` | Done | DB-backed labyrinth smoke checks pass: list/search, generate auto/manual, create/detail/delete, BFS/DFS, role errors |
 | Frontend auth and admin | `04-frontend-auth-admin.md` | Done | Auth/admin frontend implemented; `typecheck`, `build`, Docker/migrate/seed, API smoke checks, and headless browser smoke checks pass |
 | Frontend player | `05-frontend-player.md` | Done | Player screen, manual movement, themes, auto-solve UI verified with command, API, and headless browser checks |
+| Frontend refactor | `07-frontend-refactor.md` | Planned | Soft feature-sliced cleanup for frontend duplication, large components, folder structure, and global CSS organization |
 | Integration acceptance | `06-integration-acceptance.md` | Planned | End-to-end manual verification by `CHECKLIST.md`; decisions reviewed |
 
 ## Implementation Status
@@ -52,6 +53,7 @@
 | Manual movement | Done | PLAYER-05..PLAYER-08 |
 | Auto-solve BFS/DFS | Done | AUTO-01..AUTO-05, API-08, API-09 |
 | Info screens | Done | INFO-01..INFO-04 |
+| Frontend refactor | Planned | Maintenance refactor; no direct checklist behavior changes |
 | Full acceptance pass | Not started | Section 9 of `CHECKLIST.md` |
 
 ## Status Legend
