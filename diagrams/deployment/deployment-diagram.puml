@@ -1,0 +1,51 @@
+@startuml
+title Диаграмма развертывания системы
+
+skinparam backgroundColor #FFFFFF
+skinparam DefaultFontName Helvetica
+skinparam componentStyle rectangle
+skinparam node {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  FontSize 12
+}
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  FontSize 12
+}
+skinparam artifact {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  FontSize 12
+}
+skinparam ArrowColor #000000
+skinparam ArrowFontSize 11
+
+left to right direction
+
+node "Клиент" <<processor>> as Client {
+  component "Операционная система" as ClientOS
+  component "Браузер" as Browser
+  artifact "React frontend" <<script>> as ReactFrontend
+}
+
+node "Сеть" <<net>> as Network
+
+node "Сервер" <<processor>> as Server {
+  component "Операционная система" as ServerOS
+  component "Node.js runtime" as NodeRuntime
+  component "NestJS backend API" as BackendApi
+  component "СУБД\nPostgreSQL 16" as PostgreSQL
+  database "База данных" as Database
+}
+
+Client -- Network
+Network -- Server
+
+Browser ..> ReactFrontend
+NodeRuntime ..> BackendApi
+BackendApi ..> PostgreSQL
+PostgreSQL ..> Database
+
+@enduml
