@@ -1,0 +1,61 @@
+@startdot
+digraph G {
+  graph [
+    bgcolor="white",
+    rankdir=LR,
+    splines=line,
+    nodesep=0.5,
+    ranksep=0.8,
+    margin=0.05
+  ];
+
+  node [
+    shape=plaintext,
+    fontname="Helvetica",
+    fontsize=15
+  ];
+
+  edge [
+    color="black",
+    arrowhead=none,
+    penwidth=1.2
+  ];
+
+  User [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5">
+        <TR><TD BORDER="0" ALIGN="LEFT">Пользователь</TD></TR>
+        <TR><TD PORT="id" ALIGN="LEFT"><B>Ид пользователя</B></TD></TR>
+        <TR><TD ALIGN="LEFT">Логин</TD></TR>
+        <TR><TD ALIGN="LEFT">Хеш пароля</TD></TR>
+        <TR><TD ALIGN="LEFT">Роль</TD></TR>
+        <TR><TD ALIGN="LEFT">Дата создания</TD></TR>
+      </TABLE>
+    >
+  ];
+
+  Labyrinth [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5">
+        <TR><TD BORDER="0" ALIGN="LEFT">Лабиринт</TD></TR>
+        <TR><TD ALIGN="LEFT"><B>Ид лабиринта</B></TD></TR>
+        <TR><TD PORT="user_id" ALIGN="LEFT">Ид пользователя (FK)</TD></TR>
+        <TR><TD ALIGN="LEFT">Название</TD></TR>
+        <TR><TD ALIGN="LEFT">Ширина</TD></TR>
+        <TR><TD ALIGN="LEFT">Высота</TD></TR>
+        <TR><TD ALIGN="LEFT">Тема</TD></TR>
+        <TR><TD ALIGN="LEFT">Алгоритм генерации</TD></TR>
+        <TR><TD ALIGN="LEFT">Режим входа и выхода</TD></TR>
+        <TR><TD ALIGN="LEFT">Сетка</TD></TR>
+        <TR><TD ALIGN="LEFT">Дата создания</TD></TR>
+        <TR><TD ALIGN="LEFT">Дата удаления</TD></TR>
+      </TABLE>
+    >
+  ];
+
+  User:id:e -> Labyrinth:user_id:w [
+    arrowhead=dot,
+    arrowsize=0.8
+  ];
+}
+@enddot
