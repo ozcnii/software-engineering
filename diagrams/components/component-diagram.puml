@@ -9,70 +9,82 @@ skinparam component {
   BorderColor #000000
   FontSize 12
 }
-skinparam package {
-  BackgroundColor #FFFFFF
-  BorderColor #000000
-  FontSize 12
-}
 skinparam ArrowColor #000000
 skinparam ArrowFontSize 11
 
 left to right direction
 
-actor "Пользователь" as User
+component "React/Vite frontend" <<executable>> as Frontend
+component "App.tsx" <<source>> as App
+component "router.tsx" <<source>> as Router
+component "AuthScreen.tsx" <<source>> as AuthScreen
+component "LoginForm.tsx" <<source>> as LoginForm
+component "RegisterForm.tsx" <<source>> as RegisterForm
+component "AdminLayout.tsx" <<source>> as AdminLayout
+component "AdminLabyrinthList.tsx" <<source>> as AdminList
+component "AdminCreateWizard.tsx" <<source>> as AdminCreate
+component "AdminMazeEditor.tsx" <<source>> as AdminEditor
+component "PlayerLayout.tsx" <<source>> as PlayerLayout
+component "PlayerLabyrinthList.tsx" <<source>> as PlayerList
+component "MazeGrid.tsx" <<source>> as MazeGrid
+component "AutoSolvePanel.tsx" <<source>> as AutoSolvePanel
+component "client.ts" <<source>> as ClientApi
+component "authApi.ts" <<source>> as AuthApi
+component "labyrinthsApi.ts" <<source>> as LabyrinthsApi
 
-package "Клиентская часть" {
-  component "React/Vite frontend" <<executable>> as Frontend
-  component "features/auth" <<source>> as FeatureAuth
-  component "features/admin" <<source>> as FeatureAdmin
-  component "features/player" <<source>> as FeaturePlayer
-  component "shared/api" <<source>> as FrontApi
-}
+component "NestJS backend API" <<executable>> as BackendApi
+component "AppModule" <<source>> as AppModule
+component "AuthModule" <<source>> as AuthModule
+component "UsersModule" <<source>> as UsersModule
+component "LabyrinthsModule" <<source>> as LabyrinthsModule
+component "GenerationModule" <<source>> as GenerationModule
+component "SolvingModule" <<source>> as SolvingModule
+component "GenerationService" <<source>> as GenerationService
+component "SolvingService" <<source>> as SolvingService
+component "prim.generator.ts" <<source>> as PrimGenerator
+component "kruskal.generator.ts" <<source>> as KruskalGenerator
+component "bfs.solver.ts" <<source>> as BfsSolver
+component "dfs.solver.ts" <<source>> as DfsSolver
+component "Prisma Client" <<library>> as PrismaClient
+component "PostgreSQL" <<executable>> as PostgreSQL
 
-package "Общие компоненты" {
-  component "shared/types" <<source>> as SharedTypes
-}
+Frontend ..> App
+App ..> Router
+Router ..> AuthScreen
+AuthScreen ..> LoginForm
+AuthScreen ..> RegisterForm
+Router ..> AdminLayout
+AdminLayout ..> AdminList
+AdminLayout ..> AdminCreate
+AdminCreate ..> AdminEditor
+Router ..> PlayerLayout
+PlayerLayout ..> PlayerList
+PlayerLayout ..> MazeGrid
+PlayerLayout ..> AutoSolvePanel
 
-package "Серверная часть" {
-  component "NestJS backend API" <<executable>> as BackendApi
-  component "AuthModule" <<source>> as AuthModule
-  component "UsersModule" <<source>> as UsersModule
-  component "LabyrinthsModule" <<source>> as LabyrinthsModule
-  component "GenerationModule" <<source>> as GenerationModule
-  component "SolvingModule" <<source>> as SolvingModule
-  component "Prisma Client" <<library>> as PrismaClient
-}
+LoginForm ..> AuthApi
+RegisterForm ..> AuthApi
+AdminList ..> LabyrinthsApi
+AdminCreate ..> LabyrinthsApi
+PlayerLayout ..> LabyrinthsApi
+AuthApi ..> ClientApi
+LabyrinthsApi ..> ClientApi
+ClientApi ..> BackendApi
 
-package "Слой данных" {
-  component "PostgreSQL" <<executable>> as PostgreSQL
-}
-
-User --> Frontend
-
-Frontend ..> FeatureAuth
-Frontend ..> FeatureAdmin
-Frontend ..> FeaturePlayer
-
-FeatureAuth ..> FrontApi
-FeatureAdmin ..> FrontApi
-FeaturePlayer ..> FrontApi
-FeatureAuth ..> SharedTypes
-FeatureAdmin ..> SharedTypes
-FeaturePlayer ..> SharedTypes
-FrontApi ..> SharedTypes
-FrontApi ..> BackendApi : REST JSON
-
-BackendApi ..> UsersModule
-BackendApi ..> AuthModule
-BackendApi ..> LabyrinthsModule
-
+BackendApi ..> AppModule
+AppModule ..> AuthModule
+AppModule ..> UsersModule
+AppModule ..> LabyrinthsModule
 AuthModule ..> UsersModule
-UsersModule ..> SharedTypes
 LabyrinthsModule ..> UsersModule
 LabyrinthsModule ..> GenerationModule
 LabyrinthsModule ..> SolvingModule
-LabyrinthsModule ..> SharedTypes
-
+GenerationModule ..> GenerationService
+SolvingModule ..> SolvingService
+GenerationService ..> PrimGenerator
+GenerationService ..> KruskalGenerator
+SolvingService ..> BfsSolver
+SolvingService ..> DfsSolver
 UsersModule ..> PrismaClient
 LabyrinthsModule ..> PrismaClient
 PrismaClient ..> PostgreSQL
