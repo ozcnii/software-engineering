@@ -11,23 +11,23 @@ import {
 
 export class GenerateLabyrinthDto {
   @Type(() => Number)
-  @IsInt({ message: 'Width must be an integer' })
-  @Min(7, { message: 'Width must be at least 7' })
-  @Max(25, { message: 'Width must be at most 25' })
+  @IsInt({ message: 'Ширина должна быть целым числом' })
+  @Min(7, { message: 'Ширина должна быть не меньше 7' })
+  @Max(25, { message: 'Ширина должна быть не больше 25' })
   width!: number;
 
   @Type(() => Number)
-  @IsInt({ message: 'Height must be an integer' })
-  @Min(7, { message: 'Height must be at least 7' })
-  @Max(25, { message: 'Height must be at most 25' })
+  @IsInt({ message: 'Высота должна быть целым числом' })
+  @Min(7, { message: 'Высота должна быть не меньше 7' })
+  @Max(25, { message: 'Высота должна быть не больше 25' })
   height!: number;
 
-  @IsIn(LABYRINTH_THEMES, { message: 'Invalid theme' })
+  @IsIn(LABYRINTH_THEMES, { message: 'Некорректная тема лабиринта' })
   theme!: LabyrinthThemeValue;
 
-  @IsIn(GENERATION_ALGORITHMS, { message: 'Invalid generation algorithm' })
+  @IsIn(GENERATION_ALGORITHMS, { message: 'Некорректный алгоритм генерации' })
   generationAlgorithm!: GenerationAlgorithmValue;
 
-  @IsIn(ENTRY_MODES, { message: 'Invalid entry mode' })
+  @IsIn(ENTRY_MODES, { message: 'Некорректный режим входа и выхода' })
   entryMode!: EntryModeValue;
 }

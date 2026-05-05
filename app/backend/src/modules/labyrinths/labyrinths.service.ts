@@ -47,8 +47,8 @@ export class LabyrinthsService implements OnModuleDestroy {
 
     if (!sizeResult.valid) {
       throw ApiError.validation({
-        width: sizeResult.message ?? 'Invalid width',
-        height: sizeResult.message ?? 'Invalid height',
+        width: sizeResult.message ?? 'Некорректная ширина',
+        height: sizeResult.message ?? 'Некорректная высота',
       });
     }
 
@@ -61,8 +61,8 @@ export class LabyrinthsService implements OnModuleDestroy {
 
     if (!sizeResult.valid) {
       throw ApiError.validation({
-        width: sizeResult.message ?? 'Invalid width',
-        height: sizeResult.message ?? 'Invalid height',
+        width: sizeResult.message ?? 'Некорректная ширина',
+        height: sizeResult.message ?? 'Некорректная высота',
       });
     }
 
@@ -70,7 +70,7 @@ export class LabyrinthsService implements OnModuleDestroy {
 
     if (!gridResult.valid) {
       throw ApiError.validation({
-        grid: gridResult.message ?? 'Invalid grid',
+        grid: gridResult.message ?? 'Некорректная сетка лабиринта',
       });
     }
 
@@ -166,7 +166,7 @@ export class LabyrinthsService implements OnModuleDestroy {
   private validateName(name: string) {
     if (name.length < 1 || name.length > 40) {
       throw ApiError.validation({
-        name: 'Name must be between 1 and 40 characters',
+        name: 'Название должно быть от 1 до 40 символов',
       });
     }
 
@@ -211,7 +211,7 @@ export class LabyrinthsService implements OnModuleDestroy {
 
     if (typeof rawSearch !== 'string') {
       throw ApiError.validation({
-        search: 'Search must be a string',
+        search: 'Поисковый запрос должен быть строкой',
       });
     }
 
@@ -223,7 +223,7 @@ export class LabyrinthsService implements OnModuleDestroy {
 
     if (search.length > 40) {
       throw ApiError.validation({
-        search: 'Search must be at most 40 characters',
+        search: 'Поисковый запрос должен быть не длиннее 40 символов',
       });
     }
 
@@ -237,7 +237,7 @@ export class LabyrinthsService implements OnModuleDestroy {
 
     if (typeof rawLimit !== 'string' || !/^\d+$/.test(rawLimit)) {
       throw ApiError.validation({
-        limit: 'Limit must be a positive number',
+        limit: 'Лимит должен быть положительным числом',
       });
     }
 
@@ -245,7 +245,7 @@ export class LabyrinthsService implements OnModuleDestroy {
 
     if (limit < 1) {
       throw ApiError.validation({
-        limit: 'Limit must be at least 1',
+        limit: 'Лимит должен быть не меньше 1',
       });
     }
 
@@ -259,7 +259,7 @@ export class LabyrinthsService implements OnModuleDestroy {
 
     if (typeof rawCursor !== 'string' || rawCursor.trim().length === 0) {
       throw ApiError.validation({
-        cursor: 'Invalid cursor',
+        cursor: 'Некорректный курсор',
       });
     }
 
@@ -277,7 +277,7 @@ export class LabyrinthsService implements OnModuleDestroy {
         typeof parsed.id !== 'string' ||
         parsed.id.length === 0
       ) {
-        throw new Error('Invalid cursor payload');
+        throw new Error('Некорректные данные курсора');
       }
 
       return {
@@ -286,7 +286,7 @@ export class LabyrinthsService implements OnModuleDestroy {
       };
     } catch {
       throw ApiError.validation({
-        cursor: 'Invalid cursor',
+        cursor: 'Некорректный курсор',
       });
     }
   }

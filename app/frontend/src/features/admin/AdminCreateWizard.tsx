@@ -117,7 +117,7 @@ export function AdminCreateWizard() {
   function handleApiError(error: unknown, fallback: string) {
     if (error instanceof ApiClientError) {
       setFieldErrors(error.fields);
-      setGeneralError(error.message);
+      setGeneralError(error.fields.grid ?? firstFieldError(error.fields) ?? error.message);
     } else {
       setGeneralError(fallback);
     }
@@ -190,4 +190,8 @@ export function AdminCreateWizard() {
       ) : null}
     </div>
   );
+}
+
+function firstFieldError(fields: ApiFieldErrors) {
+  return Object.values(fields)[0];
 }

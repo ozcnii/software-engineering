@@ -7,12 +7,19 @@ interface MazeEditorGridProps {
 }
 
 export function MazeEditorGrid({ grid, hint, onCellClick }: MazeEditorGridProps) {
+  const width = grid[0]?.length ?? 1;
+  const height = grid.length || 1;
+  const maxGridWidth = Math.min(620, Math.round((width / height) * 620));
+
   return (
     <div className="card maze-editor-card">
       <div
         className="maze-grid"
         style={{
-          gridTemplateColumns: `repeat(${grid[0]?.length ?? 1}, minmax(14px, 1fr))`,
+          gridTemplateColumns: `repeat(${width}, minmax(14px, 1fr))`,
+          gridTemplateRows: `repeat(${height}, minmax(14px, 1fr))`,
+          aspectRatio: `${width} / ${height}`,
+          width: `min(100%, ${maxGridWidth}px)`,
         }}
       >
         {grid.map((row, rowIndex) =>

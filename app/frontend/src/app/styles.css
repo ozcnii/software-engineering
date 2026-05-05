@@ -770,7 +770,6 @@ a {
 .maze-grid {
   display: grid;
   width: min(100%, 620px);
-  aspect-ratio: 1 / 1;
   border: 2px solid var(--ink);
   background: var(--ink);
   gap: 1px;

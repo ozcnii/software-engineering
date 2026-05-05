@@ -11,6 +11,8 @@ interface CreateSaveStepProps {
 }
 
 export function CreateSaveStep({ params, grid, isSaving, onSave, onCancel }: CreateSaveStepProps) {
+  const maxPreviewWidth = Math.min(260, Math.round((params.width / params.height) * 260));
+
   return (
     <section className="wiz-save card">
       <div className="card-title">Проверка перед сохранением</div>
@@ -19,7 +21,15 @@ export function CreateSaveStep({ params, grid, isSaving, onSave, onCancel }: Cre
       <SummaryRow label="Тема" value={themeLabels[params.theme]} />
       <SummaryRow label="Алгоритм" value={algorithmLabels[params.generationAlgorithm]} />
       <SummaryRow label="Вход и выход" value="заданы" />
-      <div className="mini-preview" style={{ gridTemplateColumns: `repeat(${params.width}, minmax(6px, 1fr))` }}>
+      <div
+        className="mini-preview"
+        style={{
+          gridTemplateColumns: `repeat(${params.width}, minmax(6px, 1fr))`,
+          gridTemplateRows: `repeat(${params.height}, minmax(6px, 1fr))`,
+          aspectRatio: `${params.width} / ${params.height}`,
+          width: `min(100%, ${maxPreviewWidth}px)`,
+        }}
+      >
         {grid.map((row, rowIndex) =>
           row.map((cell, colIndex) => (
             <span className={`mini-cell cell-${cell}`} key={`${rowIndex}-${colIndex}`} />

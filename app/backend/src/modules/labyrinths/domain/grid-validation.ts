@@ -15,21 +15,21 @@ export function validateOddSize(width: number, height: number): GridValidationRe
   if (!Number.isInteger(width) || !Number.isInteger(height)) {
     return {
       valid: false,
-      message: 'Width and height must be integers',
+      message: 'Ширина и высота должны быть целыми числами',
     };
   }
 
   if (width < 7 || width > 25 || height < 7 || height > 25) {
     return {
       valid: false,
-      message: 'Width and height must be between 7 and 25',
+      message: 'Ширина и высота должны быть от 7 до 25',
     };
   }
 
   if (width % 2 === 0 || height % 2 === 0) {
     return {
       valid: false,
-      message: 'Width and height must be odd numbers',
+      message: 'Ширина и высота должны быть нечетными числами',
     };
   }
 
@@ -50,14 +50,14 @@ export function validateGridForPersistence(
   if (!isMazeGridShape(grid, width, height)) {
     return {
       valid: false,
-      message: 'Grid must match width and height',
+      message: 'Сетка должна соответствовать указанным ширине и высоте',
     };
   }
 
   if (!allCellsAreValid(grid)) {
     return {
       valid: false,
-      message: 'Grid contains invalid cell values',
+      message: 'Сетка содержит некорректные значения клеток',
     };
   }
 
@@ -66,7 +66,7 @@ export function validateGridForPersistence(
   if (!pair) {
     return {
       valid: false,
-      message: 'Grid must contain exactly one entry and one exit',
+      message: 'Сетка должна содержать ровно один вход и один выход',
     };
   }
 
@@ -79,7 +79,7 @@ export function validateGridForPersistence(
   if (!hasPath(grid, pair.entry, pair.exit)) {
     return {
       valid: false,
-      message: 'Grid must contain a path from entry to exit',
+      message: 'В лабиринте должен быть путь от входа к выходу',
     };
   }
 
@@ -136,7 +136,7 @@ export function validateEntryExit(
   if (sameCoordinate(entry, exit)) {
     return {
       valid: false,
-      message: 'Entry and exit must be different cells',
+      message: 'Вход и выход должны быть разными клетками',
     };
   }
 
@@ -144,14 +144,14 @@ export function validateEntryExit(
     if (!isOnPerimeter(grid, point)) {
       return {
         valid: false,
-        message: 'Entry and exit must be on the perimeter',
+        message: 'Вход и выход должны находиться на периметре',
       };
     }
 
     if (isCorner(grid, point)) {
       return {
         valid: false,
-        message: 'Entry and exit cannot be in corners',
+        message: 'Вход и выход не должны находиться в углах',
       };
     }
 
@@ -160,7 +160,7 @@ export function validateEntryExit(
     if (!inner || grid[inner.row][inner.col] !== 'path') {
       return {
         valid: false,
-        message: 'Entry and exit must have adjacent inner path cells',
+        message: 'Рядом с входом и выходом внутри лабиринта должен быть проход',
       };
     }
   }
