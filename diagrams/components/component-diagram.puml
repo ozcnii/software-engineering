@@ -33,20 +33,20 @@ component "authApi.ts" <<source>> as AuthApi
 component "labyrinthsApi.ts" <<source>> as LabyrinthsApi
 
 component "NestJS backend API" <<executable>> as BackendApi
-component "AppModule" <<source>> as AppModule
-component "AuthModule" <<source>> as AuthModule
-component "UsersModule" <<source>> as UsersModule
-component "LabyrinthsModule" <<source>> as LabyrinthsModule
-component "GenerationModule" <<source>> as GenerationModule
-component "SolvingModule" <<source>> as SolvingModule
-component "GenerationService" <<source>> as GenerationService
-component "SolvingService" <<source>> as SolvingService
+component "main.ts" <<source>> as MainTs
+component "app.module.ts" <<source>> as AppModule
+component "auth.module.ts" <<source>> as AuthModule
+component "users.module.ts" <<source>> as UsersModule
+component "labyrinths.module.ts" <<source>> as LabyrinthsModule
+component "generation.module.ts" <<source>> as GenerationModule
+component "solving.module.ts" <<source>> as SolvingModule
+component "generation.service.ts" <<source>> as GenerationService
+component "solving.service.ts" <<source>> as SolvingService
 component "prim.generator.ts" <<source>> as PrimGenerator
 component "kruskal.generator.ts" <<source>> as KruskalGenerator
 component "bfs.solver.ts" <<source>> as BfsSolver
 component "dfs.solver.ts" <<source>> as DfsSolver
 component "Prisma Client" <<library>> as PrismaClient
-component "PostgreSQL" <<executable>> as PostgreSQL
 
 Frontend ..> App
 App ..> Router
@@ -71,7 +71,8 @@ AuthApi ..> ClientApi
 LabyrinthsApi ..> ClientApi
 ClientApi ..> BackendApi
 
-BackendApi ..> AppModule
+BackendApi ..> MainTs
+MainTs ..> AppModule
 AppModule ..> AuthModule
 AppModule ..> UsersModule
 AppModule ..> LabyrinthsModule
@@ -87,6 +88,5 @@ SolvingService ..> BfsSolver
 SolvingService ..> DfsSolver
 UsersModule ..> PrismaClient
 LabyrinthsModule ..> PrismaClient
-PrismaClient ..> PostgreSQL
 
 @enduml
