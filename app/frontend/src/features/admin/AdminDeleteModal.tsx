@@ -1,4 +1,4 @@
-import type { LabyrinthListItem } from '../../shared/types/domain';
+import type { LabyrinthListItem } from '@labyrinth/shared/types/domain';
 import { AppModal } from '../../shared/ui/AppModal';
 
 interface AdminDeleteModalProps {

@@ -1,4 +1,4 @@
-import type { LabyrinthListItem } from '../../../shared/types/domain';
+import type { LabyrinthListItem } from '@labyrinth/shared/types/domain';
 import { algorithmLabels, themeLabels } from '../../../shared/ui/labels';
 
 interface AdminLabyrinthCardProps {

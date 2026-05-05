@@ -3,7 +3,7 @@ import { labyrinthsApi } from '../../../shared/api/labyrinthsApi';
 import { useDebouncedValue } from '../../../shared/hooks/useDebouncedValue';
 import { useIntersectionLoadMore } from '../../../shared/hooks/useIntersectionLoadMore';
 import { getErrorMessage } from '../../../shared/lib/errors';
-import type { LabyrinthListItem } from '../../../shared/types/domain';
+import type { LabyrinthListItem } from '@labyrinth/shared/types/domain';
 
 const SEARCH_DEBOUNCE_MS = 500;
 const PAGE_LIMIT = 20;

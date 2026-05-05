@@ -1,9 +1,9 @@
 import type {
-  ApiFieldErrors,
   EntryMode,
   GenerationAlgorithm,
   LabyrinthTheme,
-} from '../../../shared/types/domain';
+} from '@labyrinth/shared/types/domain';
+import type { ApiFieldErrors } from '@labyrinth/shared/types/api';
 import type { WizardParams } from '../model/createWizardState';
 
 interface CreateParamsStepProps {

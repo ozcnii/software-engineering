@@ -1,19 +1,9 @@
 import { apiRequest } from './client';
-import type { User } from '../types/domain';
-
-interface UserResponse {
-  user: User;
-}
-
-export interface LoginPayload {
-  login: string;
-  password: string;
-}
-
-export interface RegisterPayload extends LoginPayload {
-  passwordConfirm: string;
-  acceptedTerms: boolean;
-}
+import type {
+  LoginPayload,
+  RegisterPayload,
+  UserResponse,
+} from '@labyrinth/shared/types/api';
 
 export const authApi = {
   login(payload: LoginPayload) {

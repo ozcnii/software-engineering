@@ -1,4 +1,4 @@
-import type { SolvingAlgorithm } from '../../shared/types/domain';
+import type { SolvingAlgorithm } from '@labyrinth/shared/types/domain';
 import type { AutoDisplayMode } from './model/playerState';
 
 interface AutoSolvePanelProps {

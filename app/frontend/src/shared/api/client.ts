@@ -1,4 +1,4 @@
-import type { ApiErrorPayload } from '../types/domain';
+import type { ApiErrorPayload } from '@labyrinth/shared/types/api';
 
 export class ApiClientError extends Error {
   readonly status: number;

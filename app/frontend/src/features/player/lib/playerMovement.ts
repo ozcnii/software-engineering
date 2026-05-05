@@ -1,4 +1,4 @@
-import type { Coordinate, MazeCell } from '../../../shared/types/domain';
+import type { Coordinate, MazeCell } from '@labyrinth/shared/types/domain';
 import type { Direction } from '../model/playerState';
 
 export const directionDeltas: Record<Direction, Coordinate> = {

@@ -1,4 +1,4 @@
-import type { MazeGrid } from '../../../shared/types/domain';
+import type { MazeGrid } from '@labyrinth/shared/types/domain';
 import { algorithmLabels, themeLabels } from '../../../shared/ui/labels';
 import type { WizardParams } from '../model/createWizardState';
 

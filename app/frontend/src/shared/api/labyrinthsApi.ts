@@ -1,42 +1,16 @@
 import { apiRequest } from './client';
 import type {
-  EntryMode,
-  GenerationAlgorithm,
+  CreateLabyrinthPayload,
+  GenerateLabyrinthPayload,
+  GenerateLabyrinthResponse,
+  LabyrinthListQuery,
+  LabyrinthListResponse,
+} from '@labyrinth/shared/types/api';
+import type {
   LabyrinthDetail,
-  LabyrinthListItem,
-  LabyrinthTheme,
-  MazeGrid,
   SolvingAlgorithm,
   SolveLabyrinthResponse,
-} from '../types/domain';
-
-export interface LabyrinthListResponse {
-  items: LabyrinthListItem[];
-  nextCursor: string | null;
-}
-
-export interface LabyrinthListQuery {
-  search?: string;
-  cursor?: string | null;
-  limit?: number;
-}
-
-export interface GenerateLabyrinthPayload {
-  width: number;
-  height: number;
-  theme: LabyrinthTheme;
-  generationAlgorithm: GenerationAlgorithm;
-  entryMode: EntryMode;
-}
-
-export interface GenerateLabyrinthResponse extends GenerateLabyrinthPayload {
-  grid: MazeGrid;
-}
-
-export interface CreateLabyrinthPayload extends GenerateLabyrinthPayload {
-  name: string;
-  grid: MazeGrid;
-}
+} from '@labyrinth/shared/types/domain';
 
 export const labyrinthsApi = {
   list(query: LabyrinthListQuery = {}) {

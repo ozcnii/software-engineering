@@ -1,4 +1,4 @@
-import type { ApiFieldErrors } from '../../../shared/types/domain';
+import type { ApiFieldErrors } from '@labyrinth/shared/types/api';
 
 export function validateLoginFields(login: string, password: string): ApiFieldErrors {
   const errors: ApiFieldErrors = {};

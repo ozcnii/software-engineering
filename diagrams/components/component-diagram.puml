@@ -1,0 +1,80 @@
+@startuml
+title Диаграмма компонентов системы
+
+skinparam backgroundColor #FFFFFF
+skinparam DefaultFontName Helvetica
+skinparam componentStyle rectangle
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  FontSize 12
+}
+skinparam package {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  FontSize 12
+}
+skinparam ArrowColor #000000
+skinparam ArrowFontSize 11
+
+left to right direction
+
+actor "Пользователь" as User
+
+package "Клиентская часть" {
+  component "React/Vite frontend" <<executable>> as Frontend
+  component "features/auth" <<source>> as FeatureAuth
+  component "features/admin" <<source>> as FeatureAdmin
+  component "features/player" <<source>> as FeaturePlayer
+  component "shared/api" <<source>> as FrontApi
+}
+
+package "Общие компоненты" {
+  component "shared/types" <<source>> as SharedTypes
+}
+
+package "Серверная часть" {
+  component "NestJS backend API" <<executable>> as BackendApi
+  component "AuthModule" <<source>> as AuthModule
+  component "UsersModule" <<source>> as UsersModule
+  component "LabyrinthsModule" <<source>> as LabyrinthsModule
+  component "GenerationModule" <<source>> as GenerationModule
+  component "SolvingModule" <<source>> as SolvingModule
+  component "Prisma Client" <<library>> as PrismaClient
+}
+
+package "Слой данных" {
+  component "PostgreSQL" <<executable>> as PostgreSQL
+}
+
+User --> Frontend
+
+Frontend ..> FeatureAuth
+Frontend ..> FeatureAdmin
+Frontend ..> FeaturePlayer
+
+FeatureAuth ..> FrontApi
+FeatureAdmin ..> FrontApi
+FeaturePlayer ..> FrontApi
+FeatureAuth ..> SharedTypes
+FeatureAdmin ..> SharedTypes
+FeaturePlayer ..> SharedTypes
+FrontApi ..> SharedTypes
+FrontApi ..> BackendApi : REST JSON
+
+BackendApi ..> UsersModule
+BackendApi ..> AuthModule
+BackendApi ..> LabyrinthsModule
+
+AuthModule ..> UsersModule
+UsersModule ..> SharedTypes
+LabyrinthsModule ..> UsersModule
+LabyrinthsModule ..> GenerationModule
+LabyrinthsModule ..> SolvingModule
+LabyrinthsModule ..> SharedTypes
+
+UsersModule ..> PrismaClient
+LabyrinthsModule ..> PrismaClient
+PrismaClient ..> PostgreSQL
+
+@enduml

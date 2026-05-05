@@ -18,7 +18,8 @@
   },
   "workspaces": [
     "frontend",
-    "backend"
+    "backend",
+    "shared"
   ],
   "devDependencies": {
     "prettier": "^3.8.3",

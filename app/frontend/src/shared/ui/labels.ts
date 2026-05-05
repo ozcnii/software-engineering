@@ -1,4 +1,4 @@
-import type { GenerationAlgorithm, LabyrinthTheme } from '../types/domain';
+import type { GenerationAlgorithm, LabyrinthTheme } from '@labyrinth/shared/types/domain';
 
 export const themeLabels: Record<LabyrinthTheme, string> = {
   winter: 'Зима',

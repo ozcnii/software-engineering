@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { labyrinthsApi } from '../../shared/api/labyrinthsApi';
 import { getErrorMessage } from '../../shared/lib/errors';
-import type { LabyrinthListItem } from '../../shared/types/domain';
+import type { LabyrinthListItem } from '@labyrinth/shared/types/domain';
 import { ListSkeleton } from '../../shared/ui/ListSkeleton';
 import { algorithmLabels, themeLabels, themeMarks } from '../../shared/ui/labels';
 import { AdminDeleteModal } from './AdminDeleteModal';

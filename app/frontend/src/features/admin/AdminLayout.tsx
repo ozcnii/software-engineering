@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import type { User } from '../../shared/types/domain';
+import type { User } from '@labyrinth/shared/types/domain';
 
 interface AdminLayoutProps {
   user: User;

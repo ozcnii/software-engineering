@@ -1,4 +1,4 @@
-import type { Coordinate, MazeCell, MazeGrid } from '../../../shared/types/domain';
+import type { Coordinate, MazeCell, MazeGrid } from '@labyrinth/shared/types/domain';
 
 export type EditorTool = 'wall' | 'path' | 'entry' | 'exit';
 

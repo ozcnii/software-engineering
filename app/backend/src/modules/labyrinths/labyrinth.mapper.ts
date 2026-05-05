@@ -5,6 +5,10 @@ import {
   LabyrinthTheme,
   Prisma,
 } from '@prisma/client';
+import type {
+  LabyrinthDetail,
+  LabyrinthListItem,
+} from '@labyrinth/shared/types/domain';
 import { ApiError } from '../../shared/errors/api-error';
 import { computeDifficulty } from './domain/difficulty';
 import { assertIntegrityGrid } from './domain/grid-validation';
@@ -15,29 +19,9 @@ import {
   MazeGrid,
 } from './domain/maze-types';
 
-export interface LabyrinthListItemResponse {
-  id: string;
-  name: string;
-  width: number;
-  height: number;
-  theme: LabyrinthThemeValue;
-  generationAlgorithm: GenerationAlgorithmValue;
-  entryMode: EntryModeValue;
-  difficulty: number;
-  createdAt: string;
-}
+export type LabyrinthListItemResponse = LabyrinthListItem;
 
-export interface LabyrinthDetailResponse extends LabyrinthListItemResponse {
-  grid: MazeGrid;
-  entry: {
-    row: number;
-    col: number;
-  };
-  exit: {
-    row: number;
-    col: number;
-  };
-}
+export type LabyrinthDetailResponse = LabyrinthDetail;
 
 export function toLabyrinthListItem(record: Labyrinth): LabyrinthListItemResponse {
   return {

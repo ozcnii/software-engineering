@@ -1,4 +1,4 @@
-import type { MazeCell, MazeGrid } from '../../../shared/types/domain';
+import type { MazeCell, MazeGrid } from '@labyrinth/shared/types/domain';
 
 interface MazeEditorGridProps {
   grid: MazeGrid;

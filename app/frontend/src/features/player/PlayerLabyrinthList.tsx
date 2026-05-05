@@ -1,4 +1,4 @@
-import type { LabyrinthListItem } from '../../shared/types/domain';
+import type { LabyrinthListItem } from '@labyrinth/shared/types/domain';
 import { ListSkeleton } from '../../shared/ui/ListSkeleton';
 import { PlayerLabyrinthCard } from './components/PlayerLabyrinthCard';
 import { usePlayerLabyrinthList } from './hooks/usePlayerLabyrinthList';

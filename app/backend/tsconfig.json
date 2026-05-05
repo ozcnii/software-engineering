@@ -10,6 +10,9 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "paths": {
+      "@labyrinth/shared/types/*": ["../shared/types/*.d.ts"]
+    },
     "incremental": true,
     "skipLibCheck": true,
     "strict": true,

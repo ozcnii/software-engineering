@@ -1,4 +1,4 @@
-import type { ApiFieldErrors } from '../../../shared/types/domain';
+import type { ApiFieldErrors } from '@labyrinth/shared/types/api';
 import type { WizardParams } from '../model/createWizardState';
 
 export function validateParams(params: WizardParams): ApiFieldErrors {

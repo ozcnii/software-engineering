@@ -8,7 +8,7 @@ import type {
   LabyrinthTheme,
   SolvingAlgorithm,
   User,
-} from '../../shared/types/domain';
+} from '@labyrinth/shared/types/domain';
 import { AppModal } from '../../shared/ui/AppModal';
 import { themeLabels, themeMarks } from '../../shared/ui/labels';
 import { AutoSolvePanel } from './AutoSolvePanel';

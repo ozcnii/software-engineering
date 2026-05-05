@@ -1,4 +1,4 @@
-import type { LabyrinthTheme } from '../../shared/types/domain';
+import type { LabyrinthTheme } from '@labyrinth/shared/types/domain';
 import { themeLabels, themeMarks } from '../../shared/ui/labels';
 
 const themes: LabyrinthTheme[] = ['winter', 'summer', 'autumn', 'spring'];

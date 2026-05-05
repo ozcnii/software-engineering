@@ -1,0 +1,16 @@
+{
+  "name": "@labyrinth/shared",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./types/domain": {
+      "types": "./types/domain.d.ts",
+      "default": "./types/domain.ts"
+    },
+    "./types/api": {
+      "types": "./types/api.d.ts",
+      "default": "./types/api.ts"
+    }
+  }
+}

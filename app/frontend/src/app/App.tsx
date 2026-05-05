@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { authApi } from '../shared/api/authApi';
 import { ApiClientError } from '../shared/api/client';
-import type { User } from '../shared/types/domain';
+import type { User } from '@labyrinth/shared/types/domain';
 import { AppRouter } from './router';
 
 export interface AuthState {

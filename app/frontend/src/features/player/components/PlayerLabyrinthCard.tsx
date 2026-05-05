@@ -1,5 +1,5 @@
 import { formatDifficultyStars } from '../../../shared/lib/format';
-import type { LabyrinthListItem } from '../../../shared/types/domain';
+import type { LabyrinthListItem } from '@labyrinth/shared/types/domain';
 import { algorithmLabels, themeLabels, themeMarks } from '../../../shared/ui/labels';
 
 interface PlayerLabyrinthCardProps {

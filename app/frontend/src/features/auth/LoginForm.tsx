@@ -1,7 +1,8 @@
 import { FormEvent, useState } from 'react';
 import { authApi } from '../../shared/api/authApi';
 import { ApiClientError } from '../../shared/api/client';
-import type { ApiFieldErrors, User } from '../../shared/types/domain';
+import type { User } from '@labyrinth/shared/types/domain';
+import type { ApiFieldErrors } from '@labyrinth/shared/types/api';
 import { AuthField } from './components/AuthField';
 import { validateLoginFields } from './lib/authValidation';
 

@@ -1,13 +1,13 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
-import { PrismaClient, User, UserRole } from '@prisma/client';
+import { PrismaClient, type User as PrismaUser, UserRole } from '@prisma/client';
+import type {
+  User as SharedUser,
+  UserRole as SharedUserRole,
+} from '@labyrinth/shared/types/domain';
 
-export type PublicUserRole = 'admin' | 'player';
+export type PublicUserRole = SharedUserRole;
 
-export interface PublicUser {
-  id: string;
-  login: string;
-  role: PublicUserRole;
-}
+export type PublicUser = SharedUser;
 
 @Injectable()
 export class UsersService implements OnModuleDestroy {
@@ -43,7 +43,7 @@ export class UsersService implements OnModuleDestroy {
     return user ? this.toPublicUser(user) : null;
   }
 
-  toPublicUser(user: User): PublicUser {
+  toPublicUser(user: PrismaUser): PublicUser {
     return {
       id: user.id,
       login: user.login,

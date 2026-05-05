@@ -1,5 +1,5 @@
 import { formatElapsedTime } from '../../../shared/lib/format';
-import type { Coordinate, LabyrinthDetail } from '../../../shared/types/domain';
+import type { Coordinate, LabyrinthDetail } from '@labyrinth/shared/types/domain';
 
 export type ControlMode = 'manual' | 'auto';
 export type AutoDisplayMode = 'animated' | 'instant';

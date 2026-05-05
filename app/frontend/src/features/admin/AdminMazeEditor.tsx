@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { MazeGrid } from '../../shared/types/domain';
+import type { MazeGrid } from '@labyrinth/shared/types/domain';
 import { MazeEditorGrid } from './components/MazeEditorGrid';
 import { MazeEditorToolbar } from './components/MazeEditorToolbar';
 import {
