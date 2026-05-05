@@ -1,0 +1,63 @@
+@startuml
+title Диаграмма классов системы
+
+skinparam backgroundColor #FFFFFF
+skinparam DefaultFontName Helvetica
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  FontSize 12
+  AttributeIconSize 0
+}
+skinparam ArrowColor #000000
+skinparam ArrowFontSize 11
+hide circle
+
+left to right direction
+
+class User {
+  -id
+  -login
+  -role
+}
+
+class LabyrinthGame {
+  -id
+  -name
+  -width
+  -height
+  -theme
+  -generationAlgorithm
+  -entryMode
+  -maze
+  +generate()
+  +solve()
+}
+
+class Maze {
+  -width
+  -height
+  -cells
+  +placeAutoEntryExit()
+  +requireEntryExit()
+}
+
+class Coordinate {
+  -row
+  -col
+}
+
+class SolutionPath {
+  -algorithm
+  -path
+  +steps
+  +toResponse()
+}
+
+User "1" -- "0..*" LabyrinthGame
+LabyrinthGame *-- Maze
+Maze *-- Coordinate
+SolutionPath *-- Coordinate
+LabyrinthGame ..> SolutionPath
+
+@enduml

@@ -1,4 +1,4 @@
-import { Coordinate, MazeGrid } from '../../labyrinths/domain/maze-types';
+import { Coordinate, MazeGrid } from '../maze-types';
 
 interface Edge {
   a: Coordinate;

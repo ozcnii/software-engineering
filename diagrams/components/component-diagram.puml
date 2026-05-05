@@ -38,10 +38,9 @@ component "app.module.ts" <<source>> as AppModule
 component "auth.module.ts" <<source>> as AuthModule
 component "users.module.ts" <<source>> as UsersModule
 component "labyrinths.module.ts" <<source>> as LabyrinthsModule
-component "generation.module.ts" <<source>> as GenerationModule
-component "solving.module.ts" <<source>> as SolvingModule
-component "generation.service.ts" <<source>> as GenerationService
-component "solving.service.ts" <<source>> as SolvingService
+component "labyrinth-game.ts" <<source>> as LabyrinthGame
+component "maze.ts" <<source>> as Maze
+component "solution-path.ts" <<source>> as SolutionPath
 component "prim.generator.ts" <<source>> as PrimGenerator
 component "kruskal.generator.ts" <<source>> as KruskalGenerator
 component "bfs.solver.ts" <<source>> as BfsSolver
@@ -78,14 +77,13 @@ AppModule ..> UsersModule
 AppModule ..> LabyrinthsModule
 AuthModule ..> UsersModule
 LabyrinthsModule ..> UsersModule
-LabyrinthsModule ..> GenerationModule
-LabyrinthsModule ..> SolvingModule
-GenerationModule ..> GenerationService
-SolvingModule ..> SolvingService
-GenerationService ..> PrimGenerator
-GenerationService ..> KruskalGenerator
-SolvingService ..> BfsSolver
-SolvingService ..> DfsSolver
+LabyrinthsModule ..> LabyrinthGame
+LabyrinthGame ..> Maze
+LabyrinthGame ..> SolutionPath
+LabyrinthGame ..> PrimGenerator
+LabyrinthGame ..> KruskalGenerator
+LabyrinthGame ..> BfsSolver
+LabyrinthGame ..> DfsSolver
 UsersModule ..> PrismaClient
 LabyrinthsModule ..> PrismaClient
 

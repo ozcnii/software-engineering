@@ -1,8 +1,8 @@
 import {
   getPassableNeighbors,
   key,
-} from '../../labyrinths/domain/grid-validation';
-import { Coordinate, MazeGrid, sameCoordinate } from '../../labyrinths/domain/maze-types';
+} from '../grid-validation';
+import { Coordinate, MazeGrid, sameCoordinate } from '../maze-types';
 
 export function solveDfs(grid: MazeGrid, entry: Coordinate, exit: Coordinate) {
   const visited = new Set<string>();

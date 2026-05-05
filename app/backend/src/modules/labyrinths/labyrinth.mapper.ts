@@ -68,16 +68,16 @@ export function gridToJson(grid: MazeGrid): Prisma.InputJsonValue {
   return grid;
 }
 
-function toApiTheme(theme: LabyrinthTheme): LabyrinthThemeValue {
+export function toApiTheme(theme: LabyrinthTheme): LabyrinthThemeValue {
   return theme.toLowerCase() as LabyrinthThemeValue;
 }
 
-function toApiGenerationAlgorithm(
+export function toApiGenerationAlgorithm(
   algorithm: GenerationAlgorithm,
 ): GenerationAlgorithmValue {
   return algorithm.toLowerCase() as GenerationAlgorithmValue;
 }
 
-function toApiEntryMode(entryMode: EntryMode): EntryModeValue {
+export function toApiEntryMode(entryMode: EntryMode): EntryModeValue {
   return entryMode.toLowerCase() as EntryModeValue;
 }

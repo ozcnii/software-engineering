@@ -1,19 +1,21 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { ApiError } from '../../shared/errors/api-error';
-import { GenerationService } from '../generation/generation.service';
-import { SolvingService } from '../solving/solving.service';
 import { CreateLabyrinthDto } from './dto/create-labyrinth.dto';
 import { GenerateLabyrinthDto } from './dto/generate-labyrinth.dto';
 import { SolveLabyrinthDto } from './dto/solve-labyrinth.dto';
 import {
-  assertIntegrityGrid,
   validateGridForPersistence,
   validateOddSize,
 } from './domain/grid-validation';
+import { LabyrinthGame } from './domain/labyrinth-game';
+import { Maze } from './domain/maze';
 import { MazeGrid } from './domain/maze-types';
 import {
   gridToJson,
+  toApiEntryMode,
+  toApiGenerationAlgorithm,
+  toApiTheme,
   toLabyrinthDetail,
   toLabyrinthListItem,
   toPrismaEntryMode,
@@ -36,17 +38,21 @@ interface DecodedCursor {
 export class LabyrinthsService implements OnModuleDestroy {
   private readonly prisma = new PrismaClient();
 
-  constructor(
-    private readonly generationService: GenerationService,
-    private readonly solvingService: SolvingService,
-  ) {}
-
   async onModuleDestroy() {
     await this.prisma.$disconnect();
   }
 
   generate(dto: GenerateLabyrinthDto) {
-    return this.generationService.generate(dto);
+    const sizeResult = validateOddSize(dto.width, dto.height);
+
+    if (!sizeResult.valid) {
+      throw ApiError.validation({
+        width: sizeResult.message ?? 'Invalid width',
+        height: sizeResult.message ?? 'Invalid height',
+      });
+    }
+
+    return LabyrinthGame.generate(dto);
   }
 
   async create(dto: CreateLabyrinthDto, createdById: string) {
@@ -137,18 +143,24 @@ export class LabyrinthsService implements OnModuleDestroy {
 
   async solve(id: string, dto: SolveLabyrinthDto) {
     const labyrinth = await this.findActiveById(id);
-    const pair = assertIntegrityGrid(labyrinth.grid, labyrinth.width, labyrinth.height);
+    const maze = Maze.fromPersisted(labyrinth.width, labyrinth.height, labyrinth.grid);
 
-    if (!pair) {
+    if (!maze) {
       throw ApiError.dataIntegrity();
     }
 
-    return this.solvingService.solve(
-      dto.algorithm,
-      labyrinth.grid as MazeGrid,
-      pair.entry,
-      pair.exit,
-    );
+    const game = LabyrinthGame.fromPersisted({
+      id: labyrinth.id,
+      name: labyrinth.name,
+      width: labyrinth.width,
+      height: labyrinth.height,
+      theme: toApiTheme(labyrinth.theme),
+      generationAlgorithm: toApiGenerationAlgorithm(labyrinth.generationAlgorithm),
+      entryMode: toApiEntryMode(labyrinth.entryMode),
+      maze,
+    });
+
+    return game.solve(dto.algorithm);
   }
 
   private validateName(name: string) {
