@@ -24,12 +24,22 @@ export function validateFinalGrid(grid: MazeGrid): string {
     return `Выход: ${exitValidation.message}`;
   }
 
+  const thickWallValidation = validateThickWallStructure(grid);
+
+  if (!thickWallValidation.ok) {
+    return `Лабиринт не толстостенный: ${thickWallValidation.message}`;
+  }
+
   return '';
 }
 
-export function validateToolPlacement(grid: MazeGrid, tool: EditorTool, coordinate: Coordinate) {
-  if (tool !== 'entry' && tool !== 'exit') {
-    return { ok: true, message: '' };
+export function validateToolPlacement(
+  grid: MazeGrid,
+  tool: EditorTool,
+  coordinate: Coordinate,
+) {
+  if (tool === 'wall' || tool === 'path') {
+    return validateStructureToolPlacement(grid, tool, coordinate);
   }
 
   const other = findCell(grid, tool === 'entry' ? 'exit' : 'entry');
@@ -81,6 +91,79 @@ function validateEndpoint(grid: MazeGrid, coordinate: Coordinate) {
   }
 
   return { ok: true, message: '' };
+}
+
+function validateStructureToolPlacement(
+  grid: MazeGrid,
+  tool: 'wall' | 'path',
+  coordinate: Coordinate,
+) {
+  if (isPerimeter(grid, coordinate)) {
+    return tool === 'wall'
+      ? { ok: true, message: '' }
+      : { ok: false, message: 'периметр должен оставаться стеной, входом или выходом' };
+  }
+
+  if (coordinate.row % 2 === 1 && coordinate.col % 2 === 1) {
+    return tool === 'path'
+      ? { ok: true, message: '' }
+      : { ok: false, message: 'узел прохода должен оставаться проходом' };
+  }
+
+  if (coordinate.row % 2 === 0 && coordinate.col % 2 === 0) {
+    return tool === 'wall'
+      ? { ok: true, message: '' }
+      : { ok: false, message: 'пересечение стен должно оставаться стеной' };
+  }
+
+  return { ok: true, message: '' };
+}
+
+function validateThickWallStructure(grid: MazeGrid) {
+  for (const [rowIndex, row] of grid.entries()) {
+    for (const [colIndex, cell] of row.entries()) {
+      const coordinate = { row: rowIndex, col: colIndex };
+
+      if (isPerimeter(grid, coordinate)) {
+        if (cell !== 'wall' && cell !== 'entry' && cell !== 'exit') {
+          return {
+            ok: false,
+            message: 'периметр должен состоять из стен, входа и выхода',
+          };
+        }
+
+        continue;
+      }
+
+      if (rowIndex % 2 === 1 && colIndex % 2 === 1 && cell !== 'path') {
+        return {
+          ok: false,
+          message: 'узлы проходов внутри лабиринта должны оставаться проходами',
+        };
+      }
+
+      if (rowIndex % 2 === 0 && colIndex % 2 === 0 && cell !== 'wall') {
+        return {
+          ok: false,
+          message: 'пересечения стен внутри лабиринта должны оставаться стенами',
+        };
+      }
+    }
+  }
+
+  return { ok: true, message: '' };
+}
+
+function isPerimeter(grid: MazeGrid, coordinate: Coordinate) {
+  const height = grid.length;
+  const width = grid[0]?.length ?? 0;
+
+  return (
+    coordinate.row === 0 ||
+    coordinate.row === height - 1 ||
+    coordinate.col === 0 ||
+    coordinate.col === width - 1
+  );
 }
 
 function adjacentInnerCell(grid: MazeGrid, coordinate: Coordinate): Coordinate | null {

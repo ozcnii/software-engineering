@@ -1,6 +1,6 @@
 import { ApiError } from '../../../shared/errors/api-error';
 import { solveBfs } from './algorithms/bfs.solver';
-import { solveDfs } from './algorithms/dfs.solver';
+import { solveRightHand } from './algorithms/right-hand.solver';
 import { generateKruskalMaze } from './algorithms/kruskal.generator';
 import { generatePrimMaze } from './algorithms/prim.generator';
 import { Maze } from './maze';
@@ -103,9 +103,9 @@ export class LabyrinthGame {
   solve(algorithm: SolvingAlgorithmValue) {
     const pair = this.maze.requireEntryExit();
     const path =
-      algorithm === 'bfs'
+      algorithm === 'wave'
         ? solveBfs(this.maze.grid, pair.entry, pair.exit)
-        : solveDfs(this.maze.grid, pair.entry, pair.exit);
+        : solveRightHand(this.maze.grid, pair.entry, pair.exit);
 
     if (!path) {
       throw ApiError.pathNotFound();

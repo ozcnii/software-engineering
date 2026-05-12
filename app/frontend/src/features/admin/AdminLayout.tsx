@@ -15,7 +15,11 @@ export function AdminLayout({ user, onLogout }: AdminLayoutProps) {
         <div className="admin-header-right">
           <span className="badge badge-accent">admin</span>
           <span className="muted">{user.login}</span>
-          <button className="btn btn-sm btn-ghost" type="button" onClick={() => void onLogout()}>
+          <button
+            className="btn btn-sm btn-ghost"
+            type="button"
+            onClick={() => void onLogout()}
+          >
             Выйти
           </button>
         </div>
@@ -23,7 +27,11 @@ export function AdminLayout({ user, onLogout }: AdminLayoutProps) {
 
       <aside className="admin-sidebar">
         <div className="sidebar-section">Лабиринты</div>
-        <NavLink className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`} to="/admin" end>
+        <NavLink
+          className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}
+          to="/admin"
+          end
+        >
           <span className="sidebar-icon">#</span>
           Все лабиринты
         </NavLink>
@@ -38,17 +46,10 @@ export function AdminLayout({ user, onLogout }: AdminLayoutProps) {
         <div className="sidebar-section">Информация</div>
         <NavLink
           className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}
-          to="/admin/about"
-        >
-          <span className="sidebar-icon">i</span>
-          О разработчике
-        </NavLink>
-        <NavLink
-          className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}
-          to="/admin/system"
+          to="/admin/help"
         >
           <span className="sidebar-icon">?</span>
-          О системе
+          Справка
         </NavLink>
       </aside>
 

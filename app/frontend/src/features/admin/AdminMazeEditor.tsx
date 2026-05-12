@@ -46,7 +46,7 @@ export function AdminMazeEditor({ grid, resetKey, onChange }: AdminMazeEditorPro
       for (const [rowIndex, cells] of nextGrid.entries()) {
         for (const [colIndex, cell] of cells.entries()) {
           if (cell === tool) {
-            nextGrid[rowIndex][colIndex] = 'path';
+            nextGrid[rowIndex][colIndex] = 'wall';
           }
         }
       }

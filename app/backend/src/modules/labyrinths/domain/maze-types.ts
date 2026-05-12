@@ -12,7 +12,7 @@ export const CELL_TYPES = ['wall', 'path', 'entry', 'exit'] as const;
 export const LABYRINTH_THEMES = ['winter', 'summer', 'autumn', 'spring'] as const;
 export const GENERATION_ALGORITHMS = ['prim', 'kruskal'] as const;
 export const ENTRY_MODES = ['auto', 'manual'] as const;
-export const SOLVING_ALGORITHMS = ['bfs', 'dfs'] as const;
+export const SOLVING_ALGORITHMS = ['wave', 'rightHand'] as const;
 
 export type MazeCell = SharedMazeCell;
 export type LabyrinthThemeValue = LabyrinthTheme;

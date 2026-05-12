@@ -35,7 +35,6 @@ export interface LoginPayload {
 
 export interface RegisterPayload extends LoginPayload {
   passwordConfirm: string;
-  acceptedTerms: boolean;
 }
 
 export interface LabyrinthListResponse {

@@ -10,7 +10,7 @@ export type LabyrinthTheme = 'winter' | 'summer' | 'autumn' | 'spring';
 
 export type GenerationAlgorithm = 'prim' | 'kruskal';
 
-export type SolvingAlgorithm = 'bfs' | 'dfs';
+export type SolvingAlgorithm = 'wave' | 'rightHand';
 
 export type EntryMode = 'auto' | 'manual';
 

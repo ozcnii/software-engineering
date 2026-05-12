@@ -1,10 +1,9 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { AdminAboutPage } from '../features/admin/AdminAboutPage';
 import { AdminCreateWizard } from '../features/admin/AdminCreateWizard';
 import { AdminLabyrinthList } from '../features/admin/AdminLabyrinthList';
 import { AdminLayout } from '../features/admin/AdminLayout';
-import { AdminSystemPage } from '../features/admin/AdminSystemPage';
 import { AuthScreen } from '../features/auth/AuthScreen';
+import { HelpPage, PlayerHelpPage } from '../features/help/HelpPage';
 import { PlayerLayout } from '../features/player/PlayerLayout';
 import type { AuthState } from './App';
 
@@ -18,7 +17,11 @@ export function AppRouter({ auth }: AppRouterProps) {
       <Route
         path="/auth"
         element={
-          auth.user ? <Navigate to={routeForRole(auth.user.role)} replace /> : <AuthScreen auth={auth} />
+          auth.user ? (
+            <Navigate to={routeForRole(auth.user.role)} replace />
+          ) : (
+            <AuthScreen auth={auth} />
+          )
         }
       />
 
@@ -34,8 +37,7 @@ export function AppRouter({ auth }: AppRouterProps) {
       >
         <Route index element={<AdminLabyrinthList />} />
         <Route path="create" element={<AdminCreateWizard />} />
-        <Route path="about" element={<AdminAboutPage />} />
-        <Route path="system" element={<AdminSystemPage />} />
+        <Route path="help" element={<HelpPage />} />
       </Route>
 
       <Route
@@ -50,8 +52,21 @@ export function AppRouter({ auth }: AppRouterProps) {
       />
 
       <Route
+        path="/player/help"
+        element={
+          auth.user?.role === 'player' ? (
+            <PlayerHelpPage user={auth.user} onLogout={auth.logout} />
+          ) : (
+            <Navigate to={auth.user ? '/admin' : '/auth'} replace />
+          )
+        }
+      />
+
+      <Route
         path="*"
-        element={<Navigate to={auth.user ? routeForRole(auth.user.role) : '/auth'} replace />}
+        element={
+          <Navigate to={auth.user ? routeForRole(auth.user.role) : '/auth'} replace />
+        }
       />
     </Routes>
   );

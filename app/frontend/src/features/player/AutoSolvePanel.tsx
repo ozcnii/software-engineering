@@ -8,6 +8,7 @@ interface AutoSolvePanelProps {
   error: string;
   disabled: boolean;
   isRunning: boolean;
+  speedDisabled: boolean;
   onAlgorithmChange: (algorithm: SolvingAlgorithm) => void;
   onDisplayModeChange: (mode: AutoDisplayMode) => void;
   onSpeedChange: (speed: number) => void;
@@ -21,6 +22,7 @@ export function AutoSolvePanel({
   error,
   disabled,
   isRunning,
+  speedDisabled,
   onAlgorithmChange,
   onDisplayModeChange,
   onSpeedChange,
@@ -32,22 +34,25 @@ export function AutoSolvePanel({
         <label className="label">Алгоритм поиска пути</label>
         <div className="radio-list">
           <RadioOption
-            checked={algorithm === 'bfs'}
-            disabled={isRunning}
+            checked={algorithm === 'wave'}
+            disabled={isRunning || displayMode === 'instant'}
             name="solve-algorithm"
-            onChange={() => onAlgorithmChange('bfs')}
+            onChange={() => onAlgorithmChange('wave')}
           >
-            BFS (обход в ширину) — кратчайший путь
+            Волновой алгоритм — кратчайший путь
           </RadioOption>
           <RadioOption
-            checked={algorithm === 'dfs'}
-            disabled={isRunning}
+            checked={algorithm === 'rightHand'}
+            disabled={isRunning || displayMode === 'instant'}
             name="solve-algorithm"
-            onChange={() => onAlgorithmChange('dfs')}
+            onChange={() => onAlgorithmChange('rightHand')}
           >
-            DFS (обход в глубину) — случайный путь
+            Метод правой руки — движение вдоль стены
           </RadioOption>
         </div>
+        {displayMode === 'instant' ? (
+          <div className="hint">мгновенный результат строится волновым алгоритмом</div>
+        ) : null}
       </div>
 
       <hr className="divider" />
@@ -86,7 +91,7 @@ export function AutoSolvePanel({
               max="10"
               step="1"
               value={speed}
-              disabled={isRunning}
+              disabled={speedDisabled}
               onChange={(event) => onSpeedChange(Number(event.target.value))}
             />
             <span className="speed-edge">10/с</span>
@@ -97,7 +102,12 @@ export function AutoSolvePanel({
 
       {error ? <div className="form-error compact-error">{error}</div> : null}
 
-      <button className="btn btn-accent btn-full" type="button" disabled={disabled} onClick={onStart}>
+      <button
+        className="btn btn-accent btn-full"
+        type="button"
+        disabled={disabled}
+        onClick={onStart}
+      >
         ▶ Запустить решение
       </button>
     </div>

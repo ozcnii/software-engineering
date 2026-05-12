@@ -24,7 +24,6 @@ export function validateRegisterFields(
   login: string,
   password: string,
   passwordConfirm: string,
-  acceptedTerms: boolean,
 ): ApiFieldErrors {
   const errors = validateLoginFields(login, password);
   const normalizedPassword = password.trim();
@@ -34,10 +33,6 @@ export function validateRegisterFields(
     errors.passwordConfirm = 'Повторите пароль';
   } else if (normalizedConfirm !== normalizedPassword) {
     errors.passwordConfirm = 'Пароли не совпадают';
-  }
-
-  if (!acceptedTerms) {
-    errors.acceptedTerms = 'Примите условия использования';
   }
 
   return errors;

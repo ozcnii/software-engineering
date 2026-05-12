@@ -76,6 +76,12 @@ export function validateGridForPersistence(
     return entryExitResult;
   }
 
+  const thickWallResult = validateThickWallStructure(grid);
+
+  if (!thickWallResult.valid) {
+    return thickWallResult;
+  }
+
   if (!hasPath(grid, pair.entry, pair.exit)) {
     return {
       valid: false,
@@ -162,6 +168,44 @@ export function validateEntryExit(
         valid: false,
         message: 'Рядом с входом и выходом внутри лабиринта должен быть проход',
       };
+    }
+  }
+
+  return { valid: true };
+}
+
+export function validateThickWallStructure(grid: MazeGrid): GridValidationResult {
+  for (let row = 0; row < grid.length; row += 1) {
+    for (let col = 0; col < grid[row].length; col += 1) {
+      const cell = grid[row][col];
+
+      if (isOnPerimeter(grid, { row, col })) {
+        if (cell !== 'wall' && cell !== 'entry' && cell !== 'exit') {
+          return {
+            valid: false,
+            message:
+              'Лабиринт не толстостенный: периметр должен состоять из стен, входа и выхода',
+          };
+        }
+
+        continue;
+      }
+
+      if (row % 2 === 1 && col % 2 === 1 && cell !== 'path') {
+        return {
+          valid: false,
+          message:
+            'Лабиринт не толстостенный: узлы проходов внутри лабиринта должны оставаться проходами',
+        };
+      }
+
+      if (row % 2 === 0 && col % 2 === 0 && cell !== 'wall') {
+        return {
+          valid: false,
+          message:
+            'Лабиринт не толстостенный: пересечения стен внутри лабиринта должны оставаться стенами',
+        };
+      }
     }
   }
 

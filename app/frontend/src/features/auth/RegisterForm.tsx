@@ -14,7 +14,6 @@ export function RegisterForm({ onUser }: RegisterFormProps) {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<ApiFieldErrors>({});
   const [generalError, setGeneralError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -22,7 +21,7 @@ export function RegisterForm({ onUser }: RegisterFormProps) {
   async function submit(event: FormEvent) {
     event.preventDefault();
 
-    const errors = validateRegisterFields(login, password, passwordConfirm, acceptedTerms);
+    const errors = validateRegisterFields(login, password, passwordConfirm);
     setFieldErrors(errors);
     setGeneralError('');
 
@@ -37,7 +36,6 @@ export function RegisterForm({ onUser }: RegisterFormProps) {
         login,
         password,
         passwordConfirm,
-        acceptedTerms,
       });
       onUser(response.user);
     } catch (error) {
@@ -91,23 +89,11 @@ export function RegisterForm({ onUser }: RegisterFormProps) {
         onChange={setPasswordConfirm}
       />
 
-      <div className="form-row">
-        <label className="check-item">
-          <input
-            className="native-check"
-            type="checkbox"
-            checked={acceptedTerms}
-            onChange={(event) => setAcceptedTerms(event.target.checked)}
-          />
-          <span className={`check-box ${acceptedTerms ? 'on' : ''}`} aria-hidden="true" />
-          <span className="terms-text">Принимаю условия использования</span>
-        </label>
-        {fieldErrors.acceptedTerms ? (
-          <div className="err">{fieldErrors.acceptedTerms}</div>
-        ) : null}
-      </div>
-
-      <button className="btn btn-success btn-full btn-lg" type="submit" disabled={isSubmitting}>
+      <button
+        className="btn btn-success btn-full btn-lg"
+        type="submit"
+        disabled={isSubmitting}
+      >
         {isSubmitting ? 'Регистрируем...' : 'Зарегистрироваться ->'}
       </button>
     </form>

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { labyrinthsApi } from '../../shared/api/labyrinthsApi';
 import { getErrorMessage } from '../../shared/lib/errors';
 import type {
@@ -14,13 +15,17 @@ import { themeLabels, themeMarks } from '../../shared/ui/labels';
 import { AutoSolvePanel } from './AutoSolvePanel';
 import { ManualControls } from './ManualControls';
 import { MazeGrid } from './MazeGrid';
-import { PlayerInfoModals } from './PlayerInfoModals';
 import { PlayerLabyrinthList } from './PlayerLabyrinthList';
 import { PlayerStatsPanel } from './PlayerStatsPanel';
 import { PlayerThemePicker } from './PlayerThemePicker';
 import { usePlayerKeyboardMovement } from './hooks/usePlayerKeyboardMovement';
 import { usePlayerTimer } from './hooks/usePlayerTimer';
-import { getCell, isWalkableCell, moveCoordinate, sameCoordinate } from './lib/playerMovement';
+import {
+  getCell,
+  isWalkableCell,
+  moveCoordinate,
+  sameCoordinate,
+} from './lib/playerMovement';
 import {
   createInitialRunState,
   formatElapsed,
@@ -31,7 +36,6 @@ import {
   type PlayerRunState,
 } from './model/playerState';
 
-type PlayerModal = 'about' | 'system' | null;
 type ConfirmAction = 'reset' | 'exit' | 'auto' | null;
 
 interface PlayerLayoutProps {
@@ -41,7 +45,9 @@ interface PlayerLayoutProps {
 
 export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [selectedLabyrinth, setSelectedLabyrinth] = useState<LabyrinthDetail | null>(null);
+  const [selectedLabyrinth, setSelectedLabyrinth] = useState<LabyrinthDetail | null>(
+    null,
+  );
   const [run, setRun] = useState<PlayerRunState | null>(null);
   const [themeOverride, setThemeOverride] = useState<LabyrinthTheme | null>(null);
   const [controlMode, setControlMode] = useState<ControlMode>('manual');
@@ -51,8 +57,7 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
   const [isWallFeedbackActive, setIsWallFeedbackActive] = useState(false);
   const [isCompletionOpen, setIsCompletionOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
-  const [activeModal, setActiveModal] = useState<PlayerModal>(null);
-  const [autoAlgorithm, setAutoAlgorithm] = useState<SolvingAlgorithm>('bfs');
+  const [autoAlgorithm, setAutoAlgorithm] = useState<SolvingAlgorithm>('wave');
   const [autoDisplayMode, setAutoDisplayMode] = useState<AutoDisplayMode>('animated');
   const [autoSpeed, setAutoSpeed] = useState(3);
   const [solveError, setSolveError] = useState('');
@@ -61,6 +66,7 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
   const [animationPath, setAnimationPath] = useState<Coordinate[] | null>(null);
   const detailRequestIdRef = useRef(0);
   const solveRequestIdRef = useRef(0);
+  const animationSpeedRef = useRef(autoSpeed);
 
   const activeTheme = themeOverride ?? selectedLabyrinth?.theme ?? 'winter';
   const canUseLevel = Boolean(selectedLabyrinth && run);
@@ -78,6 +84,10 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
   }, []);
 
   usePlayerTimer(isTimerRunning, incrementTimer);
+
+  useEffect(() => {
+    animationSpeedRef.current = autoSpeed;
+  }, [autoSpeed]);
 
   useEffect(() => {
     if (!animationPath) {
@@ -105,7 +115,8 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
     }
 
     let index = 0;
-    const delay = 1000 / autoSpeed;
+    let timeoutId: number | null = null;
+    let isCancelled = false;
     setIsAnimationRunning(true);
     setRun((current) =>
       current
@@ -120,12 +131,15 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
         : current,
     );
 
-    const interval = window.setInterval(() => {
+    const animateNextStep = () => {
+      if (isCancelled) {
+        return;
+      }
+
       index += 1;
       const point = animationPath[index];
 
       if (!point) {
-        window.clearInterval(interval);
         setIsAnimationRunning(false);
         setIsTimerRunning(false);
         setAnimationPath(null);
@@ -147,16 +161,26 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
       );
 
       if (isLast) {
-        window.clearInterval(interval);
         setIsAnimationRunning(false);
         setIsTimerRunning(false);
         setAnimationPath(null);
         setIsCompletionOpen(true);
+        return;
       }
-    }, delay);
 
-    return () => window.clearInterval(interval);
-  }, [animationPath, autoSpeed]);
+      timeoutId = window.setTimeout(animateNextStep, 1000 / animationSpeedRef.current);
+    };
+
+    timeoutId = window.setTimeout(animateNextStep, 1000 / animationSpeedRef.current);
+
+    return () => {
+      isCancelled = true;
+
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId);
+      }
+    };
+  }, [animationPath]);
 
   const resetRun = useCallback(() => {
     if (!selectedLabyrinth) {
@@ -277,11 +301,18 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
         setIsTimerRunning(true);
       }
     },
-    [controlMode, isAnimationRunning, isSolveLoading, isTimerRunning, run, selectedLabyrinth],
+    [
+      controlMode,
+      isAnimationRunning,
+      isSolveLoading,
+      isTimerRunning,
+      run,
+      selectedLabyrinth,
+    ],
   );
 
   usePlayerKeyboardMovement({
-    enabled: Boolean(selectedLabyrinth && controlMode === 'manual' && !activeModal && !confirmAction),
+    enabled: Boolean(selectedLabyrinth && controlMode === 'manual' && !confirmAction),
     onMove: movePlayer,
   });
 
@@ -304,7 +335,8 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
     setRun(initialRun);
 
     try {
-      const result = await labyrinthsApi.solve(selectedLabyrinth.id, autoAlgorithm);
+      const solveAlgorithm = autoDisplayMode === 'instant' ? 'wave' : autoAlgorithm;
+      const result = await labyrinthsApi.solve(selectedLabyrinth.id, solveAlgorithm);
 
       if (solveRequestIdRef.current !== requestId) {
         return;
@@ -358,14 +390,22 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
         <div className="player-header-right">
           <span className="badge badge-success">игрок</span>
           <span className="muted">{user.login}</span>
-          <button className="btn btn-sm btn-ghost" type="button" onClick={() => void onLogout()}>
+          <button
+            className="btn btn-sm btn-ghost"
+            type="button"
+            onClick={() => void onLogout()}
+          >
             Выйти
           </button>
         </div>
       </header>
 
       <aside className="player-left">
-        <PlayerLabyrinthList selectedId={selectedId} detailError={detailError} onSelect={selectLabyrinth} />
+        <PlayerLabyrinthList
+          selectedId={selectedId}
+          detailError={detailError}
+          onSelect={selectLabyrinth}
+        />
 
         <hr className="divider" />
 
@@ -379,16 +419,9 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
 
         <div>
           <div className="panel-title">Информация</div>
-          <button className="btn btn-ghost btn-sm btn-full" type="button" onClick={() => setActiveModal('about')}>
-            О разработчике
-          </button>
-          <button
-            className="btn btn-ghost btn-sm btn-full info-button"
-            type="button"
-            onClick={() => setActiveModal('system')}
-          >
-            О системе
-          </button>
+          <Link className="btn btn-ghost btn-sm btn-full" to="/player/help">
+            Справка
+          </Link>
         </div>
       </aside>
 
@@ -442,7 +475,10 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
           </div>
 
           {controlMode === 'manual' ? (
-            <ManualControls disabled={!canUseLevel || isBusy || Boolean(run?.isFinished)} onMove={movePlayer} />
+            <ManualControls
+              disabled={!canUseLevel || isBusy || Boolean(run?.isFinished)}
+              onMove={movePlayer}
+            />
           ) : (
             <AutoSolvePanel
               algorithm={autoAlgorithm}
@@ -451,8 +487,15 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
               error={solveError}
               disabled={!canUseLevel || isBusy}
               isRunning={isBusy}
+              speedDisabled={!canUseLevel || isSolveLoading}
               onAlgorithmChange={setAutoAlgorithm}
-              onDisplayModeChange={setAutoDisplayMode}
+              onDisplayModeChange={(mode) => {
+                if (mode === 'instant') {
+                  setAutoAlgorithm('wave');
+                }
+
+                setAutoDisplayMode(mode);
+              }}
               onSpeedChange={setAutoSpeed}
               onStart={() => {
                 if (run && run.steps > 0 && run.progressSource === 'manual') {
@@ -490,11 +533,11 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
         <span className="footer-separator">·</span>
         <span>Тема: {selectedLabyrinth ? themeLabels[activeTheme] : '-'}</span>
         <span className="footer-separator">·</span>
-        <span>Режим: {controlMode === 'manual' ? 'ручное управление' : 'авто-решение'}</span>
+        <span>
+          Режим: {controlMode === 'manual' ? 'ручное управление' : 'авто-решение'}
+        </span>
         <span className="footer-time">{formatElapsed(run?.elapsedSeconds ?? 0)}</span>
       </footer>
-
-      <PlayerInfoModals activeModal={activeModal} onClose={() => setActiveModal(null)} />
 
       {isCompletionOpen ? (
         <SimpleModal title="Уровень пройден" onClose={() => setIsCompletionOpen(false)}>
@@ -530,7 +573,9 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
 }
 
 function MazeSkeleton() {
-  const grid = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 'path' as const));
+  const grid = Array.from({ length: 9 }, () =>
+    Array.from({ length: 9 }, () => 'path' as const),
+  );
 
   return (
     <MazeGrid

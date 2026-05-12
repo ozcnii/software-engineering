@@ -29,24 +29,10 @@ class PasswordConfirmFieldConstraint implements ValidatorConstraintInterface {
   }
 }
 
-@ValidatorConstraint({ name: 'acceptedTermsField', async: false })
-class AcceptedTermsFieldConstraint implements ValidatorConstraintInterface {
-  validate(value: unknown) {
-    return value === true;
-  }
-
-  defaultMessage() {
-    return 'Примите условия использования';
-  }
-}
-
 export class RegisterDto extends LoginDto {
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim() : value,
   )
   @Validate(PasswordConfirmFieldConstraint)
   passwordConfirm!: string;
-
-  @Validate(AcceptedTermsFieldConstraint)
-  acceptedTerms!: boolean;
 }

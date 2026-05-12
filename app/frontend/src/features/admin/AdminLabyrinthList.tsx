@@ -5,6 +5,7 @@ import { getErrorMessage } from '../../shared/lib/errors';
 import type { LabyrinthListItem } from '@labyrinth/shared/types/domain';
 import { ListSkeleton } from '../../shared/ui/ListSkeleton';
 import { algorithmLabels, themeLabels, themeMarks } from '../../shared/ui/labels';
+import { LabyrinthPreviewAnchor } from '../../shared/ui/LabyrinthPreviewAnchor';
 import { AdminDeleteModal } from './AdminDeleteModal';
 import { AdminLabyrinthCard } from './components/AdminLabyrinthCard';
 import { useAdminLabyrinthList } from './hooks/useAdminLabyrinthList';
@@ -97,7 +98,11 @@ export function AdminLabyrinthList() {
                 <tbody>
                   {list.items.map((item) => (
                     <tr key={item.id}>
-                      <td>{item.name}</td>
+                      <td>
+                        <LabyrinthPreviewAnchor item={item}>
+                          {item.name}
+                        </LabyrinthPreviewAnchor>
+                      </td>
                       <td>
                         {item.width} x {item.height}
                       </td>
@@ -122,7 +127,11 @@ export function AdminLabyrinthList() {
 
             <div className="mobile-list">
               {list.items.map((item) => (
-                <AdminLabyrinthCard item={item} key={item.id} onDelete={openDeleteModal} />
+                <AdminLabyrinthCard
+                  item={item}
+                  key={item.id}
+                  onDelete={openDeleteModal}
+                />
               ))}
             </div>
           </>
@@ -131,7 +140,9 @@ export function AdminLabyrinthList() {
         {isEmpty ? <div className="empty-state">{emptyText}</div> : null}
 
         <div ref={list.sentinelRef} className="scroll-sentinel" />
-        {list.isLoadingMore ? <div className="hint centered">загружаем ещё...</div> : null}
+        {list.isLoadingMore ? (
+          <div className="hint centered">загружаем ещё...</div>
+        ) : null}
       </section>
 
       <AdminDeleteModal
