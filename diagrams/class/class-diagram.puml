@@ -21,6 +21,26 @@ class User {
   -role
 }
 
+class LabyrinthsController {
+  +list()
+  +generate()
+  +create()
+  +checkName()
+  +detail()
+  +delete()
+  +solve()
+}
+
+class LabyrinthsService {
+  +list()
+  +generate()
+  +create()
+  +checkName()
+  +detail()
+  +remove()
+  +solve()
+}
+
 class LabyrinthGame {
   -id
   -name
@@ -60,6 +80,7 @@ class GridValidation {
   +validateEntryExitCoordinates()
   +validateGridForPersistence()
   +validateThickWallStructure()
+  +allPassableCellsAreConnected()
   +hasPath()
 }
 
@@ -80,6 +101,9 @@ class RightHandSolver {
 }
 
 User "1" -- "0..*" LabyrinthGame
+LabyrinthsController ..> LabyrinthsService
+LabyrinthsService ..> LabyrinthGame
+LabyrinthsService ..> GridValidation
 LabyrinthGame *-- Maze
 Maze *-- Coordinate
 SolutionPath *-- Coordinate

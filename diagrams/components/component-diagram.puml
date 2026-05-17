@@ -24,13 +24,18 @@ component "AdminLayout.tsx" <<source>> as AdminLayout
 component "AdminLabyrinthList.tsx" <<source>> as AdminList
 component "AdminCreateWizard.tsx" <<source>> as AdminCreate
 component "AdminMazeEditor.tsx" <<source>> as AdminEditor
+component "CreateEditorStep.tsx" <<source>> as CreateEditorStep
+component "mazeEditorRules.ts" <<source>> as MazeEditorRules
 component "PlayerLayout.tsx" <<source>> as PlayerLayout
 component "PlayerLabyrinthList.tsx" <<source>> as PlayerList
 component "MazeGrid.tsx" <<source>> as MazeGrid
 component "AutoSolvePanel.tsx" <<source>> as AutoSolvePanel
+component "HelpPage.tsx" <<source>> as HelpPage
+component "DevelopersModal" <<source>> as DevelopersModal
 component "client.ts" <<source>> as ClientApi
 component "authApi.ts" <<source>> as AuthApi
 component "labyrinthsApi.ts" <<source>> as LabyrinthsApi
+component "@labyrinth/shared types" <<library>> as SharedTypes
 
 component "NestJS backend API" <<executable>> as BackendApi
 component "main.ts" <<source>> as MainTs
@@ -38,6 +43,8 @@ component "app.module.ts" <<source>> as AppModule
 component "auth.module.ts" <<source>> as AuthModule
 component "users.module.ts" <<source>> as UsersModule
 component "labyrinths.module.ts" <<source>> as LabyrinthsModule
+component "labyrinths.controller.ts" <<source>> as LabyrinthsController
+component "labyrinths.service.ts" <<source>> as LabyrinthsService
 component "labyrinth-game.ts" <<source>> as LabyrinthGame
 component "maze.ts" <<source>> as Maze
 component "solution-path.ts" <<source>> as SolutionPath
@@ -56,11 +63,19 @@ AuthScreen ..> RegisterForm
 Router ..> AdminLayout
 AdminLayout ..> AdminList
 AdminLayout ..> AdminCreate
+AdminLayout ..> HelpPage
+AdminLayout ..> DevelopersModal
 AdminCreate ..> AdminEditor
+AdminCreate ..> CreateEditorStep
+AdminCreate ..> MazeEditorRules
+CreateEditorStep ..> AdminEditor
+AdminEditor ..> MazeEditorRules
 Router ..> PlayerLayout
 PlayerLayout ..> PlayerList
 PlayerLayout ..> MazeGrid
 PlayerLayout ..> AutoSolvePanel
+PlayerLayout ..> HelpPage
+PlayerLayout ..> DevelopersModal
 
 LoginForm ..> AuthApi
 RegisterForm ..> AuthApi
@@ -69,6 +84,8 @@ AdminCreate ..> LabyrinthsApi
 PlayerLayout ..> LabyrinthsApi
 AuthApi ..> ClientApi
 LabyrinthsApi ..> ClientApi
+AuthApi ..> SharedTypes
+LabyrinthsApi ..> SharedTypes
 ClientApi ..> BackendApi
 
 BackendApi ..> MainTs
@@ -78,15 +95,19 @@ AppModule ..> UsersModule
 AppModule ..> LabyrinthsModule
 AuthModule ..> UsersModule
 LabyrinthsModule ..> UsersModule
-LabyrinthsModule ..> LabyrinthGame
+LabyrinthsModule ..> LabyrinthsController
+LabyrinthsModule ..> LabyrinthsService
+LabyrinthsController ..> LabyrinthsService
+LabyrinthsService ..> LabyrinthGame
 LabyrinthGame ..> Maze
 LabyrinthGame ..> SolutionPath
 LabyrinthGame ..> PrimGenerator
 LabyrinthGame ..> KruskalGenerator
 LabyrinthGame ..> BfsSolver
 LabyrinthGame ..> RightHandSolver
-LabyrinthsModule ..> GridValidation
+LabyrinthsService ..> GridValidation
 UsersModule ..> PrismaClient
-LabyrinthsModule ..> PrismaClient
+LabyrinthsService ..> PrismaClient
+LabyrinthGame ..> SharedTypes
 
 @enduml
