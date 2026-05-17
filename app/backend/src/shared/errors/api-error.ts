@@ -51,7 +51,11 @@ export class ApiError extends Error {
   }
 
   static labyrinthNameExists() {
-    return new ApiError(409, 'LABYRINTH_NAME_EXISTS', 'Лабиринт с таким названием уже существует');
+    return new ApiError(
+      409,
+      'LABYRINTH_NAME_EXISTS',
+      'Лабиринт с таким названием уже существует',
+    );
   }
 
   static pathNotFound() {

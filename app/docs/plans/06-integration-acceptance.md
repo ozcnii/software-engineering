@@ -127,5 +127,5 @@ At the end of this plan, provide:
 - Player registration works.
 - Admin can create, search and delete labyrinths.
 - Player can choose and pass a labyrinth manually.
-- BFS/DFS auto-solve works through UI and API.
+- волновой алгоритм/метод правой руки auto-solve works through UI and API.
 - `STATUS.md` accurately reflects implementation state.

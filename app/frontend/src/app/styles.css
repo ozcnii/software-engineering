@@ -346,11 +346,16 @@ a {
 
 .sidebar-item {
   display: flex;
+  width: 100%;
   align-items: center;
   gap: 10px;
   padding: 10px 16px;
+  border: 0;
   border-left: 3px solid transparent;
+  background: transparent;
   color: var(--ink2);
+  text-align: left;
+  cursor: pointer;
 }
 
 .sidebar-item:hover,
@@ -806,6 +811,10 @@ a {
   gap: 1px;
 }
 
+.maze-grid-blank {
+  background: var(--ink3);
+}
+
 .maze-cell {
   display: flex;
   align-items: center;
@@ -833,6 +842,75 @@ a {
 
 .cell-exit {
   background: var(--danger);
+}
+
+.cell-blank {
+  background: var(--paper);
+}
+
+.cell-border {
+  background: #d8d0bf;
+}
+
+.cell-endpoint-slot {
+  background: #f7f2e7;
+  box-shadow: inset 0 0 0 2px rgba(54, 113, 62, 0.38);
+}
+
+.theme-winter .cell-wall,
+.theme-winter .player-cell-wall {
+  background-color: #3a4b5c;
+  background-image: url('../assets/maze-textures/winter-wall.png');
+  background-size: cover;
+}
+
+.theme-winter .cell-path,
+.theme-winter .player-cell-path {
+  background-color: #e0edf3;
+  background-image: url('../assets/maze-textures/winter-path.png');
+  background-size: cover;
+}
+
+.theme-spring .cell-wall,
+.theme-spring .player-cell-wall {
+  background-color: #476746;
+  background-image: url('../assets/maze-textures/spring-wall.png');
+  background-size: cover;
+}
+
+.theme-spring .cell-path,
+.theme-spring .player-cell-path {
+  background-color: #daecc8;
+  background-image: url('../assets/maze-textures/spring-path.png');
+  background-size: cover;
+}
+
+.theme-summer .cell-wall,
+.theme-summer .player-cell-wall {
+  background-color: #73693a;
+  background-image: url('../assets/maze-textures/summer-wall.png');
+  background-size: cover;
+}
+
+.theme-summer .cell-path,
+.theme-summer .player-cell-path {
+  background-color: #eee0b1;
+  background-image: url('../assets/maze-textures/summer-path.png');
+  background-size: cover;
+}
+
+.theme-autumn .cell-wall,
+.theme-autumn .player-cell-wall {
+  background-color: #573e2f;
+  background-image: url('../assets/maze-textures/autumn-wall.png');
+  background-size: cover;
+}
+
+.theme-autumn .cell-path,
+.theme-autumn .player-cell-path {
+  background-color: #ebd3b5;
+  background-image: url('../assets/maze-textures/autumn-path.png');
+  background-size: cover;
 }
 
 .editor-side {
@@ -1167,23 +1245,23 @@ a {
 }
 
 .player-cell-wall {
-  background: var(--ink);
+  background-color: var(--ink);
 }
 
 .theme-winter .player-cell-path {
-  background: #eaf2f6;
+  background-color: #eaf2f6;
 }
 
 .theme-summer .player-cell-path {
-  background: #f7efd0;
+  background-color: #f7efd0;
 }
 
 .theme-autumn .player-cell-path {
-  background: #f1dfcf;
+  background-color: #f1dfcf;
 }
 
 .theme-spring .player-cell-path {
-  background: #e8f3df;
+  background-color: #e8f3df;
 }
 
 .player-cell-entry {

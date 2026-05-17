@@ -1,7 +1,4 @@
-import {
-  getPassableNeighbors,
-  key,
-} from '../grid-validation';
+import { getPassableNeighbors, key } from '../grid-validation';
 import { Coordinate, MazeGrid, sameCoordinate } from '../maze-types';
 
 export function solveBfs(grid: MazeGrid, entry: Coordinate, exit: Coordinate) {

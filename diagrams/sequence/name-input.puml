@@ -39,7 +39,7 @@ else Основной поток
         CreateForm ->] : Переход к ВИ\n"Просмотреть список лабиринтов"
       end
     else Продолжение основного потока
-      Admin -> CreateForm: Нажать(кнопка "Далее — Сгенерировать")
+      Admin -> CreateForm: Нажать(кнопка "Далее — вход и выход")
       CreateForm -> MazeParams: Передать(название лабиринта)
       activate MazeParams
 

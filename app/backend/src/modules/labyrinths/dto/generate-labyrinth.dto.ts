@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsIn, IsInt, Max, Min } from 'class-validator';
+import { IsIn, IsInt, IsObject, Max, Min } from 'class-validator';
 import {
   ENTRY_MODES,
   GENERATION_ALGORITHMS,
@@ -30,4 +30,10 @@ export class GenerateLabyrinthDto {
 
   @IsIn(ENTRY_MODES, { message: 'Некорректный режим входа и выхода' })
   entryMode!: EntryModeValue;
+
+  @IsObject({ message: 'Вход должен быть координатой' })
+  entry!: unknown;
+
+  @IsObject({ message: 'Выход должен быть координатой' })
+  exit!: unknown;
 }

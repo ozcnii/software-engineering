@@ -5,6 +5,7 @@ import { generateKruskalMaze } from './algorithms/kruskal.generator';
 import { generatePrimMaze } from './algorithms/prim.generator';
 import { Maze } from './maze';
 import {
+  Coordinate,
   EntryModeValue,
   GenerationAlgorithmValue,
   LabyrinthThemeValue,
@@ -29,6 +30,8 @@ interface LabyrinthGameGenerationParams {
   theme: LabyrinthThemeValue;
   generationAlgorithm: GenerationAlgorithmValue;
   entryMode: EntryModeValue;
+  entry: Coordinate;
+  exit: Coordinate;
 }
 
 export class LabyrinthGame {
@@ -60,7 +63,10 @@ export class LabyrinthGame {
       maze,
     );
 
-    return game.generate();
+    return game.generate({
+      entry: params.entry,
+      exit: params.exit,
+    });
   }
 
   static fromPersisted(params: LabyrinthGameParams) {
@@ -76,24 +82,15 @@ export class LabyrinthGame {
     );
   }
 
-  generate() {
-    const response = {
+  generate(pair: { entry: Coordinate; exit: Coordinate }) {
+    this.maze.placeEntryExit(pair);
+
+    return {
       width: this.width,
       height: this.height,
       theme: this.theme,
       generationAlgorithm: this.generationAlgorithm,
       entryMode: this.entryMode,
-      grid: this.maze.grid,
-    };
-
-    if (this.entryMode === 'manual') {
-      return response;
-    }
-
-    const pair = this.maze.placeAutoEntryExit();
-
-    return {
-      ...response,
       grid: this.maze.grid,
       entry: pair.entry,
       exit: pair.exit,

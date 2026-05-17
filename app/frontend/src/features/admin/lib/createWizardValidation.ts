@@ -6,6 +6,8 @@ export function validateParams(params: WizardParams): ApiFieldErrors {
 
   if (!params.name.trim()) {
     errors.name = 'Введите название лабиринта';
+  } else if (params.name.trim().length > 40) {
+    errors.name = 'Название должно быть не длиннее 40 символов';
   }
 
   if (!isValidSize(params.width)) {

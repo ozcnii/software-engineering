@@ -9,6 +9,7 @@ import {
   UserRole,
 } from '@prisma/client';
 import { DEMO_LABYRINTHS } from '../src/modules/labyrinths/fixtures/demo-labyrinths';
+import { validateGridForPersistence } from '../src/modules/labyrinths/domain/grid-validation';
 
 const prisma = new PrismaClient();
 
@@ -31,6 +32,12 @@ async function main() {
     }));
 
   for (const demo of DEMO_LABYRINTHS) {
+    const gridResult = validateGridForPersistence(demo.grid, demo.width, demo.height);
+
+    if (!gridResult.valid) {
+      throw new Error(`${demo.name}: ${gridResult.message ?? 'Некорректная сетка'}`);
+    }
+
     const existingDemo = await prisma.labyrinth.findFirst({
       where: {
         name: demo.name,
@@ -38,6 +45,21 @@ async function main() {
     });
 
     if (existingDemo) {
+      await prisma.labyrinth.update({
+        where: {
+          id: existingDemo.id,
+        },
+        data: {
+          width: demo.width,
+          height: demo.height,
+          theme: themeMap[demo.theme],
+          generationAlgorithm: generationAlgorithmMap[demo.generationAlgorithm],
+          entryMode: entryModeMap[demo.entryMode],
+          grid: demo.grid as Prisma.InputJsonValue,
+          createdById: admin.id,
+          deletedAt: null,
+        },
+      });
       continue;
     }
 

@@ -9,7 +9,14 @@ interface AppModalProps {
   onClose: () => void;
 }
 
-export function AppModal({ title, titleId, className = '', children, actions, onClose }: AppModalProps) {
+export function AppModal({
+  title,
+  titleId,
+  className = '',
+  children,
+  actions,
+  onClose,
+}: AppModalProps) {
   const generatedTitleId = useId();
   const headingId = titleId ?? generatedTitleId;
 
@@ -23,7 +30,12 @@ export function AppModal({ title, titleId, className = '', children, actions, on
       >
         <div className="modal-head">
           <h2 id={headingId}>{title}</h2>
-          <button className="modal-close" type="button" onClick={onClose} aria-label="Закрыть">
+          <button
+            className="modal-close"
+            type="button"
+            onClick={onClose}
+            aria-label="Закрыть"
+          >
             x
           </button>
         </div>

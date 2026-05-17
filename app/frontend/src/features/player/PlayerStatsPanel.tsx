@@ -50,7 +50,12 @@ export function PlayerStatsPanel({
       <hr className="divider" />
 
       <div className="player-actions">
-        <button className="btn btn-ghost btn-sm btn-full" type="button" disabled={disabled} onClick={onReset}>
+        <button
+          className="btn btn-ghost btn-sm btn-full"
+          type="button"
+          disabled={disabled}
+          onClick={onReset}
+        >
           ↺ Сбросить
         </button>
         <button

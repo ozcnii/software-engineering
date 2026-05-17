@@ -39,6 +39,7 @@ class Maze {
   -height
   -cells
   +placeAutoEntryExit()
+  +placeEntryExit()
   +requireEntryExit()
 }
 
@@ -54,10 +55,39 @@ class SolutionPath {
   +toResponse()
 }
 
+class GridValidation {
+  +validateOddSize()
+  +validateEntryExitCoordinates()
+  +validateGridForPersistence()
+  +validateThickWallStructure()
+  +hasPath()
+}
+
+class PrimGenerator {
+  +generatePrimMaze()
+}
+
+class KruskalGenerator {
+  +generateKruskalMaze()
+}
+
+class BfsSolver {
+  +solveBfs()
+}
+
+class RightHandSolver {
+  +solveRightHand()
+}
+
 User "1" -- "0..*" LabyrinthGame
 LabyrinthGame *-- Maze
 Maze *-- Coordinate
 SolutionPath *-- Coordinate
 LabyrinthGame ..> SolutionPath
+LabyrinthGame ..> PrimGenerator
+LabyrinthGame ..> KruskalGenerator
+LabyrinthGame ..> BfsSolver
+LabyrinthGame ..> RightHandSolver
+Maze ..> GridValidation
 
 @enduml

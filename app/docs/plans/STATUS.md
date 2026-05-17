@@ -28,7 +28,7 @@
 | Roadmap | `00-implementation-roadmap.md` | Planned | Общая декомпозиция PRD на этапы реализации |
 | Project scaffold | `01-project-scaffold.md` | Done | Scaffold created; `typecheck`, `build`, `prisma:generate` pass; Docker verification accepted by user |
 | Backend auth and DB | `02-backend-auth-db.md` | Done | DB-backed auth smoke checks pass: seed admin login, register player, duplicate/mismatch validation, `/me`, logout |
-| Backend labyrinths and algorithms | `03-backend-labyrinths-algorithms.md` | Done | DB-backed labyrinth smoke checks pass: list/search, generate auto/manual, create/detail/delete, BFS/DFS, role errors |
+| Backend labyrinths and algorithms | `03-backend-labyrinths-algorithms.md` | Done | DB-backed labyrinth smoke checks pass: list/search, generate auto/manual, create/detail/delete, волновой алгоритм/метод правой руки, role errors |
 | Frontend auth and admin | `04-frontend-auth-admin.md` | Done | Auth/admin frontend implemented; `typecheck`, `build`, Docker/migrate/seed, API smoke checks, and headless browser smoke checks pass |
 | Frontend player | `05-frontend-player.md` | Done | Player screen, manual movement, themes, auto-solve UI verified with command, API, and headless browser checks |
 | Frontend refactor | `07-frontend-refactor.md` | Done | Soft feature-sliced cleanup verified with typecheck, build, API smoke, and browser smoke |
@@ -51,7 +51,7 @@
 | Difficulty calculation | Done | API-03 |
 | Player screen | Done | PLAYER-01..PLAYER-04 |
 | Manual movement | Done | PLAYER-05..PLAYER-08 |
-| Auto-solve BFS/DFS | Done | AUTO-01..AUTO-05, API-08, API-09 |
+| Auto-solve волновой алгоритм/метод правой руки | Done | AUTO-01..AUTO-05, API-08, API-09 |
 | Info screens | Done | INFO-01..INFO-04 |
 | Frontend refactor | Done | Maintenance refactor verified; no direct checklist behavior changes |
 | Full acceptance pass | Not started | Section 9 of `CHECKLIST.md` |

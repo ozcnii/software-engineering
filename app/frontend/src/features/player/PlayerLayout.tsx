@@ -12,6 +12,7 @@ import type {
 } from '@labyrinth/shared/types/domain';
 import { AppModal } from '../../shared/ui/AppModal';
 import { themeLabels, themeMarks } from '../../shared/ui/labels';
+import { DevelopersModal } from '../help/HelpPage';
 import { AutoSolvePanel } from './AutoSolvePanel';
 import { ManualControls } from './ManualControls';
 import { MazeGrid } from './MazeGrid';
@@ -21,6 +22,7 @@ import { PlayerThemePicker } from './PlayerThemePicker';
 import { usePlayerKeyboardMovement } from './hooks/usePlayerKeyboardMovement';
 import { usePlayerTimer } from './hooks/usePlayerTimer';
 import {
+  appendVisibleTrail,
   getCell,
   isWalkableCell,
   moveCoordinate,
@@ -56,6 +58,7 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isWallFeedbackActive, setIsWallFeedbackActive] = useState(false);
   const [isCompletionOpen, setIsCompletionOpen] = useState(false);
+  const [isDevelopersOpen, setIsDevelopersOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
   const [autoAlgorithm, setAutoAlgorithm] = useState<SolvingAlgorithm>('wave');
   const [autoDisplayMode, setAutoDisplayMode] = useState<AutoDisplayMode>('animated');
@@ -117,6 +120,7 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
     let index = 0;
     let timeoutId: number | null = null;
     let isCancelled = false;
+    let visibleTrail = [animationPath[0]];
     setIsAnimationRunning(true);
     setRun((current) =>
       current
@@ -147,13 +151,14 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
       }
 
       const isLast = index >= animationPath.length - 1;
+      visibleTrail = appendVisibleTrail(visibleTrail, point);
       setRun((current) =>
         current
           ? {
               ...current,
               position: point,
-              trail: animationPath.slice(0, index + 1),
-              steps: index,
+              trail: visibleTrail,
+              steps: visibleTrail.length - 1,
               isFinished: isLast,
               progressSource: 'auto',
             }
@@ -284,12 +289,13 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
       }
 
       const isFinished = sameCoordinate(nextPosition, selectedLabyrinth.exit);
+      const visibleTrail = appendVisibleTrail(run.trail, nextPosition);
 
       setRun({
         ...run,
         position: nextPosition,
-        trail: [...run.trail, nextPosition],
-        steps: run.steps + 1,
+        trail: visibleTrail,
+        steps: visibleTrail.length - 1,
         isFinished,
         progressSource: 'manual',
       });
@@ -420,8 +426,15 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
         <div>
           <div className="panel-title">Информация</div>
           <Link className="btn btn-ghost btn-sm btn-full" to="/player/help">
-            Справка
+            О системе
           </Link>
+          <button
+            className="btn btn-ghost btn-sm btn-full"
+            type="button"
+            onClick={() => setIsDevelopersOpen(true)}
+          >
+            О разработчиках
+          </button>
         </div>
       </aside>
 
@@ -567,6 +580,10 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
             void runAutoSolve();
           }}
         />
+      ) : null}
+
+      {isDevelopersOpen ? (
+        <DevelopersModal onClose={() => setIsDevelopersOpen(false)} />
       ) : null}
     </div>
   );

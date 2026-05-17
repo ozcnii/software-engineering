@@ -1,7 +1,4 @@
-import {
-  assertIntegrityGrid,
-  findEntryExit,
-} from './grid-validation';
+import { validateEntryExit, assertIntegrityGrid, findEntryExit } from './grid-validation';
 import { Coordinate, EntryExitPair, MazeGrid } from './maze-types';
 
 export class Maze {
@@ -43,6 +40,20 @@ export class Maze {
     this.cells[exit.row][exit.col] = 'exit';
 
     return { entry, exit };
+  }
+
+  placeEntryExit(pair: EntryExitPair) {
+    this.clearEntryExit();
+    this.cells[pair.entry.row][pair.entry.col] = 'entry';
+    this.cells[pair.exit.row][pair.exit.col] = 'exit';
+
+    const result = validateEntryExit(this.cells, pair.entry, pair.exit);
+
+    if (!result.valid) {
+      throw new Error(result.message ?? 'Invalid maze entry and exit');
+    }
+
+    return pair;
   }
 
   requireEntryExit(): EntryExitPair {
@@ -93,5 +104,15 @@ export class Maze {
 
   private choose<T>(items: T[]) {
     return items[Math.floor(Math.random() * items.length)];
+  }
+
+  private clearEntryExit() {
+    for (const [rowIndex, row] of this.cells.entries()) {
+      for (const [colIndex, cell] of row.entries()) {
+        if (cell === 'entry' || cell === 'exit') {
+          this.cells[rowIndex][colIndex] = 'wall';
+        }
+      }
+    }
   }
 }

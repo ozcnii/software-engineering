@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Реализовать backend для хранения лабиринтов, генерации Прима/Краскала, поиска BFS/DFS и REST API из PRD.
+**Goal:** Реализовать backend для хранения лабиринтов, генерации Прима/Краскала, поиска волновой алгоритм/метод правой руки и REST API из PRD.
 
 **Architecture:** Модуль `labyrinths` отвечает за CRUD и валидацию сетки. Модули `generation` и `solving` содержат чистую доменную логику без зависимости от HTTP, чтобы API мог переиспользовать алгоритмы.
 
@@ -37,7 +37,7 @@ Unknown request fields are stripped/ignored instead of rejected.
 - admin-only create/delete;
 - authenticated list/detail for admin and player;
 - admin-only generate endpoint without persistence;
-- player-only solve endpoint for BFS/DFS;
+- player-only solve endpoint for волновой алгоритм/метод правой руки;
 - computed `difficulty`;
 - validation of size, theme, algorithms, entry/exit and grid.
 
@@ -106,7 +106,7 @@ app/backend/src/modules/generation/domain/kruskal.generator.ts
 app/backend/src/modules/solving/solving.module.ts
 app/backend/src/modules/solving/solving.service.ts
 app/backend/src/modules/solving/domain/bfs.solver.ts
-app/backend/src/modules/solving/domain/dfs.solver.ts
+app/backend/src/modules/solving/domain/right-hand.solver.ts
 ```
 
 Pure domain logic lives in feature-local `domain/` folders. Nest services orchestrate persistence/API flow and call pure domain functions.

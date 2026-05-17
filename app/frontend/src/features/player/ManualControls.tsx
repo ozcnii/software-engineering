@@ -10,19 +10,39 @@ export function ManualControls({ disabled, onMove }: ManualControlsProps) {
     <div className="manual-controls">
       <div className="dpad" aria-label="d-pad">
         <div className="dpad-empty" />
-        <button className="dpad-btn" type="button" disabled={disabled} onClick={() => onMove('up')}>
+        <button
+          className="dpad-btn"
+          type="button"
+          disabled={disabled}
+          onClick={() => onMove('up')}
+        >
           ↑
         </button>
         <div className="dpad-empty" />
-        <button className="dpad-btn" type="button" disabled={disabled} onClick={() => onMove('left')}>
+        <button
+          className="dpad-btn"
+          type="button"
+          disabled={disabled}
+          onClick={() => onMove('left')}
+        >
           ←
         </button>
         <div className="dpad-empty" />
-        <button className="dpad-btn" type="button" disabled={disabled} onClick={() => onMove('right')}>
+        <button
+          className="dpad-btn"
+          type="button"
+          disabled={disabled}
+          onClick={() => onMove('right')}
+        >
           →
         </button>
         <div className="dpad-empty" />
-        <button className="dpad-btn" type="button" disabled={disabled} onClick={() => onMove('down')}>
+        <button
+          className="dpad-btn"
+          type="button"
+          disabled={disabled}
+          onClick={() => onMove('down')}
+        >
           ↓
         </button>
         <div className="dpad-empty" />

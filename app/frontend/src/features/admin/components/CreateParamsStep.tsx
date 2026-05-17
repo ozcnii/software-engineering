@@ -9,10 +9,16 @@ import type { WizardParams } from '../model/createWizardState';
 interface CreateParamsStepProps {
   params: WizardParams;
   fieldErrors: ApiFieldErrors;
+  nameStatus: string;
   onChange: (params: WizardParams) => void;
 }
 
-export function CreateParamsStep({ params, fieldErrors, onChange }: CreateParamsStepProps) {
+export function CreateParamsStep({
+  params,
+  fieldErrors,
+  nameStatus,
+  onChange,
+}: CreateParamsStepProps) {
   return (
     <div className="wiz-params">
       <section className="card full-span">
@@ -25,6 +31,9 @@ export function CreateParamsStep({ params, fieldErrors, onChange }: CreateParams
           onChange={(event) => onChange({ ...params, name: event.target.value })}
         />
         {fieldErrors.name ? <div className="err">{fieldErrors.name}</div> : null}
+        {!fieldErrors.name && nameStatus ? (
+          <div className="hint">{nameStatus}</div>
+        ) : null}
       </section>
 
       <section className="card">
@@ -138,7 +147,10 @@ function RadioCard<T extends string>({
               checked={value === optionValue}
               onChange={() => onChange(optionValue)}
             />
-            <span className={`radio-dot ${value === optionValue ? 'on' : ''}`} aria-hidden="true" />
+            <span
+              className={`radio-dot ${value === optionValue ? 'on' : ''}`}
+              aria-hidden="true"
+            />
             {label}
           </label>
         ))}

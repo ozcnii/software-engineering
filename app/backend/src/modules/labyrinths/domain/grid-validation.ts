@@ -89,6 +89,13 @@ export function validateGridForPersistence(
     };
   }
 
+  if (!allPassableCellsAreConnected(grid, pair.entry)) {
+    return {
+      valid: false,
+      message: 'В лабиринте не должно быть изолированных проходов',
+    };
+  }
+
   return { valid: true };
 }
 
@@ -103,9 +110,9 @@ export function assertIntegrityGrid(grid: unknown, width: number, height: number
     return null;
   }
 
-  const entryExitResult = validateEntryExit(grid, pair.entry, pair.exit);
+  const gridResult = validateGridForPersistence(grid, width, height);
 
-  return entryExitResult.valid ? pair : null;
+  return gridResult.valid ? pair : null;
 }
 
 export function findEntryExit(grid: MazeGrid): EntryExitPair | null {
@@ -139,28 +146,18 @@ export function validateEntryExit(
   entry: Coordinate,
   exit: Coordinate,
 ): GridValidationResult {
-  if (sameCoordinate(entry, exit)) {
-    return {
-      valid: false,
-      message: 'Вход и выход должны быть разными клетками',
-    };
+  const coordinateResult = validateEntryExitCoordinates(
+    grid[0]?.length ?? 0,
+    grid.length,
+    entry,
+    exit,
+  );
+
+  if (!coordinateResult.valid) {
+    return coordinateResult;
   }
 
   for (const point of [entry, exit]) {
-    if (!isOnPerimeter(grid, point)) {
-      return {
-        valid: false,
-        message: 'Вход и выход должны находиться на периметре',
-      };
-    }
-
-    if (isCorner(grid, point)) {
-      return {
-        valid: false,
-        message: 'Вход и выход не должны находиться в углах',
-      };
-    }
-
     const inner = getAdjacentInnerCell(grid, point);
 
     if (!inner || grid[inner.row][inner.col] !== 'path') {
@@ -169,6 +166,72 @@ export function validateEntryExit(
         message: 'Рядом с входом и выходом внутри лабиринта должен быть проход',
       };
     }
+  }
+
+  return { valid: true };
+}
+
+export function validateEntryExitCoordinates(
+  width: number,
+  height: number,
+  entry: Coordinate,
+  exit: Coordinate,
+): GridValidationResult {
+  if (
+    !isCoordinateInside(width, height, entry) ||
+    !isCoordinateInside(width, height, exit)
+  ) {
+    return {
+      valid: false,
+      message: 'Вход и выход должны находиться в пределах сетки',
+    };
+  }
+
+  if (sameCoordinate(entry, exit)) {
+    return {
+      valid: false,
+      message: 'Вход и выход должны быть разными клетками',
+    };
+  }
+
+  for (const point of [entry, exit]) {
+    if (!isOnPerimeterSize(width, height, point)) {
+      return {
+        valid: false,
+        message: 'Вход и выход должны находиться на периметре',
+      };
+    }
+
+    if (isCornerSize(width, height, point)) {
+      return {
+        valid: false,
+        message: 'Вход и выход не должны находиться в углах',
+      };
+    }
+
+    if (!isThickWallEndpoint(width, height, point)) {
+      return {
+        valid: false,
+        message: 'Вход и выход должны совпадать с узлами толстостенного лабиринта',
+      };
+    }
+  }
+
+  if (manhattanDistance(entry, exit) < 2) {
+    return {
+      valid: false,
+      message: 'Между входом и выходом должна быть минимум одна клетка',
+    };
+  }
+
+  const entryInner = getAdjacentInnerCellBySize(width, height, entry);
+  const exitInner = getAdjacentInnerCellBySize(width, height, exit);
+
+  if (!entryInner || !exitInner || sameCoordinate(entryInner, exitInner)) {
+    return {
+      valid: false,
+      message: 'Вход и выход должны вести в разные внутренние клетки',
+    };
   }
 
   return { valid: true };
@@ -237,6 +300,33 @@ export function hasPath(grid: MazeGrid, start: Coordinate, end: Coordinate) {
   return false;
 }
 
+export function allPassableCellsAreConnected(grid: MazeGrid, start: Coordinate) {
+  const passableCount = grid.reduce(
+    (count, row) =>
+      count +
+      row.filter((cell) => cell === 'path' || cell === 'entry' || cell === 'exit').length,
+    0,
+  );
+  const visited = new Set<string>();
+  const queue: Coordinate[] = [start];
+  visited.add(key(start));
+
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+
+    for (const next of getPassableNeighbors(grid, current)) {
+      const nextKey = key(next);
+
+      if (!visited.has(nextKey)) {
+        visited.add(nextKey);
+        queue.push(next);
+      }
+    }
+  }
+
+  return visited.size === passableCount;
+}
+
 export function getPassableNeighbors(grid: MazeGrid, coordinate: Coordinate) {
   const candidates = [
     { row: coordinate.row - 1, col: coordinate.col },
@@ -271,17 +361,32 @@ function allCellsAreValid(grid: MazeGrid) {
 }
 
 function isOnPerimeter(grid: MazeGrid, coordinate: Coordinate) {
+  return isOnPerimeterSize(grid[0]?.length ?? 0, grid.length, coordinate);
+}
+
+function isCoordinateInside(width: number, height: number, coordinate: Coordinate) {
   return (
-    coordinate.row === 0 ||
-    coordinate.col === 0 ||
-    coordinate.row === grid.length - 1 ||
-    coordinate.col === grid[0].length - 1
+    Number.isInteger(coordinate.row) &&
+    Number.isInteger(coordinate.col) &&
+    coordinate.row >= 0 &&
+    coordinate.col >= 0 &&
+    coordinate.row < height &&
+    coordinate.col < width
   );
 }
 
-function isCorner(grid: MazeGrid, coordinate: Coordinate) {
-  const lastRow = grid.length - 1;
-  const lastCol = grid[0].length - 1;
+function isOnPerimeterSize(width: number, height: number, coordinate: Coordinate) {
+  return (
+    coordinate.row === 0 ||
+    coordinate.col === 0 ||
+    coordinate.row === height - 1 ||
+    coordinate.col === width - 1
+  );
+}
+
+function isCornerSize(width: number, height: number, coordinate: Coordinate) {
+  const lastRow = height - 1;
+  const lastCol = width - 1;
 
   return (
     (coordinate.row === 0 && coordinate.col === 0) ||
@@ -291,9 +396,33 @@ function isCorner(grid: MazeGrid, coordinate: Coordinate) {
   );
 }
 
+function isThickWallEndpoint(width: number, height: number, coordinate: Coordinate) {
+  if (coordinate.row === 0 || coordinate.row === height - 1) {
+    return coordinate.col % 2 === 1;
+  }
+
+  if (coordinate.col === 0 || coordinate.col === width - 1) {
+    return coordinate.row % 2 === 1;
+  }
+
+  return false;
+}
+
+function manhattanDistance(a: Coordinate, b: Coordinate) {
+  return Math.abs(a.row - b.row) + Math.abs(a.col - b.col);
+}
+
 function getAdjacentInnerCell(grid: MazeGrid, coordinate: Coordinate): Coordinate | null {
-  const lastRow = grid.length - 1;
-  const lastCol = grid[0].length - 1;
+  return getAdjacentInnerCellBySize(grid[0]?.length ?? 0, grid.length, coordinate);
+}
+
+function getAdjacentInnerCellBySize(
+  width: number,
+  height: number,
+  coordinate: Coordinate,
+): Coordinate | null {
+  const lastRow = height - 1;
+  const lastCol = width - 1;
 
   if (coordinate.row === 0) {
     return { row: 1, col: coordinate.col };

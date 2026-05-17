@@ -1,5 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import { useState } from 'react';
 import type { User } from '@labyrinth/shared/types/domain';
+import { DevelopersModal } from '../help/HelpPage';
 
 interface AdminLayoutProps {
   user: User;
@@ -7,6 +9,8 @@ interface AdminLayoutProps {
 }
 
 export function AdminLayout({ user, onLogout }: AdminLayoutProps) {
+  const [isDevelopersOpen, setIsDevelopersOpen] = useState(false);
+
   return (
     <div className="admin-layout">
       <header className="admin-header">
@@ -48,14 +52,23 @@ export function AdminLayout({ user, onLogout }: AdminLayoutProps) {
           className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}
           to="/admin/help"
         >
-          <span className="sidebar-icon">?</span>
-          Справка
+          <span className="sidebar-icon">?</span>О системе
         </NavLink>
+        <button
+          className="sidebar-item sidebar-button"
+          type="button"
+          onClick={() => setIsDevelopersOpen(true)}
+        >
+          <span className="sidebar-icon">i</span>О разработчиках
+        </button>
       </aside>
 
       <main className="admin-main">
         <Outlet />
       </main>
+      {isDevelopersOpen ? (
+        <DevelopersModal onClose={() => setIsDevelopersOpen(false)} />
+      ) : null}
     </div>
   );
 }

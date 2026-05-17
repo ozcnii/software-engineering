@@ -555,8 +555,8 @@ Targeted smoke:
 - manual movement via keyboard and d-pad works;
 - wall moves do not increment steps;
 - reset/exit confirmations still appear only with progress;
-- instant BFS/DFS moves to exit;
-- animated BFS/DFS animates at selected speed and disables conflicting controls.
+- instant волновой алгоритм/метод правой руки moves to exit;
+- animated волновой алгоритм/метод правой руки animates at selected speed and disables conflicting controls.
 
 ### Task 12: Restructure Global CSS
 

@@ -46,6 +46,12 @@ export class LabyrinthsController {
     return this.labyrinthsService.create(dto, req.user.id);
   }
 
+  @Get('name-availability')
+  @Roles('admin')
+  checkName(@Query('name') name: unknown) {
+    return this.labyrinthsService.checkName(name);
+  }
+
   @Get(':id')
   @Roles('admin', 'player')
   detail(@Param('id') id: string) {

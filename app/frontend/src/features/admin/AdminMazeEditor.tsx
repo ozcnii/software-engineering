@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { MazeGrid } from '@labyrinth/shared/types/domain';
+import type { LabyrinthTheme, MazeGrid } from '@labyrinth/shared/types/domain';
 import { MazeEditorGrid } from './components/MazeEditorGrid';
 import { MazeEditorToolbar } from './components/MazeEditorToolbar';
 import {
   cloneGrid,
   getEntryExitStatus,
   validateFinalGrid,
+  validateGeneratedGridAfterEdit,
   validateToolPlacement,
   type EditorTool,
 } from './lib/mazeEditorRules';
@@ -16,11 +17,23 @@ export { validateFinalGrid };
 interface AdminMazeEditorProps {
   grid: MazeGrid;
   resetKey: number;
+  theme?: LabyrinthTheme;
+  enabledTools?: EditorTool[];
+  isBlank?: boolean;
+  validateConnectivityOnEdit?: boolean;
   onChange: (grid: MazeGrid) => void;
 }
 
-export function AdminMazeEditor({ grid, resetKey, onChange }: AdminMazeEditorProps) {
-  const [tool, setTool] = useState<EditorTool>('wall');
+export function AdminMazeEditor({
+  grid,
+  resetKey,
+  theme,
+  enabledTools = ['wall', 'path', 'entry', 'exit'],
+  isBlank = false,
+  validateConnectivityOnEdit = false,
+  onChange,
+}: AdminMazeEditorProps) {
+  const [tool, setTool] = useState<EditorTool>(enabledTools[0] ?? 'entry');
   const [undoStack, setUndoStack] = useState<MazeGrid[]>([]);
   const [redoStack, setRedoStack] = useState<MazeGrid[]>([]);
   const [hint, setHint] = useState('');
@@ -30,9 +43,21 @@ export function AdminMazeEditor({ grid, resetKey, onChange }: AdminMazeEditorPro
     setUndoStack([]);
     setRedoStack([]);
     setHint('');
+    setTool(enabledTools[0] ?? 'entry');
   }, [resetKey]);
 
+  useEffect(() => {
+    if (!enabledTools.includes(tool)) {
+      setTool(enabledTools[0] ?? 'entry');
+    }
+  }, [enabledTools, tool]);
+
   function applyCell(row: number, col: number) {
+    if (!enabledTools.includes(tool)) {
+      setHint('Этот инструмент сейчас недоступен');
+      return;
+    }
+
     const validation = validateToolPlacement(grid, tool, { row, col });
 
     if (!validation.ok) {
@@ -53,6 +78,16 @@ export function AdminMazeEditor({ grid, resetKey, onChange }: AdminMazeEditorPro
     }
 
     nextGrid[row][col] = tool;
+
+    if (validateConnectivityOnEdit) {
+      const gridError = validateGeneratedGridAfterEdit(nextGrid);
+
+      if (gridError) {
+        setHint(gridError);
+        return;
+      }
+    }
+
     setUndoStack((current) => [...current, cloneGrid(grid)]);
     setRedoStack([]);
     setHint('');
@@ -86,17 +121,23 @@ export function AdminMazeEditor({ grid, resetKey, onChange }: AdminMazeEditorPro
   }
 
   return (
-    <div className="wiz-editor">
+    <div className={`wiz-editor ${theme ? `theme-${theme}` : ''}`}>
       <div className="wiz-editor-left">
         <MazeEditorToolbar
           tool={tool}
+          enabledTools={enabledTools}
           canUndo={undoStack.length > 0}
           canRedo={redoStack.length > 0}
           onToolChange={setTool}
           onUndo={undo}
           onRedo={redo}
         />
-        <MazeEditorGrid grid={grid} hint={hint} onCellClick={applyCell} />
+        <MazeEditorGrid
+          grid={grid}
+          hint={hint}
+          isBlank={isBlank}
+          onCellClick={applyCell}
+        />
       </div>
 
       <aside className="editor-side">

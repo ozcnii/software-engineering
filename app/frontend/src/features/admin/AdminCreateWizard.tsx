@@ -1,15 +1,25 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ApiClientError } from '../../shared/api/client';
 import { labyrinthsApi } from '../../shared/api/labyrinthsApi';
 import type { MazeGrid } from '@labyrinth/shared/types/domain';
 import type { ApiFieldErrors } from '@labyrinth/shared/types/api';
+import { useDebouncedValue } from '../../shared/hooks/useDebouncedValue';
 import { validateFinalGrid } from './AdminMazeEditor';
 import { CreateEditorStep } from './components/CreateEditorStep';
 import { CreateParamsStep } from './components/CreateParamsStep';
 import { CreateSaveStep } from './components/CreateSaveStep';
-import { CreateWizardSteps, WizardNav, type WizardStep } from './components/CreateWizardSteps';
+import {
+  CreateWizardSteps,
+  WizardNav,
+  type WizardStep,
+} from './components/CreateWizardSteps';
 import { validateParams } from './lib/createWizardValidation';
+import {
+  createTemplateGrid,
+  getEntryExitStatus,
+  placeAutoEntryExit,
+} from './lib/mazeEditorRules';
 import { defaultParams, type WizardParams } from './model/createWizardState';
 
 export function AdminCreateWizard() {
@@ -21,9 +31,54 @@ export function AdminCreateWizard() {
   const [fieldErrors, setFieldErrors] = useState<ApiFieldErrors>({});
   const [generalError, setGeneralError] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isGenerated, setIsGenerated] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [nameStatus, setNameStatus] = useState('');
+  const nameRequestIdRef = useRef(0);
+  const debouncedName = useDebouncedValue(params.name.trim(), 450);
 
-  async function generate(event?: FormEvent) {
+  useEffect(() => {
+    const name = debouncedName;
+
+    if (!name) {
+      setNameStatus('');
+      return undefined;
+    }
+
+    const localErrors = validateParams({ ...params, name });
+
+    if (localErrors.name) {
+      setNameStatus('');
+      return undefined;
+    }
+
+    const requestId = nameRequestIdRef.current + 1;
+    nameRequestIdRef.current = requestId;
+    setNameStatus('проверяем название...');
+
+    labyrinthsApi
+      .checkName(name)
+      .then((response) => {
+        if (nameRequestIdRef.current !== requestId) {
+          return;
+        }
+
+        setNameStatus(response.available ? 'название свободно' : '');
+        setFieldErrors((current) => ({
+          ...current,
+          name: response.available ? '' : 'Лабиринт с таким названием уже существует',
+        }));
+      })
+      .catch(() => {
+        if (nameRequestIdRef.current === requestId) {
+          setNameStatus('');
+        }
+      });
+
+    return undefined;
+  }, [debouncedName]);
+
+  async function beginEditor(event?: FormEvent) {
     event?.preventDefault();
 
     const errors = validateParams(params);
@@ -34,7 +89,40 @@ export function AdminCreateWizard() {
       return;
     }
 
+    if (!(await ensureNameAvailable())) {
+      return;
+    }
+
+    const template = createTemplateGrid(params.width, params.height);
+    const nextGrid = params.entryMode === 'auto' ? placeAutoEntryExit(template) : template;
+
+    setGrid(nextGrid);
+    setIsGenerated(false);
+    setEditorResetKey((current) => current + 1);
+    setStep(2);
+
+    if (params.entryMode === 'auto') {
+      await generateMaze(nextGrid, 'Не удалось автоматически задать вход и выход');
+    }
+  }
+
+  async function generateMaze(
+    sourceGrid = grid,
+    missingEndpointsMessage = 'Сначала задайте вход и выход',
+  ) {
+    if (!sourceGrid) {
+      return false;
+    }
+
+    const status = getEntryExitStatus(sourceGrid);
+
+    if (!status.entry || !status.exit) {
+      setGeneralError(missingEndpointsMessage);
+      return false;
+    }
+
     setIsGenerating(true);
+    setGeneralError('');
 
     try {
       const response = await labyrinthsApi.generate({
@@ -43,28 +131,32 @@ export function AdminCreateWizard() {
         theme: params.theme,
         generationAlgorithm: params.generationAlgorithm,
         entryMode: params.entryMode,
+        entry: status.entry,
+        exit: status.exit,
       });
 
       setGrid(response.grid);
+      setIsGenerated(true);
       setEditorResetKey((current) => current + 1);
-      setStep(2);
+      return true;
     } catch (error) {
       handleApiError(error, 'Не удалось сгенерировать лабиринт');
+      return false;
     } finally {
       setIsGenerating(false);
     }
   }
 
-  async function regenerate() {
-    if (!window.confirm('Заменить текущую сетку новой генерацией?')) {
+  async function generateFromEditor() {
+    if (isGenerated && !window.confirm('Заменить текущую сетку новой генерацией?')) {
       return;
     }
 
-    await generate();
+    await generateMaze(grid);
   }
 
   function goToSave() {
-    if (!grid) {
+    if (!grid || !isGenerated) {
       setGeneralError('Сначала сгенерируйте лабиринт');
       return;
     }
@@ -81,7 +173,7 @@ export function AdminCreateWizard() {
   }
 
   async function save() {
-    if (!grid) {
+    if (!grid || !isGenerated) {
       return;
     }
 
@@ -117,9 +209,31 @@ export function AdminCreateWizard() {
   function handleApiError(error: unknown, fallback: string) {
     if (error instanceof ApiClientError) {
       setFieldErrors(error.fields);
-      setGeneralError(error.fields.grid ?? firstFieldError(error.fields) ?? error.message);
+      setGeneralError(
+        error.fields.grid ?? firstFieldError(error.fields) ?? error.message,
+      );
     } else {
       setGeneralError(fallback);
+    }
+  }
+
+  async function ensureNameAvailable() {
+    try {
+      const response = await labyrinthsApi.checkName(params.name.trim());
+
+      if (response.available) {
+        setFieldErrors((current) => ({ ...current, name: '' }));
+        return true;
+      }
+
+      setFieldErrors((current) => ({
+        ...current,
+        name: 'Лабиринт с таким названием уже существует',
+      }));
+      return false;
+    } catch (error) {
+      handleApiError(error, 'Не удалось проверить название');
+      return false;
     }
   }
 
@@ -138,14 +252,18 @@ export function AdminCreateWizard() {
       {generalError ? <div className="form-error">{generalError}</div> : null}
 
       {step === 1 ? (
-        <form onSubmit={(event) => void generate(event)}>
-          <CreateParamsStep params={params} fieldErrors={fieldErrors} onChange={setParams} />
+        <form onSubmit={(event) => void beginEditor(event)}>
+          <CreateParamsStep
+            params={params}
+            fieldErrors={fieldErrors}
+            nameStatus={nameStatus}
+            onChange={setParams}
+          />
 
           <WizardNav
-            nextLabel={isGenerating ? 'Генерируем...' : 'Далее — Сгенерировать ->'}
+            nextLabel="Далее — вход и выход ->"
             onCancel={() => navigate('/admin')}
             nextType="submit"
-            nextDisabled={isGenerating}
           />
         </form>
       ) : null}
@@ -156,8 +274,10 @@ export function AdminCreateWizard() {
             params={params}
             grid={grid}
             editorResetKey={editorResetKey}
+            isGenerated={isGenerated}
+            isGenerating={isGenerating}
             onGridChange={setGrid}
-            onRegenerate={() => void regenerate()}
+            onGenerate={() => void generateFromEditor()}
           />
           <WizardNav
             prevLabel="<- Назад"
@@ -165,6 +285,7 @@ export function AdminCreateWizard() {
             onPrev={() => setStep(1)}
             onCancel={() => navigate('/admin')}
             onNext={goToSave}
+            nextDisabled={!isGenerated || isGenerating}
           />
         </>
       ) : null}

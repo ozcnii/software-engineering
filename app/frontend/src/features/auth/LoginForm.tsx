@@ -69,7 +69,11 @@ export function LoginForm({ onUser }: LoginFormProps) {
         onChange={setPassword}
       />
 
-      <button className="btn btn-primary btn-full btn-lg" type="submit" disabled={isSubmitting}>
+      <button
+        className="btn btn-primary btn-full btn-lg"
+        type="submit"
+        disabled={isSubmitting}
+      >
         {isSubmitting ? 'Входим...' : 'Войти ->'}
       </button>
     </form>

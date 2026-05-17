@@ -27,10 +27,20 @@ export function AdminDeleteModal({
       onClose={onCancel}
       actions={
         <>
-          <button className="btn btn-sm btn-ghost" type="button" onClick={onCancel} disabled={isDeleting}>
+          <button
+            className="btn btn-sm btn-ghost"
+            type="button"
+            onClick={onCancel}
+            disabled={isDeleting}
+          >
             Отмена
           </button>
-          <button className="btn btn-sm btn-danger" type="button" onClick={onConfirm} disabled={isDeleting}>
+          <button
+            className="btn btn-sm btn-danger"
+            type="button"
+            onClick={onConfirm}
+            disabled={isDeleting}
+          >
             {isDeleting ? 'Удаляем...' : 'Подтвердить удаление'}
           </button>
         </>

@@ -21,7 +21,7 @@
 - HTML grid maze rendering;
 - manual movement with keyboard and d-pad;
 - reset and exit level;
-- auto-solve UI for BFS/DFS;
+- auto-solve UI for волновой алгоритм/метод правой руки;
 - animation/immediate modes;
 - speed 1-10 steps/sec;
 - player info modals.
@@ -230,6 +230,6 @@ Additional checks from answered planning questions:
 - Manual movement works only through valid cells.
 - Theme changes are local and reset on exit.
 - Player maze is rendered as HTML grid cells.
-- BFS/DFS auto-solve results display correctly.
+- волновой алгоритм/метод правой руки auto-solve results display correctly.
 - Animated mode respects speed.
 - All player checklist items can be verified manually.

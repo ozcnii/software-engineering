@@ -3,6 +3,7 @@ import type {
   CreateLabyrinthPayload,
   GenerateLabyrinthPayload,
   GenerateLabyrinthResponse,
+  LabyrinthNameAvailabilityResponse,
   LabyrinthListQuery,
   LabyrinthListResponse,
 } from '@labyrinth/shared/types/api';
@@ -30,7 +31,9 @@ export const labyrinthsApi = {
 
     const suffix = params.toString();
 
-    return apiRequest<LabyrinthListResponse>(`/api/labyrinths${suffix ? `?${suffix}` : ''}`);
+    return apiRequest<LabyrinthListResponse>(
+      `/api/labyrinths${suffix ? `?${suffix}` : ''}`,
+    );
   },
 
   generate(payload: GenerateLabyrinthPayload) {
@@ -38,6 +41,14 @@ export const labyrinthsApi = {
       method: 'POST',
       body: payload,
     });
+  },
+
+  checkName(name: string) {
+    const params = new URLSearchParams({ name });
+
+    return apiRequest<LabyrinthNameAvailabilityResponse>(
+      `/api/labyrinths/name-availability?${params.toString()}`,
+    );
   },
 
   create(payload: CreateLabyrinthPayload) {

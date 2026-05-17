@@ -33,18 +33,26 @@ export function MazePreview({
       {!isLoading && error ? (
         <span className="maze-preview-state error">{error}</span>
       ) : null}
-      {!isLoading && !error && detail ? <MazePreviewGrid grid={detail.grid} /> : null}
+      {!isLoading && !error && detail ? (
+        <MazePreviewGrid grid={detail.grid} theme={item.theme} />
+      ) : null}
     </span>
   );
 }
 
-function MazePreviewGrid({ grid }: { grid: MazeGrid }) {
+function MazePreviewGrid({
+  grid,
+  theme,
+}: {
+  grid: MazeGrid;
+  theme: LabyrinthListItem['theme'];
+}) {
   const width = grid[0]?.length ?? 1;
   const height = grid.length || 1;
 
   return (
     <span
-      className="maze-preview-grid"
+      className={`maze-preview-grid theme-${theme}`}
       style={{
         gridTemplateColumns: `repeat(${width}, minmax(4px, 1fr))`,
         gridTemplateRows: `repeat(${height}, minmax(4px, 1fr))`,

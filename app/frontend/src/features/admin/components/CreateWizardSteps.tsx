@@ -12,11 +12,15 @@ export function CreateWizardSteps({ step }: { step: WizardStep }) {
 
         return (
           <div className="stepper-part" key={label}>
-            <div className={`wiz-dot ${isDone ? 's-done' : ''} ${isActive ? 's-active' : ''}`}>
+            <div
+              className={`wiz-dot ${isDone ? 's-done' : ''} ${isActive ? 's-active' : ''}`}
+            >
               {stepNumber}
             </div>
             <span className={`wiz-lbl ${isActive ? 's-active' : ''}`}>{label}</span>
-            {index < labels.length - 1 ? <div className={`wiz-line ${isDone ? 's-done' : ''}`} /> : null}
+            {index < labels.length - 1 ? (
+              <div className={`wiz-line ${isDone ? 's-done' : ''}`} />
+            ) : null}
           </div>
         );
       })}
@@ -54,7 +58,12 @@ export function WizardNav({
       <button className="btn btn-ghost btn-sm" type="button" onClick={onCancel}>
         Отмена
       </button>
-      <button className="btn btn-primary" type={nextType} onClick={onNext} disabled={nextDisabled}>
+      <button
+        className="btn btn-primary"
+        type={nextType}
+        onClick={onNext}
+        disabled={nextDisabled}
+      >
         {nextLabel}
       </button>
     </div>

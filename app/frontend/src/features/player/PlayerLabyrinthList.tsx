@@ -9,7 +9,11 @@ interface PlayerLabyrinthListProps {
   onSelect: (labyrinth: LabyrinthListItem) => void;
 }
 
-export function PlayerLabyrinthList({ selectedId, detailError, onSelect }: PlayerLabyrinthListProps) {
+export function PlayerLabyrinthList({
+  selectedId,
+  detailError,
+  onSelect,
+}: PlayerLabyrinthListProps) {
   const list = usePlayerLabyrinthList();
   const isEmpty = !list.isLoadingInitial && list.items.length === 0 && !list.error;
   const emptyText = list.debouncedSearch ? 'Ничего не найдено' : 'Нет лабиринтов';
@@ -29,7 +33,9 @@ export function PlayerLabyrinthList({ selectedId, detailError, onSelect }: Playe
       {list.error ? <div className="form-error compact-error">{list.error}</div> : null}
 
       <div className="player-maze-list">
-        {list.isLoadingInitial ? <ListSkeleton label="Загрузка списка лабиринтов" /> : null}
+        {list.isLoadingInitial ? (
+          <ListSkeleton label="Загрузка списка лабиринтов" />
+        ) : null}
 
         {!list.isLoadingInitial
           ? list.items.map((item) => (
@@ -42,9 +48,13 @@ export function PlayerLabyrinthList({ selectedId, detailError, onSelect }: Playe
             ))
           : null}
 
-        {isEmpty ? <div className="empty-state player-empty-state">{emptyText}</div> : null}
+        {isEmpty ? (
+          <div className="empty-state player-empty-state">{emptyText}</div>
+        ) : null}
         <div ref={list.sentinelRef} className="scroll-sentinel" />
-        {list.isLoadingMore ? <div className="hint centered">загружаем ещё...</div> : null}
+        {list.isLoadingMore ? (
+          <div className="hint centered">загружаем ещё...</div>
+        ) : null}
       </div>
     </div>
   );

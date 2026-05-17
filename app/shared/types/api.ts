@@ -1,4 +1,5 @@
 import type {
+  Coordinate,
   EntryMode,
   GenerationAlgorithm,
   LabyrinthDetail,
@@ -54,14 +55,25 @@ export interface GenerateLabyrinthPayload {
   theme: LabyrinthTheme;
   generationAlgorithm: GenerationAlgorithm;
   entryMode: EntryMode;
+  entry: Coordinate;
+  exit: Coordinate;
 }
 
 export interface GenerateLabyrinthResponse extends GenerateLabyrinthPayload {
   grid: MazeGrid;
 }
 
-export interface CreateLabyrinthPayload extends GenerateLabyrinthPayload {
+export interface LabyrinthNameAvailabilityResponse {
+  available: boolean;
+}
+
+export interface CreateLabyrinthPayload {
   name: string;
+  width: number;
+  height: number;
+  theme: LabyrinthTheme;
+  generationAlgorithm: GenerationAlgorithm;
+  entryMode: EntryMode;
   grid: MazeGrid;
 }
 

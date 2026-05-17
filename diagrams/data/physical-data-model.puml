@@ -1,0 +1,68 @@
+@startuml
+title Физическая модель базы данных
+
+skinparam backgroundColor #FFFFFF
+skinparam DefaultFontName Helvetica
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  FontSize 12
+}
+hide circle
+
+entity "User" as User {
+  * id : String <<PK, uuid>>
+  --
+  * login : String <<unique>>
+  * passwordHash : String
+  * role : UserRole
+  * createdAt : DateTime
+}
+
+entity "Labyrinth" as Labyrinth {
+  * id : String <<PK, uuid>>
+  --
+  * name : String
+  * width : Int
+  * height : Int
+  * theme : LabyrinthTheme
+  * generationAlgorithm : GenerationAlgorithm
+  * entryMode : EntryMode
+  * grid : Json
+  * createdById : String <<FK>>
+  * createdAt : DateTime
+  deletedAt : DateTime?
+  --
+  index(createdById)
+  index(deletedAt, createdAt, id)
+}
+
+enum UserRole {
+  ADMIN
+  PLAYER
+}
+
+enum LabyrinthTheme {
+  WINTER
+  SUMMER
+  AUTUMN
+  SPRING
+}
+
+enum GenerationAlgorithm {
+  PRIM
+  KRUSKAL
+}
+
+enum EntryMode {
+  AUTO
+  MANUAL
+}
+
+User ||--o{ Labyrinth : createdBy
+User::role --> UserRole
+Labyrinth::theme --> LabyrinthTheme
+Labyrinth::generationAlgorithm --> GenerationAlgorithm
+Labyrinth::entryMode --> EntryMode
+
+@enduml

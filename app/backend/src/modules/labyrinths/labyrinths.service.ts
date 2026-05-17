@@ -5,12 +5,13 @@ import { CreateLabyrinthDto } from './dto/create-labyrinth.dto';
 import { GenerateLabyrinthDto } from './dto/generate-labyrinth.dto';
 import { SolveLabyrinthDto } from './dto/solve-labyrinth.dto';
 import {
+  validateEntryExitCoordinates,
   validateGridForPersistence,
   validateOddSize,
 } from './domain/grid-validation';
 import { LabyrinthGame } from './domain/labyrinth-game';
 import { Maze } from './domain/maze';
-import { MazeGrid } from './domain/maze-types';
+import { Coordinate, MazeGrid } from './domain/maze-types';
 import {
   gridToJson,
   toApiEntryMode,
@@ -52,7 +53,41 @@ export class LabyrinthsService implements OnModuleDestroy {
       });
     }
 
-    return LabyrinthGame.generate(dto);
+    const entry = this.parseCoordinate(dto.entry, 'entry');
+    const exit = this.parseCoordinate(dto.exit, 'exit');
+    const entryExitResult = validateEntryExitCoordinates(
+      dto.width,
+      dto.height,
+      entry,
+      exit,
+    );
+
+    if (!entryExitResult.valid) {
+      throw ApiError.validation({
+        grid: entryExitResult.message ?? 'Некорректные вход и выход',
+      });
+    }
+
+    return LabyrinthGame.generate({
+      ...dto,
+      entry,
+      exit,
+    });
+  }
+
+  async checkName(rawName: unknown) {
+    if (typeof rawName !== 'string') {
+      throw ApiError.validation({
+        name: 'Название должно быть строкой',
+      });
+    }
+
+    const name = this.validateName(rawName.trim());
+    const exists = await this.activeNameExists(name);
+
+    return {
+      available: !exists,
+    };
   }
 
   async create(dto: CreateLabyrinthDto, createdById: string) {
@@ -173,7 +208,31 @@ export class LabyrinthsService implements OnModuleDestroy {
     return name;
   }
 
+  private parseCoordinate(value: unknown, field: string): Coordinate {
+    if (
+      !value ||
+      typeof value !== 'object' ||
+      !Number.isInteger((value as Coordinate).row) ||
+      !Number.isInteger((value as Coordinate).col)
+    ) {
+      throw ApiError.validation({
+        [field]: 'Координата должна содержать целые row и col',
+      });
+    }
+
+    return {
+      row: (value as Coordinate).row,
+      col: (value as Coordinate).col,
+    };
+  }
+
   private async assertActiveNameIsUnique(name: string) {
+    if (await this.activeNameExists(name)) {
+      throw ApiError.labyrinthNameExists();
+    }
+  }
+
+  private async activeNameExists(name: string) {
     const existing = await this.prisma.labyrinth.findFirst({
       where: {
         deletedAt: null,
@@ -184,9 +243,7 @@ export class LabyrinthsService implements OnModuleDestroy {
       },
     });
 
-    if (existing) {
-      throw ApiError.labyrinthNameExists();
-    }
+    return Boolean(existing);
   }
 
   private async findActiveById(id: string) {

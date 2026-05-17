@@ -14,13 +14,19 @@ export class ApiClientError extends Error {
   }
 }
 
-const API_URL = (import.meta.env.VITE_API_URL ?? 'http://localhost:3001').replace(/\/$/, '');
+const API_URL = (import.meta.env.VITE_API_URL ?? 'http://localhost:3001').replace(
+  /\/$/,
+  '',
+);
 
 type RequestOptions = Omit<RequestInit, 'body' | 'credentials'> & {
   body?: unknown;
 };
 
-export async function apiRequest<T>(path: string, options: RequestOptions = {}): Promise<T> {
+export async function apiRequest<T>(
+  path: string,
+  options: RequestOptions = {},
+): Promise<T> {
   const headers = new Headers(options.headers);
 
   if (options.body !== undefined && !headers.has('Content-Type')) {

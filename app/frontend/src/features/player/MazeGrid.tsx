@@ -1,5 +1,9 @@
 import type { CSSProperties } from 'react';
-import type { Coordinate, LabyrinthTheme, MazeGrid as MazeGridData } from '@labyrinth/shared/types/domain';
+import type {
+  Coordinate,
+  LabyrinthTheme,
+  MazeGrid as MazeGridData,
+} from '@labyrinth/shared/types/domain';
 import { coordinateKey, sameCoordinate } from './lib/playerMovement';
 
 interface MazeGridProps {

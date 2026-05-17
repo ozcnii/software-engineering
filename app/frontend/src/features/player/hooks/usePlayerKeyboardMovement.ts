@@ -6,7 +6,10 @@ interface UsePlayerKeyboardMovementOptions {
   onMove: (direction: Direction) => void;
 }
 
-export function usePlayerKeyboardMovement({ enabled, onMove }: UsePlayerKeyboardMovementOptions) {
+export function usePlayerKeyboardMovement({
+  enabled,
+  onMove,
+}: UsePlayerKeyboardMovementOptions) {
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (!enabled) {

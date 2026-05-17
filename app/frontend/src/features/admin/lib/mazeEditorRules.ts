@@ -24,13 +24,27 @@ export function validateFinalGrid(grid: MazeGrid): string {
     return `Выход: ${exitValidation.message}`;
   }
 
+  const distanceValidation = validateEntryExitDistance(grid, status.entry, status.exit);
+
+  if (!distanceValidation.ok) {
+    return distanceValidation.message;
+  }
+
   const thickWallValidation = validateThickWallStructure(grid);
 
   if (!thickWallValidation.ok) {
     return `Лабиринт не толстостенный: ${thickWallValidation.message}`;
   }
 
+  if (!allPassableCellsAreConnected(grid, status.entry)) {
+    return 'В лабиринте не должно быть изолированных проходов';
+  }
+
   return '';
+}
+
+export function validateGeneratedGridAfterEdit(grid: MazeGrid) {
+  return validateFinalGrid(grid);
 }
 
 export function validateToolPlacement(
@@ -48,7 +62,17 @@ export function validateToolPlacement(
     return { ok: false, message: 'Вход и выход не должны совпадать' };
   }
 
-  return validateEndpoint(grid, coordinate);
+  const endpointValidation = validateEndpoint(grid, coordinate);
+
+  if (!endpointValidation.ok || !other) {
+    return endpointValidation;
+  }
+
+  return validateEntryExitDistance(
+    grid,
+    tool === 'entry' ? coordinate : other,
+    tool === 'exit' ? coordinate : other,
+  );
 }
 
 export function getEntryExitStatus(grid: MazeGrid) {
@@ -65,6 +89,38 @@ export function getEntryExitStatus(grid: MazeGrid) {
 
 export function cloneGrid(grid: MazeGrid): MazeGrid {
   return grid.map((row) => [...row]);
+}
+
+export function createTemplateGrid(width: number, height: number): MazeGrid {
+  return Array.from({ length: height }, (_, row) =>
+    Array.from({ length: width }, (_, col) =>
+      row === 0 ||
+      col === 0 ||
+      row === height - 1 ||
+      col === width - 1 ||
+      (row % 2 === 0 && col % 2 === 0)
+        ? 'wall'
+        : 'path',
+    ),
+  );
+}
+
+export function placeAutoEntryExit(grid: MazeGrid): MazeGrid {
+  const candidates = collectEndpointCandidates(grid);
+
+  for (const entry of candidates) {
+    for (const exit of [...candidates].reverse()) {
+      if (validateEntryExitDistance(grid, entry, exit).ok) {
+        const nextGrid = cloneGrid(grid);
+        nextGrid[entry.row][entry.col] = 'entry';
+        nextGrid[exit.row][exit.col] = 'exit';
+
+        return nextGrid;
+      }
+    }
+  }
+
+  return grid;
 }
 
 function validateEndpoint(grid: MazeGrid, coordinate: Coordinate) {
@@ -84,10 +140,48 @@ function validateEndpoint(grid: MazeGrid, coordinate: Coordinate) {
     return { ok: false, message: 'клетка не должна быть в углу' };
   }
 
+  if (
+    ((coordinate.row === 0 || coordinate.row === height - 1) &&
+      coordinate.col % 2 === 0) ||
+    ((coordinate.col === 0 || coordinate.col === width - 1) && coordinate.row % 2 === 0)
+  ) {
+    return {
+      ok: false,
+      message: 'клетка должна совпадать с узлом толстостенного лабиринта',
+    };
+  }
+
   const inner = adjacentInnerCell(grid, coordinate);
 
   if (!inner || grid[inner.row]?.[inner.col] !== 'path') {
     return { ok: false, message: 'рядом внутри лабиринта должен быть проход' };
+  }
+
+  return { ok: true, message: '' };
+}
+
+function validateEntryExitDistance(grid: MazeGrid, entry: Coordinate, exit: Coordinate) {
+  if (entry.row === exit.row && entry.col === exit.col) {
+    return { ok: false, message: 'Вход и выход должны быть разными клетками' };
+  }
+
+  if (Math.abs(entry.row - exit.row) + Math.abs(entry.col - exit.col) < 2) {
+    return {
+      ok: false,
+      message: 'Между входом и выходом должна быть минимум одна клетка',
+    };
+  }
+
+  const entryInner = adjacentInnerCell(grid, entry);
+  const exitInner = adjacentInnerCell(grid, exit);
+
+  if (
+    entryInner &&
+    exitInner &&
+    entryInner.row === exitInner.row &&
+    entryInner.col === exitInner.col
+  ) {
+    return { ok: false, message: 'Вход и выход должны вести в разные внутренние клетки' };
   }
 
   return { ok: true, message: '' };
@@ -154,6 +248,45 @@ function validateThickWallStructure(grid: MazeGrid) {
   return { ok: true, message: '' };
 }
 
+function allPassableCellsAreConnected(grid: MazeGrid, start: Coordinate) {
+  const passableCount = grid.reduce(
+    (count, row) =>
+      count +
+      row.filter((cell) => cell === 'path' || cell === 'entry' || cell === 'exit').length,
+    0,
+  );
+  const visited = new Set<string>([coordinateKey(start)]);
+  const queue: Coordinate[] = [start];
+
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+
+    for (const next of passableNeighbors(grid, current)) {
+      const key = coordinateKey(next);
+
+      if (!visited.has(key)) {
+        visited.add(key);
+        queue.push(next);
+      }
+    }
+  }
+
+  return visited.size === passableCount;
+}
+
+function passableNeighbors(grid: MazeGrid, coordinate: Coordinate) {
+  return [
+    { row: coordinate.row - 1, col: coordinate.col },
+    { row: coordinate.row + 1, col: coordinate.col },
+    { row: coordinate.row, col: coordinate.col - 1 },
+    { row: coordinate.row, col: coordinate.col + 1 },
+  ].filter((next) => {
+    const cell = grid[next.row]?.[next.col];
+
+    return cell === 'path' || cell === 'entry' || cell === 'exit';
+  });
+}
+
 function isPerimeter(grid: MazeGrid, coordinate: Coordinate) {
   const height = grid.length;
   const width = grid[0]?.length ?? 0;
@@ -187,6 +320,26 @@ function adjacentInnerCell(grid: MazeGrid, coordinate: Coordinate): Coordinate |
   }
 
   return null;
+}
+
+function collectEndpointCandidates(grid: MazeGrid) {
+  const height = grid.length;
+  const width = grid[0]?.length ?? 0;
+  const candidates: Coordinate[] = [];
+
+  for (let col = 1; col < width - 1; col += 2) {
+    candidates.push({ row: 0, col }, { row: height - 1, col });
+  }
+
+  for (let row = 1; row < height - 1; row += 2) {
+    candidates.push({ row, col: 0 }, { row, col: width - 1 });
+  }
+
+  return candidates.filter((candidate) => validateEndpoint(grid, candidate).ok);
+}
+
+function coordinateKey(coordinate: Coordinate) {
+  return `${coordinate.row}:${coordinate.col}`;
 }
 
 function findCell(grid: MazeGrid, target: MazeCell): Coordinate | null {

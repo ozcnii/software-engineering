@@ -44,7 +44,8 @@ component "solution-path.ts" <<source>> as SolutionPath
 component "prim.generator.ts" <<source>> as PrimGenerator
 component "kruskal.generator.ts" <<source>> as KruskalGenerator
 component "bfs.solver.ts" <<source>> as BfsSolver
-component "dfs.solver.ts" <<source>> as DfsSolver
+component "right-hand.solver.ts" <<source>> as RightHandSolver
+component "grid-validation.ts" <<source>> as GridValidation
 component "Prisma Client" <<library>> as PrismaClient
 
 Frontend ..> App
@@ -83,7 +84,8 @@ LabyrinthGame ..> SolutionPath
 LabyrinthGame ..> PrimGenerator
 LabyrinthGame ..> KruskalGenerator
 LabyrinthGame ..> BfsSolver
-LabyrinthGame ..> DfsSolver
+LabyrinthGame ..> RightHandSolver
+LabyrinthsModule ..> GridValidation
 UsersModule ..> PrismaClient
 LabyrinthsModule ..> PrismaClient
 

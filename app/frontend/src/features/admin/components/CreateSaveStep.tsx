@@ -10,7 +10,13 @@ interface CreateSaveStepProps {
   onCancel: () => void;
 }
 
-export function CreateSaveStep({ params, grid, isSaving, onSave, onCancel }: CreateSaveStepProps) {
+export function CreateSaveStep({
+  params,
+  grid,
+  isSaving,
+  onSave,
+  onCancel,
+}: CreateSaveStepProps) {
   const maxPreviewWidth = Math.min(260, Math.round((params.width / params.height) * 260));
 
   return (
@@ -22,7 +28,7 @@ export function CreateSaveStep({ params, grid, isSaving, onSave, onCancel }: Cre
       <SummaryRow label="Алгоритм" value={algorithmLabels[params.generationAlgorithm]} />
       <SummaryRow label="Вход и выход" value="заданы" />
       <div
-        className="mini-preview"
+        className={`mini-preview theme-${params.theme}`}
         style={{
           gridTemplateColumns: `repeat(${params.width}, minmax(6px, 1fr))`,
           gridTemplateRows: `repeat(${params.height}, minmax(6px, 1fr))`,
@@ -37,10 +43,18 @@ export function CreateSaveStep({ params, grid, isSaving, onSave, onCancel }: Cre
         )}
       </div>
       <div className="save-actions">
-        <button className="btn btn-success btn-full btn-lg" type="button" onClick={onSave}>
+        <button
+          className="btn btn-success btn-full btn-lg"
+          type="button"
+          onClick={onSave}
+        >
           {isSaving ? 'Сохраняем...' : 'Сохранить лабиринт'}
         </button>
-        <button className="btn btn-ghost btn-full btn-sm" type="button" onClick={onCancel}>
+        <button
+          className="btn btn-ghost btn-full btn-sm"
+          type="button"
+          onClick={onCancel}
+        >
           Отмена
         </button>
       </div>

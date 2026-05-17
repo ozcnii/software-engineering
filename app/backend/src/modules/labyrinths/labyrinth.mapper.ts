@@ -5,10 +5,7 @@ import {
   LabyrinthTheme,
   Prisma,
 } from '@prisma/client';
-import type {
-  LabyrinthDetail,
-  LabyrinthListItem,
-} from '@labyrinth/shared/types/domain';
+import type { LabyrinthDetail, LabyrinthListItem } from '@labyrinth/shared/types/domain';
 import { ApiError } from '../../shared/errors/api-error';
 import { computeDifficulty } from './domain/difficulty';
 import { assertIntegrityGrid } from './domain/grid-validation';

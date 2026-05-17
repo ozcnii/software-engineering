@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { User } from '@labyrinth/shared/types/domain';
+import { AppModal } from '../../shared/ui/AppModal';
 
 interface PlayerHelpPageProps {
   user: User;
@@ -38,11 +39,6 @@ export function HelpPage() {
           Доступны четыре темы: зима, лето, осень и весна. Для игрока смена темы действует
           локально в текущей сессии прохождения.
         </InfoCard>
-        <InfoCard title="Разработчики">
-          Фокин Евгений Андреевич, Сидоров Артемий Олегович, группа 6303. Самарский
-          университет, кафедра информационных систем, 2026.
-        </InfoCard>
-        <InfoCard title="Руководитель">Зеленко Лариса Сергеевна.</InfoCard>
       </section>
     </div>
   );
@@ -82,5 +78,27 @@ function InfoCard({ title, children }: { title: string; children: string }) {
       <div className="card-title">{title}</div>
       <p>{children}</p>
     </article>
+  );
+}
+
+export function DevelopersModal({ onClose }: { onClose: () => void }) {
+  return (
+    <AppModal
+      title="О разработчиках"
+      onClose={onClose}
+      actions={
+        <button className="btn btn-sm btn-primary" type="button" onClick={onClose}>
+          Закрыть
+        </button>
+      }
+    >
+      <div className="modal-body">
+        <p>
+          Фокин Евгений Андреевич, Сидоров Артемий Олегович, группа 6303. Самарский
+          университет, кафедра информационных систем, 2026.
+        </p>
+        <p>Руководитель: Зеленко Лариса Сергеевна.</p>
+      </div>
+    </AppModal>
   );
 }

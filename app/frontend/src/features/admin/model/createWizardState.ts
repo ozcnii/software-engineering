@@ -1,4 +1,8 @@
-import type { EntryMode, GenerationAlgorithm, LabyrinthTheme } from '@labyrinth/shared/types/domain';
+import type {
+  EntryMode,
+  GenerationAlgorithm,
+  LabyrinthTheme,
+} from '@labyrinth/shared/types/domain';
 
 export interface WizardParams {
   name: string;

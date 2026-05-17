@@ -171,7 +171,7 @@ Backend modules are created empty at scaffold stage:
 - `users` — user model and seed admin, later.
 - `labyrinths` — CRUD and validation, later.
 - `generation` — Prim/Kruskal, later.
-- `solving` — BFS/DFS, later.
+- `solving` — волновой алгоритм/метод правой руки, later.
 
 Prisma schema at scaffold stage should only establish provider and datasource:
 

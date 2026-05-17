@@ -16,6 +16,14 @@ export function sameCoordinate(left: Coordinate, right: Coordinate) {
   return left.row === right.row && left.col === right.col;
 }
 
+export function appendVisibleTrail(trail: Coordinate[], position: Coordinate) {
+  const existingIndex = trail.findIndex((point) => sameCoordinate(point, position));
+
+  return existingIndex >= 0
+    ? trail.slice(0, existingIndex + 1)
+    : [...trail, position];
+}
+
 export function moveCoordinate(coordinate: Coordinate, direction: Direction): Coordinate {
   const delta = directionDeltas[direction];
 
