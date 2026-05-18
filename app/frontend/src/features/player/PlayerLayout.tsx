@@ -426,7 +426,7 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
         <div>
           <div className="panel-title">Информация</div>
           <Link className="btn btn-ghost btn-sm btn-full" to="/player/help">
-            О системе
+            Справка
           </Link>
           <button
             className="btn btn-ghost btn-sm btn-full"

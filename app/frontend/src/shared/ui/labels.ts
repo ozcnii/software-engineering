@@ -8,10 +8,10 @@ export const themeLabels: Record<LabyrinthTheme, string> = {
 };
 
 export const themeMarks: Record<LabyrinthTheme, string> = {
-  winter: '*',
-  summer: '+',
-  autumn: '~',
-  spring: '.',
+  winter: '❄',
+  summer: '☀',
+  autumn: '🍂',
+  spring: '🌸',
 };
 
 export const algorithmLabels: Record<GenerationAlgorithm, string> = {

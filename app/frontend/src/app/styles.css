@@ -652,6 +652,23 @@ a {
   padding: 18px 20px;
 }
 
+.developers-modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 24px 28px;
+  text-align: center;
+}
+
+.developers-modal-body p {
+  margin: 0;
+}
+
+.developers-modal-body .developers-spacer {
+  margin-top: 14px;
+}
+
 .modal-actions {
   justify-content: flex-end;
   border-top: 1.5px dashed var(--ink3);

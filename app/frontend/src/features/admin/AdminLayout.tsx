@@ -52,7 +52,7 @@ export function AdminLayout({ user, onLogout }: AdminLayoutProps) {
           className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}
           to="/admin/help"
         >
-          <span className="sidebar-icon">?</span>О системе
+          <span className="sidebar-icon">?</span>Справка
         </NavLink>
         <button
           className="sidebar-item sidebar-button"
