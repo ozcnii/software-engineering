@@ -1,0 +1,38 @@
+@startuml bfs
+skinparam defaultFontName "Helvetica"
+skinparam defaultFontSize 13
+skinparam dpi 150
+skinparam ActivityBackgroundColor #FFFFFF
+skinparam ActivityBorderColor #333333
+skinparam ActivityDiamondBackgroundColor #FFFFFF
+skinparam ActivityDiamondBorderColor #333333
+skinparam ArrowColor #333333
+
+title Схема волнового алгоритма поиска пути
+
+start
+:Ввести сетку лабиринта,\nклетку входа и клетку выхода;
+:Положить клетку входа\nв очередь и в множество посещённых;
+:Создать пустую карту предков;
+while (Очередь не пуста?) is (да)
+  :Извлечь клетку из начала очереди;
+  if (Извлечённая клетка\nсовпадает с выходом?) then (да)
+    :Восстановить путь по карте\nпредков от выхода до входа;
+    :Инвертировать последовательность\nи вернуть путь;
+    stop
+  else (нет)
+  endif
+  while (Остались необработанные\nпроходимые соседи?) is (да)
+    :Взять очередного соседа;
+    if (Сосед уже посещён?) then (да)
+    else (нет)
+      :Добавить соседа в множество\nпосещённых;
+      :Записать текущую клетку\nкак предка соседа;
+      :Положить соседа в конец очереди;
+    endif
+  endwhile (нет)
+endwhile (нет)
+:Вернуть признак отсутствия пути;
+stop
+
+@enduml

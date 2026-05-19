@@ -3,7 +3,6 @@ import { AdminCreateWizard } from '../features/admin/AdminCreateWizard';
 import { AdminLabyrinthList } from '../features/admin/AdminLabyrinthList';
 import { AdminLayout } from '../features/admin/AdminLayout';
 import { AuthScreen } from '../features/auth/AuthScreen';
-import { HelpPage, PlayerHelpPage } from '../features/help/HelpPage';
 import { PlayerLayout } from '../features/player/PlayerLayout';
 import type { AuthState } from './App';
 
@@ -37,7 +36,6 @@ export function AppRouter({ auth }: AppRouterProps) {
       >
         <Route index element={<AdminLabyrinthList />} />
         <Route path="create" element={<AdminCreateWizard />} />
-        <Route path="help" element={<HelpPage />} />
       </Route>
 
       <Route
@@ -45,17 +43,6 @@ export function AppRouter({ auth }: AppRouterProps) {
         element={
           auth.user?.role === 'player' ? (
             <PlayerLayout user={auth.user} onLogout={auth.logout} />
-          ) : (
-            <Navigate to={auth.user ? '/admin' : '/auth'} replace />
-          )
-        }
-      />
-
-      <Route
-        path="/player/help"
-        element={
-          auth.user?.role === 'player' ? (
-            <PlayerHelpPage user={auth.user} onLogout={auth.logout} />
           ) : (
             <Navigate to={auth.user ? '/admin' : '/auth'} replace />
           )

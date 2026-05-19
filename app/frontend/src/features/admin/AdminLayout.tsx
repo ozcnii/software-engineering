@@ -48,12 +48,14 @@ export function AdminLayout({ user, onLogout }: AdminLayoutProps) {
         </NavLink>
 
         <div className="sidebar-section">Информация</div>
-        <NavLink
-          className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}
-          to="/admin/help"
+        <a
+          className="sidebar-item"
+          href="/help.html"
+          target="_blank"
+          rel="noreferrer"
         >
           <span className="sidebar-icon">?</span>Справка
-        </NavLink>
+        </a>
         <button
           className="sidebar-item sidebar-button"
           type="button"

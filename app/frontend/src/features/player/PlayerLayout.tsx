@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { labyrinthsApi } from '../../shared/api/labyrinthsApi';
 import { getErrorMessage } from '../../shared/lib/errors';
 import type {
@@ -425,9 +424,14 @@ export function PlayerLayout({ user, onLogout }: PlayerLayoutProps) {
 
         <div>
           <div className="panel-title">Информация</div>
-          <Link className="btn btn-ghost btn-sm btn-full" to="/player/help">
+          <a
+            className="btn btn-ghost btn-sm btn-full"
+            href="/help.html"
+            target="_blank"
+            rel="noreferrer"
+          >
             Справка
-          </Link>
+          </a>
           <button
             className="btn btn-ghost btn-sm btn-full"
             type="button"

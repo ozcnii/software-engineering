@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Справка — Лабиринт</title>
+    <style>
+      :root {
+        --bg: #faf8f3;
+        --paper: #fffef9;
+        --ink: #2c2416;
+        --ink2: #6b5d4f;
+        --ink3: #c4b8a8;
+        --accent: #3a5a8c;
+        --shadow: 2px 3px 0 var(--ink3);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        min-height: 100vh;
+      }
+
+      body {
+        background:
+          linear-gradient(rgba(250, 248, 243, 0.92), rgba(250, 248, 243, 0.92)),
+          repeating-linear-gradient(
+            45deg,
+            rgba(44, 36, 22, 0.04) 0 1px,
+            transparent 1px 12px
+          );
+      }
+
+      .page {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 32px 20px 64px;
+      }
+
+      .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      .page-title {
+        font-size: 26px;
+        margin: 0;
+        font-weight: 700;
+      }
+
+      .page-sub {
+        margin: 4px 0 0;
+        color: var(--ink2);
+        font-size: 14px;
+      }
+
+      .close-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 36px;
+        padding: 8px 18px;
+        border: 2px solid var(--ink);
+        border-radius: 5px 9px 4px 8px;
+        background: var(--paper);
+        color: var(--ink);
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        font: inherit;
+        white-space: nowrap;
+      }
+
+      .close-btn:hover {
+        transform: translate(-1px, -1px);
+        box-shadow: 3px 4px 0 var(--ink3);
+      }
+
+      .card {
+        background: var(--paper);
+        border: 2px solid var(--ink);
+        border-radius: 6px 10px 5px 9px;
+        box-shadow: var(--shadow);
+        padding: 18px 22px;
+        margin-bottom: 18px;
+      }
+
+      .card h2 {
+        margin: 0 0 10px;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+
+      .card p {
+        margin: 0 0 10px;
+      }
+
+      .card p:last-child {
+        margin-bottom: 0;
+      }
+
+      .card ul {
+        margin: 0 0 10px;
+        padding-left: 22px;
+      }
+
+      .card ul:last-child {
+        margin-bottom: 0;
+      }
+
+      .card li {
+        margin-bottom: 6px;
+      }
+
+      .card li:last-child {
+        margin-bottom: 0;
+      }
+
+      kbd {
+        display: inline-block;
+        padding: 1px 6px;
+        border: 1px solid var(--ink3);
+        border-radius: 4px;
+        background: var(--bg);
+        font-family: inherit;
+        font-size: 14px;
+      }
+
+      @media (max-width: 480px) {
+        .page {
+          padding: 20px 14px 48px;
+        }
+
+        .page-title {
+          font-size: 22px;
+        }
+
+        .card {
+          padding: 14px 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <div>
+          <h1 class="page-title">Справка</h1>
+          <p class="page-sub">Система генерации и прохождения лабиринтов</p>
+        </div>
+        <button
+          type="button"
+          class="close-btn"
+          onclick="window.close(); setTimeout(function(){ history.length > 1 ? history.back() : (location.href='/'); }, 50);"
+        >
+          ← Закрыть
+        </button>
+      </header>
+
+      <section class="card">
+        <h2>Назначение системы</h2>
+        <p>
+          Система предназначена для создания, хранения и прохождения двумерных
+          толстостенных лабиринтов. Администратор формирует уровни, игрок
+          проходит их вручную или с помощью автоматического решения.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Роли пользователей</h2>
+        <ul>
+          <li>
+            <b>Администратор</b> — создаёт, редактирует и удаляет лабиринты,
+            настраивает их параметры и темы оформления.
+          </li>
+          <li>
+            <b>Игрок</b> — просматривает список доступных лабиринтов и проходит
+            их вручную или с помощью авто-решения.
+          </li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Авторизация и регистрация</h2>
+        <p>
+          Вход в систему выполняется по логину и паролю на экране авторизации.
+          Новый пользователь регистрируется на этом же экране и автоматически
+          получает роль игрока. Роль администратора назначается отдельно.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Создание лабиринта</h2>
+        <p>Администратор задаёт параметры будущего лабиринта:</p>
+        <ul>
+          <li>название лабиринта;</li>
+          <li>
+            ширина и высота сетки — нечётные значения в диапазоне от 7 до 25;
+          </li>
+          <li>тема оформления (зима, лето, осень, весна);</li>
+          <li>
+            алгоритм генерации (метод Прима или метод Краскала);
+          </li>
+          <li>
+            режим расстановки входа и выхода (автоматический или вручную).
+          </li>
+        </ul>
+        <p>
+          После генерации лабиринт открывается в редакторе для просмотра и
+          уточнения структуры.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Редактор сетки</h2>
+        <p>
+          В редакторе администратор уточняет сетку лабиринта вручную. Толщина
+          стены и прохода равна одной клетке; редактор сохраняет толстостенную
+          структуру и защищает проходные узлы и пересечения стен от правок,
+          которые её ломают. Сохранение возможно только для согласованного
+          лабиринта со связным проходом от входа до выхода.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Прохождение лабиринта</h2>
+        <p>
+          Игрок выбирает лабиринт из списка слева, после чего активируется
+          поле для прохождения. Управление в ручном режиме доступно тремя
+          способами:
+        </p>
+        <ul>
+          <li>
+            клавиши стрелок
+            <kbd>↑</kbd>
+            <kbd>↓</kbd>
+            <kbd>←</kbd>
+            <kbd>→</kbd>;
+          </li>
+          <li>
+            клавиши
+            <kbd>W</kbd>
+            <kbd>A</kbd>
+            <kbd>S</kbd>
+            <kbd>D</kbd>;
+          </li>
+          <li>экранные кнопки управления в правой панели.</li>
+        </ul>
+        <p>
+          Ходы через стены не засчитываются. По достижении клетки выхода игроку
+          показываются количество шагов и затраченное время.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Автоматическое решение</h2>
+        <p>В системе реализованы два алгоритма автоматического решения:</p>
+        <ul>
+          <li>
+            <b>Волновой алгоритм</b> — выполняет поиск в ширину и строит
+            кратчайший путь от входа до выхода. Работает для любого корректно
+            сгенерированного лабиринта.
+          </li>
+          <li>
+            <b>Метод правой руки</b> — двигается вдоль стены. Не требует обхода
+            всей сетки, но может не найти выход для лабиринта с неподходящей
+            структурой проходов.
+          </li>
+        </ul>
+        <p>
+          Решение можно отобразить мгновенно или с анимацией пошагового
+          движения; скорость анимации настраивается ползунком.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Темы оформления</h2>
+        <p>
+          Доступны четыре темы: зима, лето, осень и весна. Администратор
+          фиксирует тему лабиринта при его создании. Игрок при прохождении
+          может переключить тему локально для текущей сессии, не изменяя
+          сохранённую тему лабиринта.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
