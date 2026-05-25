@@ -1,0 +1,87 @@
+@startuml
+title Диаграмма объектов предметной области
+
+skinparam backgroundColor #FFFFFF
+skinparam DefaultFontName Helvetica
+skinparam object {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  FontSize 12
+}
+skinparam ArrowColor #000000
+skinparam ArrowFontSize 11
+
+object "Пользователь" as User {
+  логин
+  пароль
+  роль
+}
+
+object "Администратор" as Admin {
+  роль = ADMIN
+}
+
+object "Игрок" as Player {
+  роль = PLAYER
+}
+
+object "Лабиринт" as Maze {
+  название
+  ширина
+  высота
+  алгоритм генерации
+  способ расстановки входа и выхода
+}
+
+object "Сетка лабиринта" as Grid {
+  размер по ширине
+  размер по высоте
+}
+
+object "Клетка" as Cell {
+  тип: стена / проход
+  координата
+}
+
+object "Вход и выход" as EntryExit {
+  координата входа
+  координата выхода
+}
+
+object "Тема оформления" as Theme {
+  зима / лето / осень / весна
+}
+
+object "Алгоритм генерации" as GenAlgorithm {
+  метод Прима
+  метод Краскала
+}
+
+object "Алгоритм поиска пути" as PathAlgorithm {
+  волновой алгоритм
+  метод правой руки
+}
+
+object "База данных" as Database {
+  пользователи
+  лабиринты
+}
+
+Admin --|> User
+Player --|> User
+
+Admin "1" --> "*" Maze : создаёт
+Player "1" --> "*" Maze : проходит
+
+Maze "1" *-- "1" Grid : содержит
+Grid "1" *-- "*" Cell : состоит из
+Maze "1" --> "1" EntryExit : имеет
+Maze "1" --> "1" Theme : оформлено
+Maze "1" --> "1" GenAlgorithm : построен
+Player "1" --> "0..1" PathAlgorithm : выбирает
+PathAlgorithm "1" --> "1" Grid : обрабатывает
+
+Database "1" o-- "*" User : хранит
+Database "1" o-- "*" Maze : хранит
+
+@enduml

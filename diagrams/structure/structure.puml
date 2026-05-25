@@ -1,0 +1,68 @@
+@startuml
+title Структурная схема системы
+
+skinparam backgroundColor #FFFFFF
+skinparam DefaultFontName Helvetica
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  FontSize 12
+}
+skinparam ArrowColor #000000
+skinparam ArrowFontSize 11
+
+rectangle "Клиентская часть системы" as Client {
+  rectangle "Подсистема авторизации\nи регистрации" as ClientAuth
+  rectangle "Подсистема администратора" as ClientAdmin {
+    rectangle "Просмотр списка\nлабиринтов" as AdminList
+    rectangle "Создание лабиринта\n(параметры, редактор, сохранение)" as AdminCreate
+    rectangle "Удаление лабиринта" as AdminDelete
+  }
+  rectangle "Подсистема игрока" as ClientPlayer {
+    rectangle "Выбор лабиринта" as PlayerSelect
+    rectangle "Ручное прохождение" as PlayerManual
+    rectangle "Автоматическое решение" as PlayerAuto
+  }
+  rectangle "Подсистема визуализации\nсетки и темы оформления" as ClientView
+  rectangle "Справочная подсистема\n(справка, разработчики)" as ClientHelp
+  rectangle "Подсистема взаимодействия\nс сервером (HTTP/REST)" as ClientHttp
+}
+
+rectangle "Серверная часть системы" as Server {
+  rectangle "Подсистема взаимодействия\nс клиентом (HTTP/REST)" as ServerHttp
+  rectangle "Подсистема аутентификации\nи выдачи JWT" as ServerAuth
+  rectangle "Подсистема работы\nс пользователями" as ServerUsers
+  rectangle "Подсистема работы с лабиринтами" as ServerMazes {
+    rectangle "Алгоритмы генерации\n(Прим, Краскал)" as ServerGen
+    rectangle "Алгоритмы поиска пути\n(волновой, правая рука)" as ServerSolve
+    rectangle "Валидация и проверка\nцелостности сетки" as ServerValidate
+  }
+  rectangle "Подсистема взаимодействия\nс СУБД (Prisma ORM)" as ServerDb
+}
+
+database "База данных\nPostgreSQL" as DB {
+  rectangle "Таблица\nпользователей" as TableUsers
+  rectangle "Таблица\nлабиринтов" as TableMazes
+}
+
+ClientAuth --> ClientHttp
+ClientAdmin --> ClientHttp
+ClientPlayer --> ClientHttp
+ClientHelp --> ClientView
+ClientAdmin --> ClientView
+ClientPlayer --> ClientView
+
+ClientHttp --> ServerHttp : HTTPS / REST / JSON
+ServerHttp --> ServerAuth
+ServerHttp --> ServerUsers
+ServerHttp --> ServerMazes
+ServerAuth --> ServerUsers
+ServerMazes --> ServerGen
+ServerMazes --> ServerSolve
+ServerMazes --> ServerValidate
+ServerUsers --> ServerDb
+ServerMazes --> ServerDb
+ServerDb --> DB : SQL
+TableUsers -[hidden]- TableMazes
+
+@enduml
