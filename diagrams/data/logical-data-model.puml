@@ -29,7 +29,6 @@ digraph G {
         <TR><TD ALIGN="LEFT">Логин</TD></TR>
         <TR><TD ALIGN="LEFT">Хеш пароля</TD></TR>
         <TR><TD ALIGN="LEFT">Роль</TD></TR>
-        <TR><TD ALIGN="LEFT">Дата создания</TD></TR>
       </TABLE>
     >
   ];
@@ -47,8 +46,6 @@ digraph G {
         <TR><TD ALIGN="LEFT">Алгоритм генерации</TD></TR>
         <TR><TD ALIGN="LEFT">Режим входа и выхода</TD></TR>
         <TR><TD ALIGN="LEFT">Сетка</TD></TR>
-        <TR><TD ALIGN="LEFT">Дата создания</TD></TR>
-        <TR><TD ALIGN="LEFT">Дата удаления</TD></TR>
       </TABLE>
     >
   ];
