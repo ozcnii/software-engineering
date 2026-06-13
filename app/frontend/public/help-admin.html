@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Справка администратора — Лабиринт</title>
+    <style>
+      :root {
+        --bg: #faf8f3;
+        --paper: #fffef9;
+        --ink: #2c2416;
+        --ink2: #6b5d4f;
+        --ink3: #c4b8a8;
+        --accent: #3a5a8c;
+        --shadow: 2px 3px 0 var(--ink3);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        min-height: 100vh;
+      }
+
+      body {
+        background:
+          linear-gradient(rgba(250, 248, 243, 0.92), rgba(250, 248, 243, 0.92)),
+          repeating-linear-gradient(
+            45deg,
+            rgba(44, 36, 22, 0.04) 0 1px,
+            transparent 1px 12px
+          );
+      }
+
+      .page {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 32px 20px 64px;
+      }
+
+      .page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 8px;
+      }
+
+      .page-title {
+        font-size: 26px;
+        margin: 0;
+        font-weight: 700;
+      }
+
+      .page-sub {
+        margin: 4px 0 0;
+        color: var(--ink2);
+        font-size: 14px;
+      }
+
+      .page-intro {
+        margin: 0 0 24px;
+        color: var(--ink2);
+        font-size: 15px;
+      }
+
+      .page-intro a {
+        color: var(--accent);
+      }
+
+      .close-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 36px;
+        padding: 8px 18px;
+        border: 2px solid var(--ink);
+        border-radius: 5px 9px 4px 8px;
+        background: var(--paper);
+        color: var(--ink);
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        font: inherit;
+        white-space: nowrap;
+      }
+
+      .close-btn:hover {
+        transform: translate(-1px, -1px);
+        box-shadow: 3px 4px 0 var(--ink3);
+      }
+
+      .card {
+        background: var(--paper);
+        border: 2px solid var(--ink);
+        border-radius: 6px 10px 5px 9px;
+        box-shadow: var(--shadow);
+        padding: 18px 22px;
+        margin-bottom: 18px;
+      }
+
+      .card h2 {
+        margin: 0 0 10px;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--ink);
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+
+      .step-num {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 26px;
+        height: 26px;
+        padding: 0 6px;
+        border: 2px solid var(--ink);
+        border-radius: 50%;
+        background: var(--bg);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .card p {
+        margin: 0 0 10px;
+      }
+
+      .card p:last-child {
+        margin-bottom: 0;
+      }
+
+      .card ul,
+      .card ol {
+        margin: 0 0 10px;
+        padding-left: 22px;
+      }
+
+      .card ul:last-child,
+      .card ol:last-child {
+        margin-bottom: 0;
+      }
+
+      .card li {
+        margin-bottom: 6px;
+      }
+
+      .card li:last-child {
+        margin-bottom: 0;
+      }
+
+      figure {
+        margin: 14px 0 4px;
+      }
+
+      figure img {
+        display: block;
+        width: 100%;
+        max-width: 720px;
+        margin: 0 auto;
+        border: 1.5px solid var(--ink3);
+        border-radius: 5px;
+        box-shadow: var(--shadow);
+      }
+
+      figcaption {
+        margin: 8px auto 0;
+        max-width: 720px;
+        text-align: center;
+        color: var(--ink2);
+        font-size: 13px;
+        font-style: italic;
+      }
+
+      kbd {
+        display: inline-block;
+        padding: 1px 6px;
+        border: 1px solid var(--ink3);
+        border-radius: 4px;
+        background: var(--bg);
+        font-family: inherit;
+        font-size: 14px;
+      }
+
+      @media (max-width: 480px) {
+        .page {
+          padding: 20px 14px 48px;
+        }
+
+        .page-title {
+          font-size: 22px;
+        }
+
+        .card {
+          padding: 14px 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <h1 class="page-title">Справка</h1>
+        <button
+          type="button"
+          class="close-btn"
+          onclick="window.close(); setTimeout(function(){ history.length > 1 ? history.back() : (location.href='/'); }, 50);"
+        >
+          ← Закрыть
+        </button>
+      </header>
+
+      <section class="card">
+        <h2>Назначение и роль администратора</h2>
+        <p>
+          Система предназначена для создания, хранения и прохождения двумерных
+          толстостенных лабиринтов. Администратор формирует уровни: задаёт
+          параметры, генерирует и правит сетку, расставляет вход и выход,
+          сохраняет и при необходимости удаляет лабиринты. Готовые лабиринты
+          становятся доступны игрокам для прохождения.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2><span class="step-num">1</span>Главный экран: список лабиринтов</h2>
+        <p>
+          Раздел «Все лабиринты» показывает таблицу созданных лабиринтов:
+          название, размер, алгоритм генерации, тему и действия. Поле «поиск…»
+          фильтрует список по названию. Слева расположено меню навигации, кнопка
+          «+ Создать» — справа вверху.
+        </p>
+        <figure>
+          <img src="/help/admin-list.png" alt="Список всех лабиринтов" />
+          <figcaption>Рисунок 1 — Список лабиринтов администратора</figcaption>
+        </figure>
+      </section>
+
+      <section class="card">
+        <h2><span class="step-num">2</span>Создание лабиринта: параметры</h2>
+        <p>
+          Нажмите «Создать новый». На первом шаге мастера задайте параметры:
+        </p>
+        <ul>
+          <li>название лабиринта;</li>
+          <li>ширина и высота сетки — нечётные значения от 7 до 25;</li>
+          <li>тема оформления (зима, лето, осень, весна);</li>
+          <li>алгоритм генерации (метод Прима или метод Краскала);</li>
+          <li>режим расстановки входа и выхода (авто или вручную).</li>
+        </ul>
+        <p>Нажмите «Далее — вход и выход», чтобы перейти к редактору.</p>
+        <figure>
+          <img src="/help/create-params.png" alt="Шаг 1 — параметры лабиринта" />
+          <figcaption>Рисунок 2 — Шаг 1: параметры лабиринта</figcaption>
+        </figure>
+      </section>
+
+      <section class="card">
+        <h2><span class="step-num">3</span>Редактор: вход и выход</h2>
+        <p>
+          В режиме ручной расстановки выберите инструмент «S Вход» и отметьте
+          клетку входа, затем «E Выход» — клетку выхода. Панель «Статус»
+          показывает, заданы ли вход и выход; вход и выход не должны совпадать и
+          не ставятся в углах. Кнопки «Отмена»/«Повтор» откатывают и повторяют
+          правки.
+        </p>
+        <figure>
+          <img src="/help/create-manual-entry-exit.png" alt="Расстановка входа и выхода в редакторе" />
+          <figcaption>Рисунок 3 — Расстановка входа и выхода</figcaption>
+        </figure>
+      </section>
+
+      <section class="card">
+        <h2><span class="step-num">4</span>Редактор: правка сетки</h2>
+        <p>
+          Инструментами «Стена» и «Проход» уточните структуру лабиринта.
+          Толщина стены и прохода равна одной клетке; редактор сохраняет
+          толстостенную структуру и защищает проходные узлы и пересечения стен от
+          правок, которые её ломают. «Легенда» поясняет цвета: стена, проход,
+          вход, выход.
+        </p>
+        <figure>
+          <img src="/help/create-editor-generated.png" alt="Редактор сгенерированного лабиринта" />
+          <figcaption>Рисунок 4 — Правка сетки в редакторе</figcaption>
+        </figure>
+      </section>
+
+      <section class="card">
+        <h2><span class="step-num">5</span>Сохранение</h2>
+        <p>
+          На шаге «Сохранить» показывается сводка: название, размер, тема,
+          алгоритм, статус входа и выхода и предпросмотр сетки. Сохранение
+          возможно только для согласованного лабиринта со связным проходом от
+          входа до выхода. Нажмите «Сохранить лабиринт» — он появится в общем
+          списке и станет доступен игрокам.
+        </p>
+        <figure>
+          <img src="/help/create-save.png" alt="Шаг 3 — проверка перед сохранением" />
+          <figcaption>Рисунок 5 — Шаг 3: сохранение лабиринта</figcaption>
+        </figure>
+      </section>
+
+      <section class="card">
+        <h2><span class="step-num">6</span>Удаление лабиринта</h2>
+        <p>
+          В строке таблицы нажмите «удал.» в столбце «Действия». Откроется окно
+          подтверждения с названием лабиринта. Нажмите «Подтвердить удаление»,
+          чтобы удалить, или «Отмена», чтобы вернуться без изменений.
+        </p>
+        <figure>
+          <img src="/help/delete-modal.png" alt="Окно подтверждения удаления" />
+          <figcaption>Рисунок 6 — Подтверждение удаления лабиринта</figcaption>
+        </figure>
+      </section>
+
+      <section class="card">
+        <h2>Темы оформления</h2>
+        <p>
+          Доступны четыре темы: зима, лето, осень и весна. Администратор фиксирует
+          тему лабиринта при его создании. Игрок при прохождении может переключить
+          тему локально для текущей сессии, не изменяя сохранённую тему лабиринта.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

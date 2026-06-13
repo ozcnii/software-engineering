@@ -50,7 +50,7 @@ export function AdminLayout({ user, onLogout }: AdminLayoutProps) {
         <div className="sidebar-section">Информация</div>
         <a
           className="sidebar-item"
-          href="/help.html"
+          href="/help-admin.html"
           target="_blank"
           rel="noreferrer"
         >
