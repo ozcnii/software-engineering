@@ -9,24 +9,24 @@ skinparam class {
 }
 
 entity "User" as User {
-  id
+  id : uuid <<PK>>
   --
-  login
-  passwordHash
-  role
+  login : varchar(8) <<unique>>
+  passwordHash : varchar(60)
+  role : ENUM('ADMIN','PLAYER')
 }
 
 entity "Labyrinth" as Labyrinth {
-  id
+  id : uuid <<PK>>
   --
-  createdById (FK)
-  name
-  width
-  height
-  theme
-  generationAlgorithm
-  entryMode
-  grid
+  createdById : uuid <<FK>>
+  name : varchar(100)
+  width : smallint
+  height : smallint
+  theme : ENUM('WINTER','SUMMER','AUTUMN','SPRING')
+  generationAlgorithm : ENUM('PRIM','KRUSKAL')
+  entryMode : ENUM('AUTO','MANUAL')
+  grid : jsonb
 }
 
 User ||--o{ Labyrinth
