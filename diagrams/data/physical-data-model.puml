@@ -1,5 +1,6 @@
 @startuml
 hide circle
+skinparam dpi 150
 skinparam backgroundColor #FFFFFF
 skinparam DefaultFontName Helvetica
 skinparam DefaultFontSize 12

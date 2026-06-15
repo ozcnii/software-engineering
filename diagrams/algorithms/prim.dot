@@ -1,0 +1,42 @@
+// Схема алгоритма генерации лабиринта методом Прима.
+// Выполнена по ГОСТ 19.701-90 (ИСО 5807-85):
+//   терминатор — овал; данные — параллелограмм; процесс — прямоугольник; решение — ромб.
+//   Линии потока сверху вниз/слева направо — без стрелок (стандартное направление);
+//   стрелки только на возвратах цикла (направление против стандарта).
+digraph prim {
+    rankdir=TB;
+    splines=ortho;
+    nodesep=0.45;
+    ranksep=0.40;
+    graph [fontname="Arial"];
+    node  [fontname="Arial", fontsize=12, color="#333333", fixedsize=false];
+    edge  [fontname="Arial", fontsize=11, color="#333333", dir=none, arrowsize=0.8];
+
+    start   [shape=ellipse,       label="Начало"];
+    in      [shape=parallelogram, label="Ввести ширину\nи высоту сетки"];
+    create  [shape=box,           label="Создать сетку,\nзаполненную стенами"];
+    pick    [shape=box,           label="Случайно выбрать стартовую клетку\nс нечётными координатами"];
+    mark    [shape=box,           label="Пометить стартовую клетку\nкак пройденную"];
+    addf    [shape=box,           label="Добавить фронтиры стартовой\nклетки в список фронтиров"];
+    d1      [shape=diamond,       label="Список\nфронтиров\nне пуст?", height=1.1, width=2.0];
+    extract [shape=box,           label="Случайно извлечь\nфронтир из списка"];
+    d2      [shape=diamond,       label="Целевая клетка\nфронтира\nпосещена?", height=1.1, width=2.2];
+    wall    [shape=box,           label="Перевести стену\nфронтира в проход"];
+    markt   [shape=box,           label="Пометить целевую клетку\nкак пройденную"];
+    addt    [shape=box,           label="Добавить фронтиры целевой\nклетки в список фронтиров"];
+    ret     [shape=parallelogram, label="Вернуть готовую\nсетку лабиринта"];
+    finish  [shape=ellipse,       label="Конец"];
+
+    // Главная вертикаль (стандартное направление — без стрелок)
+    start -> in -> create -> pick -> mark -> addf -> d1;
+    d1      -> extract [label="да"];
+    extract -> d2;
+    d2      -> wall    [label="нет"];
+    wall    -> markt -> addt;
+    ret     -> finish;
+    d1      -> ret     [label="нет"];
+
+    // Возвраты цикла (направление вверх — со стрелками)
+    addt -> d1 [dir=forward];
+    d2   -> d1 [label="да", dir=forward];
+}

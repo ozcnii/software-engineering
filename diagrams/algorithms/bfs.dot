@@ -1,0 +1,57 @@
+// Схема волнового алгоритма поиска пути (поиск в ширину, BFS).
+// Выполнена по ГОСТ 19.701-90 (ИСО 5807-85):
+//   терминатор — овал; данные — параллелограмм; процесс — прямоугольник; решение — ромб.
+//   Линии потока сверху вниз/слева направо — без стрелок (стандартное направление);
+//   стрелки только на возвратах цикла (направление против стандарта).
+digraph bfs {
+    rankdir=TB;
+    splines=ortho;
+    nodesep=0.45;
+    ranksep=0.40;
+    graph [fontname="Arial"];
+    node  [fontname="Arial", fontsize=12, color="#333333"];
+    edge  [fontname="Arial", fontsize=11, color="#333333", dir=none, arrowsize=0.8];
+
+    start    [shape=ellipse,       label="Начало"];
+    in       [shape=parallelogram, label="Ввести сетку лабиринта,\nклетку входа и клетку выхода"];
+    enq0     [shape=box,           label="Положить клетку входа в очередь\nи в множество посещённых"];
+    prevmap  [shape=box,           label="Создать пустую\nкарту предков"];
+    dq       [shape=diamond,       label="Очередь\nне пуста?", height=1.0, width=1.8];
+    deq      [shape=box,           label="Извлечь клетку\nиз начала очереди"];
+    dgoal    [shape=diamond,       label="Извлечённая клетка\nсовпадает\nс выходом?", height=1.2, width=2.4];
+    dnb      [shape=diamond,       label="Остались\nнеобработанные\nсоседи?", height=1.2, width=2.2];
+    taken    [shape=box,           label="Взять очередного\nпроходимого соседа"];
+    dvis     [shape=diamond,       label="Сосед\nуже посещён?", height=1.0, width=2.0];
+    addv     [shape=box,           label="Добавить соседа в\nмножество посещённых"];
+    setp     [shape=box,           label="Записать текущую клетку\nкак предка соседа"];
+    enq      [shape=box,           label="Положить соседа\nв конец очереди"];
+
+    nopath   [shape=parallelogram, label="Вернуть признак\nотсутствия пути"];
+    restore  [shape=box,           label="Восстановить путь по карте\nпредков от выхода ко входу"];
+    invert   [shape=box,           label="Инвертировать\nпоследовательность"];
+    retpath  [shape=parallelogram, label="Вернуть путь"];
+    finish   [shape=ellipse,       label="Конец"];
+
+    // Главная вертикаль (стандартное направление — без стрелок)
+    start -> in -> enq0 -> prevmap -> dq;
+    dq    -> deq   [label="да"];
+    deq   -> dgoal;
+    dgoal -> dnb   [label="нет"];
+    dnb   -> taken [label="да"];
+    taken -> dvis;
+    dvis  -> addv  [label="нет"];
+    addv  -> setp -> enq;
+
+    // Выход «путь не найден» (слева)
+    dq      -> nopath [label="нет"];
+    nopath  -> finish;
+
+    // Выход «путь найден» (справа)
+    dgoal   -> restore [label="да"];
+    restore -> invert -> retpath -> finish;
+
+    // Возвраты циклов (направление вверх — со стрелками)
+    enq  -> dnb [dir=forward];
+    dvis -> dnb [label="да", dir=forward];
+    dnb  -> dq  [label="нет", dir=forward];
+}
