@@ -85,6 +85,6 @@ npm run build
 
 ## Service Ports
 
-- Frontend: `http://localhost:5173`
-- Backend: `http://localhost:3001`
-- PostgreSQL: `localhost:5433`
+- Frontend: `http://localhost:15173`
+- Backend: `http://localhost:13001`
+- PostgreSQL: `localhost:55432`

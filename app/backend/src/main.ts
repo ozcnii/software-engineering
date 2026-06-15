@@ -9,11 +9,11 @@ import { toValidationFields } from './shared/errors/validation-error-fields';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const port = Number(process.env.PORT ?? 3001);
+  const port = Number(process.env.PORT ?? 13001);
 
   app.setGlobalPrefix('api');
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: 'http://localhost:15173',
     credentials: true,
   });
   app.use(cookieParser());

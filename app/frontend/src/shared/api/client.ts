@@ -14,7 +14,7 @@ export class ApiClientError extends Error {
   }
 }
 
-const API_URL = (import.meta.env.VITE_API_URL ?? 'http://localhost:3001').replace(
+const API_URL = (import.meta.env.VITE_API_URL ?? 'http://localhost:13001').replace(
   /\/$/,
   '',
 );
